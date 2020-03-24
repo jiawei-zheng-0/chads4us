@@ -1,0 +1,17 @@
+@media only screen and (max-width: 800px) {
+    .link {
+        display: none;
+    }
+
+    .link:hover {
+        color: white !important;
+    }
+}
+
+.ct {
+    width: 50%;
+}
+
+html, body {
+    background: whitesmoke;
+}
