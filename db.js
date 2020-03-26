@@ -22,12 +22,21 @@ const collegeDB = new Pool({
 module.exports = {
     register: (username, hash, callback) => {
         const registerQuery = 'INSERT INTO users(userid,password) VALUES($1, $2)';
+        const createProfileQuery = 'INSERT INTO studentData(userid) VALUES($1)';
         userDB.query(registerQuery, [username, hash], (err, results) => {
             if (err) {
                 callback(err);
             }
             else {
                 callback(null, results);
+                userDB.query(createProfileQuery, [username], (err, results) => {
+                    if (err) {
+                        callback(err);
+                    }
+                    else {
+                        callback(null, results);
+                    }
+                })
             }
         })
     },

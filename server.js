@@ -58,6 +58,7 @@ app.get('/gettest', (req, res) => {
 
 //API
 
+//REGISTER
 app.post('/register', (req, res) => {
     let username = req.body.username;
     let password = req.body.password;
@@ -75,6 +76,7 @@ app.post('/register', (req, res) => {
     });
 })
 
+//LOGIN
 app.post('/login', function (req, res) {
     let username = req.body.username;
     let password = req.body.password;
