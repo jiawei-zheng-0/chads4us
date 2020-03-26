@@ -10,6 +10,15 @@ const userDB = new Pool({
     ssl: true
 })
 
+const collegeDB = new Pool({
+    user: config.collegeDBusername,
+    host: config.collegeDBhost,
+    database: config.collegeDBdatabase,
+    password: config.collegeDBpassword,
+    port: config.collegeDBport,
+    ssl: true
+})
+
 module.exports = {
     register: (username, hash, callback) => {
         const registerQuery = 'INSERT INTO users(userid,password) VALUES($1, $2)';

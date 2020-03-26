@@ -96,6 +96,132 @@ app.post('/login', function (req, res) {
     });
 })
 
+app.post('/editprofile', function (req, res) {
+    let username = req.body.username;
+    let password;
+    if (req.body.password) {
+        password = req.body.password;
+    }
+    let GPA = req.body.GPA;
+    if (req.body.GPA) {
+        GPA = req.body.GPA;
+    }
+    let SATMath;
+    if (req.body.SATMath) {
+        SATMath = req.body.SATMath;
+    }
+    let SATEBRW;
+    if (req.body.SATEBRW) {
+        SATEBRW = req.body.SATEBRW;
+    }
+    let highSchool;
+    if (req.body.HighSchool) {
+        HighSchool = req.body.HighSchool;
+    }
+    let state;
+    if (req.body.State) {
+        state = req.body.State;
+    }
+    let collegeClass;
+    if (req.body.CollegeClass) {
+        collegeClass = req.body.CollegeClass;
+    }
+    let major1;
+    if (req.body.Major1) {
+        major1 = req.body.Major1;
+    }
+    let major2;
+    if (req.body.Major2) {
+        major2 = req.body.Major2;
+    }
+    let ACTComp;
+    if (req.body.SATEBRW) {
+        ACTComp = req.body.ACTComposite;
+    }
+    let ACTMath;
+    if (req.body.ACTMath) {
+        ACTMath = req.body.ACTMath;
+    }
+    let ACTReading;
+    if (req.body.ACTReading) {
+        ACTReading = req.body.ACTReading;
+    }
+    let ACTScience;
+    if (req.body.ACTScience) {
+        ACTScience = req.body.ACTScience;
+    }
+    let ACTEnglish;
+    if (req.body.ACTEnglish) {
+        ACTEnglish = req.body.ACTEnglish;
+    }
+    let ACTWriting;
+    if (req.body.ACTWriting) {
+        ACTWriting = req.body.ACTWriting;
+    }
+    let SATLiterature;
+    if (req.body.SATLiterature) {
+        SATLiterature = req.body.SATLiterature;
+    }
+    let SATUSHistory;
+    if (req.body.SATUSHistory) {
+        SATUSHistory = req.body.SATUSHistory;
+    }
+    let SATWorldHistory;
+    if (req.body.SATWorldHistory) {
+        SATWorldHistory = req.body.SATWorldHistory;
+    }
+    let SATMath1;
+    if (req.body.SATMath1) {
+        SATMath1 = req.body.SATMath1;
+    }
+    let SATMath2;
+    if (req.body.SATMath2) {
+        SATMath2 = req.body.SATMath2;
+    }
+    let SATEcoBio;
+    if (req.body.SATEcoBio) {
+        SATEcoBio = req.body.SATEcoBio;
+    }
+    let SATMolBio;
+    if (req.body.SATMolBio) {
+        SATMolBio = req.body.SATMolBio;
+    }
+    let SATChemistry;
+    if (req.body.SATChemistry) {
+        SATChemistry = req.body.SATChemistry;
+    }
+    let SATPhysics;
+    if (req.body.SATPhysics) {
+        SATPhysics = req.body.SATPhysics;
+    }
+    let NumOfPassedAPS;
+    if (req.body.NumOfPassedAPS) {
+        NumOfPassedAPS = req.body.NumOfPassedAPS;
+    }
+    db.editprofile(username, password, (err, result) => {
+        if (err) {
+            res.status(500).send({
+                status: "error",
+                error: 'err'
+            });
+        }
+        else if (result == 1) {
+            req.session.loggedin = true;
+            req.session.username = username;
+            res.status(200).send({
+                status: "OK"
+            });
+        }
+        else {
+            res.status(500).send({
+                status: "error",
+                error: "WRONG LOGIN"
+            });
+        }
+    });
+
+})
+
 /*
 app.post('/login', function (req, res) {
 	res.status(500).send({
