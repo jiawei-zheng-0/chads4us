@@ -100,107 +100,110 @@ app.post('/login', function (req, res) {
 
 app.post('/editprofile', function (req, res) {
     let username = req.body.username;
-    let password;
-    if (req.body.password) {
-        password = req.body.password;
+    let residenceState;
+    if (req.body.residenceState) {
+        residenceState = req.body.residenceState;
     }
+    let highSchoolName;
+    if (req.body.highSchoolName) {
+        highSchoolName = req.body.highSchoolName;
+    } 
+    let highSchoolCity;
+    if (req.body.highSchoolCity) {
+        highSchoolCity = req.body.highSchoolCity;
+    }
+    let highSchoolState;
+    if (req.body.highSchoolState) {
+        highSchoolState = req.body.highSchoolState;
+    }     
     let GPA = req.body.GPA;
     if (req.body.GPA) {
         GPA = req.body.GPA;
     }
-    let SATMath;
-    if (req.body.SATMath) {
-        SATMath = req.body.SATMath;
-    }
-    let SATEBRW;
-    if (req.body.SATEBRW) {
-        SATEBRW = req.body.SATEBRW;
-    }
-    let highSchool;
-    if (req.body.HighSchool) {
-        HighSchool = req.body.HighSchool;
-    }
-    let state;
-    if (req.body.State) {
-        state = req.body.State;
-    }
     let collegeClass;
-    if (req.body.CollegeClass) {
-        collegeClass = req.body.CollegeClass;
+    if (req.body.collegeClass) {
+        collegeClass = req.body.collegeClass;
+    }
+    let satEBRW;
+    if (req.body.satEBRW) {
+        satEBRW = req.body.satEBRW;
+    }
+    let satMath;
+    if (req.body.satMath) {
+        satMath = req.body.satMath;
     }
     let major1;
-    if (req.body.Major1) {
-        major1 = req.body.Major1;
+    if (req.body.major1) {
+        major1 = req.body.major1;
     }
     let major2;
-    if (req.body.Major2) {
-        major2 = req.body.Major2;
+    if (req.body.major2) {
+        major2 = req.body.major2;
     }
-    let ACTComp;
-    if (req.body.SATEBRW) {
-        ACTComp = req.body.ACTComposite;
+    let actEnglish;
+    if (req.body.actEnglish) {
+        actEnglish = req.body.actEnglish;
     }
-    let ACTMath;
-    if (req.body.ACTMath) {
-        ACTMath = req.body.ACTMath;
+    let actMath;
+    if (req.body.actMath) {
+        actMath = req.body.actMath;
     }
-    let ACTReading;
-    if (req.body.ACTReading) {
-        ACTReading = req.body.ACTReading;
+    let actReading;
+    if (req.body.actReading) {
+        actReading = req.body.actReading;
     }
-    let ACTScience;
-    if (req.body.ACTScience) {
-        ACTScience = req.body.ACTScience;
+    let actScience;
+    if (req.body.actScience) {
+        actScience = req.body.actScience;
     }
-    let ACTEnglish;
-    if (req.body.ACTEnglish) {
-        ACTEnglish = req.body.ACTEnglish;
+    let actComposite;
+    if (req.body.actComposite) {
+        actComposite = req.body.actComposite;
     }
-    let ACTWriting;
-    if (req.body.ACTWriting) {
-        ACTWriting = req.body.ACTWriting;
+    let satLiterature;
+    if (req.body.satLiterature) {
+        satLiterature = req.body.satLiterature;
     }
-    let SATLiterature;
-    if (req.body.SATLiterature) {
-        SATLiterature = req.body.SATLiterature;
+    let satUSHistory;
+    if (req.body.satUSHistory) {
+        satUSHistory = req.body.satUSHistory;
     }
-    let SATUSHistory;
-    if (req.body.SATUSHistory) {
-        SATUSHistory = req.body.SATUSHistory;
+    let satWorldHistory;
+    if (req.body.satWorldHistory) {
+        satWorldHistory = req.body.satWorldHistory;
     }
-    let SATWorldHistory;
-    if (req.body.SATWorldHistory) {
-        SATWorldHistory = req.body.SATWorldHistory;
+    let satMath1;
+    if (req.body.satMath1) {
+        satMath1 = req.body.satMath1;
     }
-    let SATMath1;
-    if (req.body.SATMath1) {
-        SATMath1 = req.body.SATMath1;
+    let satMath2;
+    if (req.body.satMath2) {
+        satMath2 = req.body.satMath2;
     }
-    let SATMath2;
-    if (req.body.SATMath2) {
-        SATMath2 = req.body.SATMath2;
+    let satEcoBio;
+    if (req.body.satEcoBio) {
+        satEcoBio = req.body.satEcoBio;
     }
-    let SATEcoBio;
-    if (req.body.SATEcoBio) {
-        SATEcoBio = req.body.SATEcoBio;
+    let satMolBio;
+    if (req.body.satMolBio) {
+        satMolBio = req.body.satMolBio;
     }
-    let SATMolBio;
-    if (req.body.SATMolBio) {
-        SATMolBio = req.body.SATMolBio;
+    let satChem;
+    if (req.body.satChem) {
+        satChem = req.body.satChem;
     }
-    let SATChemistry;
-    if (req.body.SATChemistry) {
-        SATChemistry = req.body.SATChemistry;
+    let satPhysics;
+    if (req.body.satPhysics) {
+        satPhysics = req.body.satPhysics;
     }
-    let SATPhysics;
-    if (req.body.SATPhysics) {
-        SATPhysics = req.body.SATPhysics;
+    let numPassedAPs;
+    if (req.body.numPassedAPs) {
+        numPassedAPs = req.body.numPassedAPs;
     }
-    let NumOfPassedAPS;
-    if (req.body.NumOfPassedAPS) {
-        NumOfPassedAPS = req.body.NumOfPassedAPS;
-    }
-    db.editProfile(username, password, GPA, SATMath, (err, result) => {
+    db.editProfile(username, residenceState, highSchoolName, highSchoolCity, highSchoolState, GPA, collegeClass, 
+        major1, major2, satEBRW, satMath, actEnglish, actMath, actReading, actScience, actComposite, 
+        satLiterature, satUSHistory, satWorldHistory, satMath1, satMath2, satEcoBio, satMolBio, 
+        satChem, satPhysics, numPassedAPs, (err, result) => {
         if (err) {
             res.status(500).send({
                 status: "error",
@@ -210,11 +213,10 @@ app.post('/editprofile', function (req, res) {
         else {
             res.status(500).send({
                 status: "error",
-                error: "WRONG LOGIN"
+                error: "Cannot edit profile"
             });
         }
     });
-
 })
 
 /*
