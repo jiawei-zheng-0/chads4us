@@ -10,7 +10,7 @@ const cookieParser = require('cookie-parser');
 const { Pool, Client } = require('pg')
 const config = require('./config.json');
 const db = require('./db.js');
-var cors = require('cors');
+const cors = require('cors');
 
 app.use(cors());
 app.use(express.static(__dirname + '/public'));
@@ -125,7 +125,7 @@ app.get('/profile', function (req, res) {
 
 //EDIT PROFILE
 app.post('/editprofile', function (req, res) {
-    let username = req.body.username;
+    let username = req.body.userid;
     db.getProfile(username, (err, result) => {
         if (err) {
             console.log(err);
@@ -134,31 +134,11 @@ app.post('/editprofile', function (req, res) {
             });
         }
         else {
-            result.residencestate = req.body.residenceState;
-            result.highschoolname = req.body.highSchoolName;
-            result.highschoolcity = req.body.highSchoolCity;
-            result.highschoolstate = req.body.highSchoolState;
-            result.gpa = req.body.GPA;
-            result.collegeclass = req.body.collegeClass;
-            result.satebrw = req.body.satEBRW;
-            result.satmath = req.body.satMath;
-            result.major1 = req.body.major1;
-            result.major2 = req.body.major2;
-            result.actenglish = req.body.actEnglish;
-            result.actmath = req.body.actMath;
-            result.actreading = req.body.actReading;
-            result.actscience = req.body.actScience;
-            result.actcomposite = req.body.actComposite;
-            result.satliterature = req.body.satLiterature;
-            result.satushistory = req.body.satUSHistory;
-            result.satworldhistory = req.body.satWorldHistory;
-            result.satmath1 = req.body.satMath1;
-            result.satmath2 = req.body.satMath2;
-            result.satecobio = req.body.satEcoBio;
-            result.satmolbio = req.body.satMolBio;
-            result.satchem = req.body.satChem;
-            result.satphysics = req.body.satPhysics;
-            result.numpassedaps = req.body.numPassedAPs;
+            console.log(result);
+            Object.keys(result).forEach((key) => {
+                result[key] = req.body[key];
+            });
+            console.log(result);
             db.editProfile(username, result.residencestate, result.highschoolname, result.highschoolcity, result.highschoolstate, result.gpa, result.collegeclass,
                 result.major1, result.major2, result.satebrw, result.satmath, result.actenglish, result.actmath, result.actreading, result.actscience, result.actcomposite,
                 result.satliterature, result.satushistory, result.satworldhistory, result.satmath1, result.satmath2, result.satecobio, result.satmolbio,
