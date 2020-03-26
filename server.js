@@ -67,15 +67,18 @@ app.post('/register', (req, res) => {
         console.log(`pw hash is ${hash}`);
         db.register(username, hash, (err, result) => {
             if (err) {
-                console.log('Username already exists');
-                res.status(500).send();
+                res.status(500).send({
+                    message: "Username already exists."
+                });
             }
             else {
-                res.status(200).send();
+                res.status(200).send({
+                    message: "Success"
+                });
             }
         });
     });
-})
+});
 
 app.post('/login', function (req, res) {
     let username = req.body.username;
