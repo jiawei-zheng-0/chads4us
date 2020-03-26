@@ -66,7 +66,9 @@ app.post('/register', (req, res) => {
         db.register(username, hash, (err, result) => {
             if (err) {
                 console.log('Username already exists');
-                res.status(500).send();
+                res.status(500).send({
+                    error: "Username already exists"
+                });
             }
             else {
                 console.log(`New user ${username} registered`);
@@ -83,7 +85,10 @@ app.post('/login', function (req, res) {
     db.login(username, (err, hashedPW) => {
         if (err) {
             console.log('Username does not exist');
-            res.status(500).send();
+            res.status(500).send({
+                error: "Username does not exist"
+            });
+            
         }
         else {
             bcrypt.compare(password, hashedPW, (err, result) => {
@@ -91,7 +96,9 @@ app.post('/login', function (req, res) {
                     res.status(200).send();
                 } else {
                     console.log('Wrong password');
-                    res.status(500).send();
+                    res.status(500).send({
+                        error: "Wrong password"
+                    });
                 }
             });
         }
