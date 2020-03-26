@@ -10,7 +10,9 @@ const cookieParser = require('cookie-parser');
 const { Pool, Client } = require('pg')
 const config = require('./config.json');
 const db = require('./db.js');
+var cors = require('cors');
 
+app.use(cors());
 app.use(express.static(__dirname + '/public'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -66,7 +68,9 @@ app.post('/register', (req, res) => {
         db.register(username, hash, (err, result) => {
             if (err) {
                 console.log('Username already exists');
-                res.status(500).send();
+                res.status(500).send({
+                    error: "Username already exists"
+                });
             }
             else {
                 console.log(`New user ${username} registered`);
@@ -83,7 +87,10 @@ app.post('/login', function (req, res) {
     db.login(username, (err, hashedPW) => {
         if (err) {
             console.log('Username does not exist');
-            res.status(500).send();
+            res.status(500).send({
+                error: "Username does not exist"
+            });
+            
         }
         else {
             bcrypt.compare(password, hashedPW, (err, result) => {
@@ -91,7 +98,9 @@ app.post('/login', function (req, res) {
                     res.status(200).send();
                 } else {
                     console.log('Wrong password');
-                    res.status(500).send();
+                    res.status(500).send({
+                        error: "Wrong password"
+                    });
                 }
             });
         }
