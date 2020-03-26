@@ -80,63 +80,15 @@ module.exports = {
         major1, major2, satEBRW, satMath, actEnglish, actMath, actReading, actScience, actComposite,
         satLiterature, satUSHistory, satWorldHistory, satMath1, satMath2, satEcoBio, satMolBio,
         satChem, satPhysics, numPassedAPs, callback) => {
-        let parmArray = [username];
+        let parmArray = [username, residenceState, highSchoolName, highSchoolCity, highSchoolState, GPA, collegeClass,
+            major1, major2, satEBRW, satMath, actEnglish, actMath, actReading, actScience, actComposite,
+            satLiterature, satUSHistory, satWorldHistory, satMath1, satMath2, satEcoBio, satMolBio,
+            satChem, satPhysics, numPassedAPs];
         let counter = 2;
-        let editQuery = 'UPDATE studentData SET ';
-        editQuery += `residencestate = $${counter++}, `;
-        parmArray.push(residenceState);
-        editQuery += `highschoolname = $${counter++}, `;
-        parmArray.push(highSchoolName);
-        editQuery += `highschoolcity = $${counter++}, `;
-        parmArray.push(highSchoolCity);
-        editQuery += `highschoolstate = $${counter++}, `;
-        parmArray.push(highSchoolState);
-        editQuery += `GPA = $${counter++}, `;
-        parmArray.push(GPA);
-        editQuery += `collegeclass = $${counter++}, `;
-        parmArray.push(collegeClass);
-        editQuery += `major1 = $${counter++}, `;
-        parmArray.push(major1);
-        editQuery += `major2 = $${counter++}, `;
-        parmArray.push(major2);
-        editQuery += `satebrw = $${counter++}, `;
-        parmArray.push(satEBRW);
-        editQuery += `satmath = $${counter++}, `;
-        parmArray.push(satMath);
-        editQuery += `actenglish = $${counter++}, `;
-        parmArray.push(actEnglish);
-        editQuery += `actmath = $${counter++}, `;
-        parmArray.push(actMath);
-        editQuery += `actreading = $${counter++}, `;
-        parmArray.push(actReading);
-        editQuery += `actscience = $${counter++}, `;
-        parmArray.push(actScience);
-        editQuery += `actcomposite = $${counter++}, `;
-        parmArray.push(actComposite);
-        editQuery += `satliterature = $${counter++}, `;
-        parmArray.push(satLiterature);
-        editQuery += `satushistory = $${counter++}, `;
-        parmArray.push(satUSHistory);
-        editQuery += `satworldhistory = $${counter++}, `;
-        parmArray.push(satWorldHistory);
-        editQuery += `satmath1 = $${counter++}, `;
-        parmArray.push(satMath1);
-        editQuery += `satmath2 = $${counter++}, `;
-        parmArray.push(satMath2);
-        editQuery += `satecobio = $${counter++}, `;
-        parmArray.push(satEcoBio);
-        editQuery += `satmolbio = $${counter++}, `;
-        parmArray.push(satMolBio);
-        editQuery += `satchem = $${counter++}, `;
-        parmArray.push(satChem);
-        editQuery += `satphysics = $${counter++}, `;
-        parmArray.push(satPhysics);
-        editQuery += `numpassedaps = $${counter++}, `;
-        parmArray.push(numPassedAPs);
-        editQuery = editQuery.slice(0, -2);
-        editQuery += ' WHERE userid = $1';
-        console.log(editQuery);
-        console.log(parmArray);
+        let editQuery = `UPDATE studentData SET residencestate = $2, highschoolname = $3, highschoolcity = $4, highschoolstate = $5, GPA = $6,
+        collegeclass = $7, major1 = $8, major2 = $9, satebrw = $10, satmath = $11, actenglish = $12, actmath = $13, actreading = $14, 
+        actscience = $15, actcomposite = $16, satliterature = $17, satushistory = $18, satworldhistory = $19, satmath1 = $20, satmath2 = $21, 
+        satecobio = $22, satmolbio = $23, satchem = $24, satphysics = $25, numpassedaps = $26 WHERE userid = $1`;
         userDB.query(editQuery, parmArray, (err, results) => {
             if (err) {
                 callback(err);

@@ -78,7 +78,7 @@ app.post('/register', (req, res) => {
             }
         });
     });
-})
+});
 
 //LOGIN
 app.post('/login', function (req, res) {
@@ -134,7 +134,6 @@ app.post('/editprofile', function (req, res) {
             });
         }
         else {
-            console.log(result);
             result.residencestate = req.body.residenceState;
             result.highschoolname = req.body.highSchoolName;
             result.highschoolcity = req.body.highSchoolCity;
@@ -160,7 +159,6 @@ app.post('/editprofile', function (req, res) {
             result.satchem = req.body.satChem;
             result.satphysics = req.body.satPhysics;
             result.numpassedaps = req.body.numPassedAPs;
-            console.log(result);
             db.editProfile(username, result.residencestate, result.highschoolname, result.highschoolcity, result.highschoolstate, result.gpa, result.collegeclass,
                 result.major1, result.major2, result.satebrw, result.satmath, result.actenglish, result.actmath, result.actreading, result.actscience, result.actcomposite,
                 result.satliterature, result.satushistory, result.satworldhistory, result.satmath1, result.satmath2, result.satecobio, result.satmolbio,
