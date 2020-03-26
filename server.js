@@ -15,10 +15,10 @@ app.use(express.static(__dirname + '/public'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
-
+/*
 app.use(session({
-    key: 'user_sid',
-    secret: 'secretstuff',
+    key: 'chads4me_session',
+    secret: 'chads',
     resave: false,
     saveUninitialized: false,
     cookie: {
@@ -43,7 +43,7 @@ let sessionChecker = (req, res, next) => {
 app.get('/', sessionChecker, (req, res) => {
     res.sendFile(__dirname + "/public/" + "index.html");
 })
-
+*/
 app.post('/posttest', (req, res) => {
     res.status(200).send({
         status: "post response"
@@ -62,16 +62,14 @@ app.get('/gettest', (req, res) => {
 app.post('/register', (req, res) => {
     let username = req.body.username;
     let password = req.body.password;
-    console.log(`username is ${username}`);
-    console.log(`password is ${password}`);
     bcrypt.hash(password, 10, (err, hash) => {
-        console.log(`pw hash is ${hash}`);
         db.register(username, hash, (err, result) => {
             if (err) {
                 console.log('Username already exists');
                 res.status(500).send();
             }
             else {
+                console.log(`New user ${username} registered`);
                 res.status(200).send();
             }
         });
