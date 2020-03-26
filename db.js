@@ -58,4 +58,27 @@ module.exports = {
             }
         })
     },
+    editProfile: (username, password, GPA, callback) => {
+        let editQuery = 'UPDATE studentData SET '
+        if (password){
+            editQuery += `password = $1`
+        }
+        if (GPA){
+            editQuery += `GPA = $2`
+        }
+        userDB.query(loginQuery, [username], (err, results) => {
+            if (err) {
+                callback(err);
+            }
+            else {
+                if (results.rowCount == 0){
+                    callback(results);
+                }
+                else{
+                    //Return just the password field
+                    callback(null, results.rows[0].password);
+                }
+            }
+        })
+    },
 };

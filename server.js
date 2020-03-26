@@ -200,18 +200,11 @@ app.post('/editprofile', function (req, res) {
     if (req.body.NumOfPassedAPS) {
         NumOfPassedAPS = req.body.NumOfPassedAPS;
     }
-    db.editprofile(username, password, (err, result) => {
+    db.editProfile(username, password, GPA, SATMath, (err, result) => {
         if (err) {
             res.status(500).send({
                 status: "error",
                 error: 'err'
-            });
-        }
-        else if (result == 1) {
-            req.session.loggedin = true;
-            req.session.username = username;
-            res.status(200).send({
-                status: "OK"
             });
         }
         else {
