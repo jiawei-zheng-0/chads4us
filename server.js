@@ -193,6 +193,20 @@ app.post('/deleteprofiles', function (req, res) {
     });
 });
 
+app.post('/importProfiles', function (req, res) {
+    db.importProfiles((err, result) => {
+        if (err) {
+            console.log(err);
+            res.status(500).send({
+                error: 'Error in importing profiles'
+            });
+        }
+        else {
+            res.status(200).send(result);
+        }
+    });
+});
+
 /*
 app.post('/login', function (req, res) {
 	res.status(500).send({
