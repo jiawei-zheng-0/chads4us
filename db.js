@@ -151,4 +151,16 @@ module.exports = {
             }
         })
     },
+    //Delete profiles (admin)
+    deleteProfiles: (callback) => {
+        const deleteProfilesQuery = 'DELETE FROM studentdata';
+        userDB.query(deleteProfilesQuery, (err, results) => {
+            if (err) {
+                callback(err);
+            }
+            else {
+                callback(null);
+            }
+        })
+    }
 };

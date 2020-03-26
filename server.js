@@ -107,6 +107,7 @@ app.post('/login', function (req, res) {
     });
 })
 
+//GET STUDENT PROFILE
 app.get('/profile', function (req, res) {
     let username = req.body.username;
     db.getProfile(username, (err, result) => {
@@ -122,6 +123,7 @@ app.get('/profile', function (req, res) {
     });
 });
 
+//EDIT PROFILE
 app.post('/editprofile', function (req, res) {
     let username = req.body.username;
     db.getProfile(username, (err, result) => {
@@ -178,6 +180,20 @@ app.post('/editprofile', function (req, res) {
         }
     });
 })
+
+//DELETE ALL STUDENT PROFILES
+app.post('/deleteprofiles', function (req, res) {
+    db.deleteProfiles((err, result) => {
+        if (err) {
+            res.status(500).send({
+                error: 'Error in deleting profiles'
+            });
+        }
+        else {
+            res.status(200).send(result);
+        }
+    });
+});
 
 /*
 app.post('/login', function (req, res) {
