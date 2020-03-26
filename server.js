@@ -10,7 +10,9 @@ const cookieParser = require('cookie-parser');
 const { Pool, Client } = require('pg')
 const config = require('./config.json');
 const db = require('./db.js');
+var cors = require('cors');
 
+app.use(cors());
 app.use(express.static(__dirname + '/public'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
