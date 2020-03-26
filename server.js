@@ -125,7 +125,7 @@ app.get('/profile', function (req, res) {
 
 //EDIT PROFILE
 app.post('/editprofile', function (req, res) {
-    let username = req.body.userid;
+    let username = req.body.username;
     db.getProfile(username, (err, result) => {
         if (err) {
             console.log(err);
