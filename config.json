@@ -1,0 +1,12 @@
+{
+    "userDBusername": "rbcirpkvaevilg",
+    "userDBhost": "ec2-35-174-88-65.compute-1.amazonaws.com",
+    "userDBdatabase": "dcsdk28ufdqgk0",
+    "userDBpassword": "2548ded3733c1b8487a74b9910d7f58b563e1674212e0b46d640a48a0d7523ea",
+    "userDBport": 5432,
+    "collegeDBusername": "rbcirpkvaevilg",
+    "collegeDBhost": "ec2-35-174-88-65.compute-1.amazonaws.com",
+    "collegeDBdatabase": "dcsdk28ufdqgk0",
+    "collegeDBpassword": "2548ded3733c1b8487a74b9910d7f58b563e1674212e0b46d640a48a0d7523ea",
+    "collegeDBport": 5432
+}
