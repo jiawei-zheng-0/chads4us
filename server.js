@@ -90,7 +90,7 @@ app.post('/login', function (req, res) {
             res.status(500).send({
                 error: "Username does not exist"
             });
-            
+
         }
         else {
             bcrypt.compare(password, hashedPW, (err, result) => {
@@ -107,123 +107,74 @@ app.post('/login', function (req, res) {
     });
 })
 
-app.post('/editprofile', function (req, res) {
+app.get('/profile', function (req, res) {
     let username = req.body.username;
-    let residenceState;
-    if (req.body.residenceState) {
-        residenceState = req.body.residenceState;
-    }
-    let highSchoolName;
-    if (req.body.highSchoolName) {
-        highSchoolName = req.body.highSchoolName;
-    } 
-    let highSchoolCity;
-    if (req.body.highSchoolCity) {
-        highSchoolCity = req.body.highSchoolCity;
-    }
-    let highSchoolState;
-    if (req.body.highSchoolState) {
-        highSchoolState = req.body.highSchoolState;
-    }     
-    let GPA = req.body.GPA;
-    if (req.body.GPA) {
-        GPA = req.body.GPA;
-    }
-    let collegeClass;
-    if (req.body.collegeClass) {
-        collegeClass = req.body.collegeClass;
-    }
-    let satEBRW;
-    if (req.body.satEBRW) {
-        satEBRW = req.body.satEBRW;
-    }
-    let satMath;
-    if (req.body.satMath) {
-        satMath = req.body.satMath;
-    }
-    let major1;
-    if (req.body.major1) {
-        major1 = req.body.major1;
-    }
-    let major2;
-    if (req.body.major2) {
-        major2 = req.body.major2;
-    }
-    let actEnglish;
-    if (req.body.actEnglish) {
-        actEnglish = req.body.actEnglish;
-    }
-    let actMath;
-    if (req.body.actMath) {
-        actMath = req.body.actMath;
-    }
-    let actReading;
-    if (req.body.actReading) {
-        actReading = req.body.actReading;
-    }
-    let actScience;
-    if (req.body.actScience) {
-        actScience = req.body.actScience;
-    }
-    let actComposite;
-    if (req.body.actComposite) {
-        actComposite = req.body.actComposite;
-    }
-    let satLiterature;
-    if (req.body.satLiterature) {
-        satLiterature = req.body.satLiterature;
-    }
-    let satUSHistory;
-    if (req.body.satUSHistory) {
-        satUSHistory = req.body.satUSHistory;
-    }
-    let satWorldHistory;
-    if (req.body.satWorldHistory) {
-        satWorldHistory = req.body.satWorldHistory;
-    }
-    let satMath1;
-    if (req.body.satMath1) {
-        satMath1 = req.body.satMath1;
-    }
-    let satMath2;
-    if (req.body.satMath2) {
-        satMath2 = req.body.satMath2;
-    }
-    let satEcoBio;
-    if (req.body.satEcoBio) {
-        satEcoBio = req.body.satEcoBio;
-    }
-    let satMolBio;
-    if (req.body.satMolBio) {
-        satMolBio = req.body.satMolBio;
-    }
-    let satChem;
-    if (req.body.satChem) {
-        satChem = req.body.satChem;
-    }
-    let satPhysics;
-    if (req.body.satPhysics) {
-        satPhysics = req.body.satPhysics;
-    }
-    let numPassedAPs;
-    if (req.body.numPassedAPs) {
-        numPassedAPs = req.body.numPassedAPs;
-    }
-    db.editProfile(username, residenceState, highSchoolName, highSchoolCity, highSchoolState, GPA, collegeClass, 
-        major1, major2, satEBRW, satMath, actEnglish, actMath, actReading, actScience, actComposite, 
-        satLiterature, satUSHistory, satWorldHistory, satMath1, satMath2, satEcoBio, satMolBio, 
-        satChem, satPhysics, numPassedAPs, (err, result) => {
+    db.getProfile(username, (err, result) => {
         if (err) {
+            console.log(err);
             res.status(500).send({
-                status: "error",
-                error: 'err'
+                error: 'no user exists'
             });
         }
         else {
+            res.status(200).send(result);
+        }
+    });
+});
+
+app.post('/editprofile', function (req, res) {
+    let username = req.body.username;
+    db.getProfile(username, (err, result) => {
+        if (err) {
+            console.log(err);
             res.status(500).send({
-                status: "error",
-                error: "Cannot edit profile"
+                error: 'no user exists'
             });
+        }
+        else {
+            console.log(result);
+            result.residencestate = req.body.residenceState;
+            result.highschoolname = req.body.highSchoolName;
+            result.highschoolcity = req.body.highSchoolCity;
+            result.highschoolstate = req.body.highSchoolState;
+            result.gpa = req.body.GPA;
+            result.collegeclass = req.body.collegeClass;
+            result.satebrw = req.body.satEBRW;
+            result.satmath = req.body.satMath;
+            result.major1 = req.body.major1;
+            result.major2 = req.body.major2;
+            result.actenglish = req.body.actEnglish;
+            result.actmath = req.body.actMath;
+            result.actreading = req.body.actReading;
+            result.actscience = req.body.actScience;
+            result.actcomposite = req.body.actComposite;
+            result.satliterature = req.body.satLiterature;
+            result.satushistory = req.body.satUSHistory;
+            result.satworldhistory = req.body.satWorldHistory;
+            result.satmath1 = req.body.satMath1;
+            result.satmath2 = req.body.satMath2;
+            result.satecobio = req.body.satEcoBio;
+            result.satmolbio = req.body.satMolBio;
+            result.satchem = req.body.satChem;
+            result.satphysics = req.body.satPhysics;
+            result.numpassedaps = req.body.numPassedAPs;
+            console.log(result);
+            db.editProfile(username, result.residencestate, result.highschoolname, result.highschoolcity, result.highschoolstate, result.gpa, result.collegeclass,
+                result.major1, result.major2, result.satebrw, result.satmath, result.actenglish, result.actmath, result.actreading, result.actscience, result.actcomposite,
+                result.satliterature, result.satushistory, result.satworldhistory, result.satmath1, result.satmath2, result.satecobio, result.satmolbio,
+                result.satchem, result.satphysics, result.numpassedaps, (err, result) => {
+                    if (err) {
+                        console.log('error in editing profile');
+                        console.log(err);
+                        res.status(500).send({
+                            error: 'error in editing profile'
+                        });
+                    }
+                    else {
+                        console.log(`User ${username} profile updated`);
+                        res.status(200).send();
+                    }
+                });
         }
     });
 })
