@@ -314,7 +314,19 @@ app.post('/scraperankings', function (req, res) {
     axios.get(config.collegeRankingSite)
         .then(function (response) {
             // handle success
-            console.log(response.data);
+            console.log(response.data.data[0]);
+            let collegeRankings = {
+                rankings: [],
+                collegeNames: []
+            };
+            response.data.data.forEach(college => {
+                if (college.name in colleges){
+                    collegeRankings.rankings.push(Number(college.rank.replace("=", "")))
+                    collegeRankings.collegeNames.push(college.name)
+                }
+
+            });
+            console.log(collegeRankings);
         })
         .catch(function (error) {
             // handle error
