@@ -12,6 +12,8 @@ const config = require('./config.json');
 const db = require('./db.js');
 const cors = require('cors');
 const csv = require('fast-csv');
+const axios = require('axios');
+
 
 app.use(cors());
 app.use(express.static(__dirname + '/public'));
@@ -187,16 +189,17 @@ app.post('/deleteprofiles', function (req, res) {
     });
 });
 
+// @TODO import from admin uplaoded file
 app.post('/importprofiles', (req, res) => {
-    fs.readFile('students-1.csv', 'utf-8', (err, data) => {//change to input csv
+    fs.readFile(config.studentProfileCSV, 'utf-8', (err, data) => {//change to input csv
         if (err) { throw err };
 
         var newValue = data.replace(/\ *,\ */gim, ',');//removes spaces next to commas in csv
 
-        fs.writeFile('students-1-result.csv', newValue, 'utf-8', function (err) {
+        fs.writeFile('formattedCSV.csv', newValue, 'utf-8', function (err) {
             if (err) { throw err };
             let profiles = []
-            fs.createReadStream(path.resolve(__dirname, 'students-1-result.csv'))
+            fs.createReadStream(path.resolve(__dirname, 'formattedCSV.csv'))
                 .pipe(csv.parse({ headers: true }))
                 .on('error', error => console.error(error))
                 .on('data', row => {
@@ -307,6 +310,9 @@ app.post('/importprofiles', (req, res) => {
     });
 });
 
+app.post('/deleteprofiles', function (req, res) {
+
+}
 /*
 app.post('/login', function (req, res) {
 	res.status(500).send({

@@ -1,0 +1,101 @@
+American University
+Barnard College
+Berry College
+California State University, East Bay
+California State University, Fresno
+California State University, Monterey Bay
+Campbell University
+Carnegie Mellon University
+Central Connecticut State University
+Centre College
+Clarkson University
+Colgate University
+Colorado College
+DePaul University
+DePauw University
+Drake University
+Drexel University
+Eastern Illinois University
+Eastern Washington University
+Florida Gulf Coast University
+Fordham University
+Franklin & Marshall College
+Gannon University
+Gettysburg College
+Gordon College
+Hendrix College
+Hope College
+Idaho State University
+Illinois College
+Indiana University Bloomington
+Iona College
+John Carroll University
+Kalamazoo College
+Kennesaw State University
+Lawrence Technological University
+Manhattan College
+Massachusetts Institute of Technology
+Mercer University
+Merrimack College
+Mississippi State University
+Missouri University of Science and Technology
+Moravian College
+Mount Holyoke College
+New Jersey Institute of Technology
+New York University
+North Park University
+Northwestern University
+Nova Southeastern University
+Princeton University
+Providence College
+Reed College
+Rice University
+Rider University
+Rochester Institute of Technology
+Roger Williams University
+SUNY College of Environmental Science and Forestry
+Saint Louis University
+Salve Regina University
+Samford University
+San Diego State University
+School of the Art Institute of Chicago
+Siena College
+Smith College
+St Bonaventure University
+Stevenson University
+Stony Brook University
+Suffolk University
+Temple University
+Texas Christian University
+Texas Tech University
+The College of St Scholastica
+The College of Wooster
+Transylvania University
+University of Alabama
+University of Alabama at Birmingham
+University of Arizona
+University of Arkansas
+University of California, Davis
+University of California, Santa Barbara
+University of California, Santa Cruz
+University of Central Florida
+University of Delaware
+University of Hartford
+University of Houston
+University of Illinois at Chicago
+University of Kentucky
+University of Maine
+University of Massachusetts Amherst
+University of Montana
+University of Nevada, Las Vegas
+University of Nevada, Reno
+University of Richmond
+University of San Diego
+University of Utah
+Utah State University
+Vassar College
+Wagner College
+Washington & Jefferson College
+Westmont College
+William Jewell College
+Williams College
