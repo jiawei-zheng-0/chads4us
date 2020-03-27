@@ -58,6 +58,8 @@ module.exports = {
             }
         })
     },
+
+
     //Get profile
     getProfile: (username, callback) => {
         const getProfileQuery = 'SELECT * FROM studentdata WHERE username = $1';
@@ -112,51 +114,6 @@ module.exports = {
             }
             else {
                 callback(null);
-            }
-        })
-    },
-    //Import student profiles from csv
-    importProfiles: (callback) => {
-        let csv = './students-1.csv';
-        const tempTableQuery = 'CREATE TEMP TABLE x AS SELECT * FROM studentData LIMIT 0';
-        const alterTableQuery = 'ALTER TABLE x ADD COLUMN password varchar';
-        const copyCSVQuery = `COPY x FROM ${csv} DELIMITER ',' CSV HEADER`;
-        const wipeProfilesQuery = 'DELETE FROM studentData';
-        const importProfilesQuery = 'INSERT INTO studentData (username,residencestate,highschoolname, highschoolcity, highschoolstate, gpa, collegeclass, major1, major2, satebrw, satmath, actenglish, actmath, actreading, actscience, actcomposite, satliterature, satushistory, satworldhistory, satmath1, satmath2, satecobio, satmolbio, satchem, satphysics, numpassedaps) SELECT (username,residencestate,highschoolname, highschoolcity, highschoolstate, gpa, collegeclass, major1, major2, satebrw, satmath, actenglish, actmath, actreading, actscience, actcomposite, satliterature, satushistory, satworldhistory, satmath1, satmath2, satecobio, satmolbio, satchem, satphysics, numpassedaps) FROM x';
-        userDB.query(tempTableQuery, (err, results) => {
-            if (err) {
-                callback(err);
-            }
-            else {
-                userDB.query(alterTableQuery, (err, results) => {
-                    if (err) {
-                        callback(err);
-                    }
-                    else {
-                        userDB.query(copyCSVQuery, (err, results) => {
-                            if (err) {
-                                callback(err);
-                            }
-                            else {
-                                userDB.query(wipeProfilesQuery, (err, results) => {
-                                    if (err) {
-                                        callback(err);
-                                    }
-                                    else {
-                                        userDB.query(importProfilesQuery, (err, results) => {
-                                            if (err) {
-                                                callback(err);
-                                            }
-                                            else {
-                                                callback(results);
-                                            }
-                                        })
-                                    }
-                                })
-                            }
-                        })
-                    }
-                })
             }
         })
     }
