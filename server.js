@@ -49,6 +49,8 @@ app.get('/', sessionChecker, (req, res) => {
     res.sendFile(__dirname + "/public/" + "index.html");
 })
 */
+let colleges = fs.readFileSync('colleges.txt').toString().split('\n');
+
 app.post('/posttest', (req, res) => {
     res.status(200).send({
         status: "post response"
