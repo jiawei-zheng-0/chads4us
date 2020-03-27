@@ -69,7 +69,7 @@ module.exports = {
             }
             else {
                 if (results.rowCount == 0) {
-                    callback(err);
+                    callback('Profile does not exist');
                 }
                 else {
                     callback(null, results.rows[0]);

@@ -121,13 +121,14 @@ app.post('/login', function (req, res) {
 })
 
 //GET STUDENT PROFILE
-app.get('/profile', function (req, res) {
-    let username = req.body.username;
+app.get('/profile/:username', function (req, res) {
+    //let username = req.body.username;
+    let username = req.params.username;
     db.getProfile(username, (err, result) => {
         if (err) {
             console.log(err);
             res.status(500).send({
-                error: 'no user exists'
+                error: err
             });
         }
         else {
@@ -137,8 +138,8 @@ app.get('/profile', function (req, res) {
 });
 
 //EDIT PROFILE
-app.post('/editprofile', function (req, res) {
-    let username = req.body.username;
+app.post('/editprofile/:username', function (req, res) {
+    let username = req.params.username;
     db.getProfile(username, (err, result) => {
         if (err) {
             console.log(err);
