@@ -310,9 +310,20 @@ app.post('/importprofiles', (req, res) => {
     });
 });
 
-app.post('/deleteprofiles', function (req, res) {
-
-}
+app.post('/scraperankings', function (req, res) {
+    axios.get(config.collegeRankingSite)
+        .then(function (response) {
+            // handle success
+            console.log(response.data);
+        })
+        .catch(function (error) {
+            // handle error
+            console.error('Error in');
+        })
+        .then(function () {
+            // always executed
+        });
+});
 /*
 app.post('/login', function (req, res) {
 	res.status(500).send({
