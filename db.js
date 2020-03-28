@@ -127,12 +127,20 @@ module.exports = {
     //Delete profiles (admin)
     deleteProfiles: (callback) => {
         const deleteProfilesQuery = 'DELETE FROM studentdata';
+        const deleteAccountsQuery = 'DELETE FROM users';
         userDB.query(deleteProfilesQuery, (err, results) => {
             if (err) {
                 callback(err);
             }
             else {
-                callback(null);
+                userDB.query(deleteAccountsQuery, (err, results) => {
+                    if (err) {
+                        callback(err);
+                    }
+                    else {
+                        callback(null);
+                    }
+                });
             }
         })
     },
