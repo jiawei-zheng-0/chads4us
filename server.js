@@ -50,6 +50,10 @@ app.get('/', sessionChecker, (req, res) => {
 })
 */
 let collegeList = fs.readFileSync('colleges.txt').toString().split(/\r?\n/);
+collegeList = collegeList.filter(function (removeEmpty) {
+    return removeEmpty != '';
+});
+console.log(collegeList)
 
 let str = "<dd>90.0%</dd>\n<dt>Students Graduating Within 4 Years</dt>\n<dd> 52.8%</dd>";
 let completionrate = str.slice(str.indexOf("4 Years") + 18, str.indexOf("4 Years") + 22);
@@ -185,14 +189,14 @@ app.post('/editprofile/:username', function (req, res) {
                                             error: 'error in changing password'
                                         });
                                     }
-                                    else{
+                                    else {
                                         console.log(`User ${username} password changed`);
                                         res.status(200).send();
                                     }
                                 });
                             });
                         }
-                        else{
+                        else {
                             res.status(200).send();
                         }
                     }
@@ -215,7 +219,7 @@ app.post('/deleteprofiles', function (req, res) {
     });
 });
 
-// @TODO import from admin uplaoded file
+// import profiles from file config.studentProfileCSV
 app.post('/importprofiles', (req, res) => {
     fs.readFile(config.studentProfileCSV, 'utf-8', (err, data) => {//change to input csv
         if (err) { throw err };
@@ -374,13 +378,54 @@ app.post('/scraperankings', function (req, res) {
             });
         })
 });
+
+
+app.post('/scrapecollegedata', function (req, res) {
+    collegeList.forEach(college => {
+        //console.log(`${config.collegeDataSite}${college.replace(/ \& |\, | /gim, '-')}`);
+        axios.get(`${config.collegeDataSite}${college.replace(/ \& |\, | /gim, '-')}`)
+            .then((response) => {
+                
+                let percent;
+                let r = response.data.match(/<dt>Students Graduating Within 4 Years<\/dt>\s<dd> *\d{1,2}\.\d{1,2}%<\/dd>/gim);
+                if (r) {
+                    percent = r[0].match(/\d{1,2}\.\d{1,2}/gim);
+                } else{
+                    percent = null;
+                }
+                console.log(`${college} - ${percent}`);
+
+                //let str = response.data;
+                //let completionrate = str.slice(str.indexOf("4 Years") + 18, str.indexOf("4 Years") + 22);
+                //console.log(`${college} - ${completionrate}`);
+            })
+            .catch(function (error) {
+                console.error(error);
+                res.status(500).send({
+                    college: `Error in importing ${college} from collegedata.com`
+                });
+            })
+    });
+    /*
+        db.getProfile(username, (err, result) => {
+            if (err) {
+                console.log(err);
+                res.status(500).send({
+                    error: err
+                });
+            }
+            else {
+                res.status(200).send(result);
+            }
+        });*/
+});
 /*
 app.post('/login', function (req, res) {
-	res.status(500).send({
+    res.status(500).send({
                 status: "LOGIN ERROR",
                 error: 'err'
             });
-	/*
+    /*
     var username = req.body.username;
     var password = req.body.password;
     console.log(req.body);

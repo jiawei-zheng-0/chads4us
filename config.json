@@ -10,5 +10,7 @@
     "collegeDBpassword": "86aff79764957d6b3ee6cd9f372d8140d422f0e96ee7765024dc98fccda607ad",
     "collegeDBport": 5432,
     "studentProfileCSV": "students-1.csv",
-    "collegeRankingSite": "http://allv22.all.cs.stonybrook.edu/~stoller/cse416/WSJ_THE/united_states_rankings_2020_limit0_25839923f8b1714cf54659d4e4af6c3b.json"
+    "collegeRankingSite": "http://allv22.all.cs.stonybrook.edu/~stoller/cse416/WSJ_THE/united_states_rankings_2020_limit0_25839923f8b1714cf54659d4e4af6c3b.json",
+    "collegeDataSite" : "http://www.collegedata.com/college/"
+
 }
