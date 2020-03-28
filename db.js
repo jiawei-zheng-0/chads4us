@@ -40,6 +40,25 @@ module.exports = {
             }
         })
     },
+    importProfile: (username, hash, callback) => {
+        const registerQuery = 'INSERT INTO users (username,password) VALUES($1, $2)  ON CONFLICT (username) DO UPDATE SET password = EXCLUDED.password';
+        const createProfileQuery = 'INSERT INTO studentdata (username) VALUES ($1) ON CONFLICT DO NOTHING';
+        userDB.query(registerQuery, [username, hash], (err, results) => {
+            if (err) {
+                callback(err);
+            }
+            else {
+                userDB.query(createProfileQuery, [username], (err, results) => {
+                    if (err) {
+                        callback(err);
+                    }
+                    else {
+                        callback(null, results);
+                    }
+                })
+            }
+        })
+    },
     //Get hashed password
     login: (username, callback) => {
         const loginQuery = 'SELECT password FROM users WHERE username=$1';

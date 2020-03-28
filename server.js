@@ -270,7 +270,7 @@ app.post('/importprofiles', (req, res) => {
                     profiles.forEach(profile => {
                         bcrypt.hash(profile.password, 10, (err, hash) => {
                             profile.password = hash;
-                            db.register(profile.username, hash, (err, result) => {
+                            db.importProfile(profile.username, hash, (err, result) => {
                                 if (err) {
                                     console.log('Username already exists');
                                 }
