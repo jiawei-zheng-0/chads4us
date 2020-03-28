@@ -77,8 +77,6 @@ module.exports = {
             }
         })
     },
-
-
     //Get profile
     getProfile: (username, callback) => {
         const getProfileQuery = 'SELECT * FROM studentdata WHERE username = $1';
@@ -140,6 +138,52 @@ module.exports = {
                 }
             }
         })
+    },
+    //Search for colleges
+    searchColleges: (isStrict, collegename, lowadmissionrate, highadmissionrate, costofattendance, location, major1,
+        major2, lowranking, highranking, lowsize, highsize, lowsatmath, highsatmath, lowsatebrw, highsatebrw, lowactcomposite, highactcompsite, callback) => {
+        let searchQuery = 'SELECT * FROM colleges WHERE 1=1';
+        if (collegename) {
+            searchQuery += ` AND collegename LIKE '%${collegename}%'`;
+        }
+        if (lowadmissionrate && highadmissionrate) {
+            searchQuery += ` AND admissionrate BETWEEN ${lowadmissionrate} AND ${highadmissionrate}`;
+        }
+        if (costofattendance) {
+            searchQuery += ` AND costofattendence < ${costofattendance}`;
+        }
+        if (location) {
+            searchQuery += ` AND location='${location}'`;
+        }
+        if (major1) {
+            searchQuery += ` AND array_to_string(majors, ',') LIKE '%${major1}%'`;
+        }
+        if (major2) {
+            searchQuery += ` AND array_to_string(majors, ',') LIKE '%${major2}%'`;
+        }
+        if (lowranking && highranking) {
+            searchQuery += ` AND ranking BETWEEN ${lowranking} AND ${highranking}`;
+        }
+        if (lowsize && highsize) {
+            searchQuery += ` AND size BETWEEN ${lowsize} AND ${highsize}`;
+        }
+        if (lowsatmath && highsatmath) {
+            searchQuery += ` AND satmath BETWEEN ${lowsatmath} AND ${highsatmath}`;
+        }
+        if (lowsatebrw && highsatebrw) {
+            searchQuery += ` AND satebrw BETWEEN ${lowsatebrw} AND ${highsatebrw}`;
+        }
+        if (lowactcomposite && highactcompsite) {
+            searchQuery += ` AND actcomposite BETWEEN ${lowactcomposite} AND ${highactcompsite}`;
+        }
+        console.log(searchQuery);
+        collegeDB.query(searchQuery, (err, results) => {
+            if (err) {
+                callback(err);
+            } else {
+                callback(null, results);
+            }
+        });
     },
     //Delete profiles (admin)
     deleteProfiles: (callback) => {
