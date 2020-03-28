@@ -218,7 +218,7 @@ app.post('/editprofile/:username', function (req, res) {
 
 //Search for colleges
 app.post('/searchcolleges', function (req, res) {
-    db.searchColleges(null, req.body.collegename, req.body.lowadmissionrate, req.body.highadmissionrate, 
+    db.searchColleges(req.body.isStrict, req.body.collegename, req.body.lowadmissionrate, req.body.highadmissionrate, 
     req.body.costofattendance, req.body.location, req.body.major1, req.body.major2, req.body.lowranking,
     req.body.highranking, req.body.lowsize, req.body.highsize, req.body.lowsatmath, req.body.highsatmath, 
     req.body.lowsatebrw, req.body.highsatebrw, req.body.lowactcomposite, req.body.highactcomposite, (err, result) => {
@@ -228,7 +228,7 @@ app.post('/searchcolleges', function (req, res) {
             });
         }
         else {
-            res.status(200).send(result);
+            res.status(200).send(result.rows);
         }
     });
 });
