@@ -124,6 +124,23 @@ module.exports = {
             }
         })
     },
+    //Change password
+    changePassword: (username, password, callback) => {
+        let changePasswordQuery = `UPDATE users SET password = $2 WHERE username = $1`;
+        userDB.query(changePasswordQuery, [username,password], (err, results) => {
+            if (err) {
+                callback(err);
+            }
+            else {
+                if (results.rowCount == 0) {
+                    callback(null, results);
+                }
+                else {
+                    callback(null, results);
+                }
+            }
+        })
+    },
     //Delete profiles (admin)
     deleteProfiles: (callback) => {
         const deleteProfilesQuery = 'DELETE FROM studentdata';

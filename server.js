@@ -144,6 +144,9 @@ app.get('/profile/:username', function (req, res) {
 //EDIT PROFILE
 app.post('/editprofile/:username', function (req, res) {
     let username = req.params.username;
+    //if password in body, password is getting changed
+    let password = req.body.password;
+
     db.getProfile(username, (err, result) => {
         if (err) {
             console.log(err);
@@ -170,7 +173,25 @@ app.post('/editprofile/:username', function (req, res) {
                     }
                     else {
                         console.log(`User ${username} profile updated`);
-                        res.status(200).send();
+                        if (password) {
+                            bcrypt.hash(password, 10, (err, hash) => {
+                                db.changePassword(username, hash, (err, result) => {
+                                    if (err) {
+                                        console.log(`error in changing password for ${username}`);
+                                        res.status(500).send({
+                                            error: 'error in changing password'
+                                        });
+                                    }
+                                    else{
+                                        console.log(`User ${username} password changed`);
+                                        res.status(200).send();
+                                    }
+                                });
+                            });
+                        }
+                        else{
+                            res.status(200).send();
+                        }
                     }
                 });
         }
