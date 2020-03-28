@@ -116,5 +116,26 @@ module.exports = {
                 callback(null);
             }
         })
+    },
+    //import college rankings
+    importCollegeRankings: (collegeRankings, callback) => {
+        let importCollegeRankingsQuery = 'INSERT INTO colleges (collegename, ranking) VALUES ';
+        let counter = 1;
+        for (let i = 0; i < collegeRankings.length / 2; i++) {
+            importCollegeRankingsQuery += `($${counter++}, $${counter++}), `;
+        };
+        importCollegeRankingsQuery = importCollegeRankingsQuery.slice(0, -2);
+        importCollegeRankingsQuery += ' ON CONFLICT (collegename) DO UPDATE SET ranking = EXCLUDED.ranking';
+
+        collegeDB.query(importCollegeRankingsQuery, collegeRankings, (err, results) => {
+            if (err) {
+                console.log(err);
+                callback(err);
+            }
+            else {
+                callback(null);
+            }
+        })
+
     }
 };

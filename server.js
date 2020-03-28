@@ -49,7 +49,7 @@ app.get('/', sessionChecker, (req, res) => {
     res.sendFile(__dirname + "/public/" + "index.html");
 })
 */
-let colleges = fs.readFileSync('colleges.txt').toString().split('\n');
+let collegeList = fs.readFileSync('colleges.txt').toString().split(/\r?\n/);
 
 app.post('/posttest', (req, res) => {
     res.status(200).send({
@@ -304,7 +304,9 @@ app.post('/importprofiles', (req, res) => {
                         timeoutCounter++;
                         if (timeoutCounter >= profiles.length) {//if func takes more than row # of seconds, timeout
                             clearInterval(intervalID);
-                            res.status(500).send();
+                            res.status(500).send({
+                                error: 'Error in importing profiles'
+                            });
                         }
                     }, 1000);
                 });
@@ -315,28 +317,38 @@ app.post('/importprofiles', (req, res) => {
 app.post('/scraperankings', function (req, res) {
     axios.get(config.collegeRankingSite)
         .then(function (response) {
-            // handle success
-            console.log(response.data.data[0]);
-            let collegeRankings = {
-                rankings: [],
-                collegeNames: []
-            };
+            let collegeRankings = []
             response.data.data.forEach(college => {
-                if (college.name in colleges){
-                    collegeRankings.rankings.push(Number(college.rank.replace("=", "")))
-                    collegeRankings.collegeNames.push(college.name)
+                if (collegeList.includes(college.name)) {
+                    if (college.rank === '401-500') {
+                        college.rank = '401'
+                    } else if (college.rank === '501-600') {
+                        college.rank = '501'
+                    } else if (college.rank === '\u003E 600') {
+                        college.rank = '601'
+                    }
+                    collegeRankings.push(college.name);
+                    collegeRankings.push(Number(college.rank.replace("=", "")));
                 }
 
             });
-            console.log(collegeRankings);
+            db.importCollegeRankings(collegeRankings, (err, result) => {
+                if (err) {
+                    res.status(500).send({
+                        error: 'Error in importing rankings'
+                    });
+                }
+                else {
+                    res.status(200).send();
+                }
+            });
         })
         .catch(function (error) {
-            // handle error
-            console.error('Error in');
+            console.error(error);
+            res.status(500).send({
+                error: 'Error in scraping rankings'
+            });
         })
-        .then(function () {
-            // always executed
-        });
 });
 /*
 app.post('/login', function (req, res) {
