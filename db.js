@@ -157,9 +157,9 @@ module.exports = {
         }
         if (costofattendance) {
             if (isStrict)
-                searchQuery += ` AND costofattendance IS NOT NULL AND costofattendence < ${costofattendance}`;
+                searchQuery += ` AND costofattendance IS NOT NULL AND costofattendance < ${costofattendance}`;
             else
-                searchQuery += ` AND costofattendance IS NULL OR costofattendence < ${costofattendance}`;
+                searchQuery += ` AND costofattendance IS NULL OR costofattendance < ${costofattendance}`;
         }
         if (location) {
             if (isStrict)

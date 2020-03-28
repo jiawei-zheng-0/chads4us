@@ -223,6 +223,7 @@ app.post('/searchcolleges', function (req, res) {
     req.body.highranking, req.body.lowsize, req.body.highsize, req.body.lowsatmath, req.body.highsatmath, 
     req.body.lowsatebrw, req.body.highsatebrw, req.body.lowactcomposite, req.body.highactcomposite, (err, result) => {
         if (err) {
+            console.log(err);
             res.status(500).send({
                 error: 'Error in searching for colleges'
             });
