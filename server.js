@@ -458,6 +458,21 @@ app.post('/scrapecollegedata', function (req, res) {
             }
         });*/
 });
+
+//GET ALL COLLEGE DATA
+app.get('/getallcolleges', function (req, res) {
+    db.getAllColleges((err, result) => {
+        if (err) {
+            res.status(500).send({
+                error: 'Error in retrieving all colleges'
+            });
+        }
+        else {
+            res.status(200).send(result);
+        }
+    });
+});
+
 /*
 app.post('/login', function (req, res) {
     res.status(500).send({

@@ -201,5 +201,17 @@ module.exports = {
                 callback(null);
             }
         })
+    },
+    getAllColleges: (callback) => {
+        let getAllCollegesQuery = 'SELECT * FROM colleges';
+        collegeDB.query(getAllCollegesQuery, (err, results) => {
+            if (err) {
+                console.log(err);
+                callback(err);
+            }
+            else {
+                callback(null,results.rows);
+            }
+        })
     }
 };
