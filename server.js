@@ -51,6 +51,9 @@ app.get('/', sessionChecker, (req, res) => {
 */
 let collegeList = fs.readFileSync('colleges.txt').toString().split(/\r?\n/);
 
+let str = "<dd>90.0%</dd>\n<dt>Students Graduating Within 4 Years</dt>\n<dd> 52.8%</dd>";
+let completionrate = str.slice(str.indexOf("4 Years") + 18, str.indexOf("4 Years") + 22);
+
 app.post('/posttest', (req, res) => {
     res.status(200).send({
         status: "post response"
