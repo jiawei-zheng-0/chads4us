@@ -49,7 +49,22 @@ app.get('/', sessionChecker, (req, res) => {
     res.sendFile(__dirname + "/public/" + "index.html");
 })
 */
+let collegesWithThe = [
+    'The Citadel',
+    'The Art Institute of Atlanta',
+    'The College of New Jersey',
+    'The Jewish Theological Seminary',
+    'The King\'s College',
+    'The New School: College of Performing Arts',
+    'The Restaurant School at Walnut Hill College',
+    'The Sage Colleges'
+]
+
 let collegeList = fs.readFileSync('colleges.txt').toString().split(/\r?\n/);
+collegeList = collegeList.filter(function (removeEmpty) {
+    return removeEmpty != '';
+});
+console.log(collegeList)
 
 let str = "<dd>90.0%</dd>\n<dt>Students Graduating Within 4 Years</dt>\n<dd> 52.8%</dd>";
 let completionrate = str.slice(str.indexOf("4 Years") + 18, str.indexOf("4 Years") + 22);
@@ -185,14 +200,14 @@ app.post('/editprofile/:username', function (req, res) {
                                             error: 'error in changing password'
                                         });
                                     }
-                                    else{
+                                    else {
                                         console.log(`User ${username} password changed`);
                                         res.status(200).send();
                                     }
                                 });
                             });
                         }
-                        else{
+                        else {
                             res.status(200).send();
                         }
                     }
@@ -232,7 +247,7 @@ app.post('/deleteprofiles', function (req, res) {
     });
 });
 
-// @TODO import from admin uplaoded file
+// import profiles from file config.studentProfileCSV
 app.post('/importprofiles', (req, res) => {
     fs.readFile(config.studentProfileCSV, 'utf-8', (err, data) => {//change to input csv
         if (err) { throw err };
@@ -391,13 +406,82 @@ app.post('/scraperankings', function (req, res) {
             });
         })
 });
+
+app.post('/scrapecollegedata', function (req, res) {
+    let fourYearGradRate = [];
+    let counter = 0;
+    collegeList.forEach(college => {
+        //console.log(`${config.collegeDataSite}${college.replace(/ \& |\, | /gim, '-')}`);
+        let collegeURL = college.replace(/ \& |\, | /gim, '-');
+        // If college name starts with 'The' and not on THE list, remove 'The'
+        if (college.startsWith('The ') && !collegesWithThe.includes(college)) {
+            collegeURL = collegeURL.slice(4);
+        }
+        console.log(`${config.collegeDataSite}${collegeURL}`)
+        axios.get(`${config.collegeDataSite}${collegeURL}`)
+            .then((response) => {
+                /*
+                if (response.data.toString().includes('Your search returned no matches')){
+                    console.log(`${college} INVALID URL`);
+                }
+                */
+                let percent;
+                let r = response.data.match(/<dt>Students Graduating Within 4 Years<\/dt>\s<dd> *\d{1,2}\.\d{1,2}%<\/dd>/gim);
+                if (r) {
+                    percent = r[0].match(/\d{1,2}\.\d{1,2}/gim);
+                } else {
+                    percent = null;
+                }
+                console.log(`${college} - ${percent}`);
+                fourYearGradRate.push(percent);
+
+
+                counter++;
+            })
+            .catch(function (error) {
+                console.error(error);
+                //res.status(500).send({
+                //    college: `Error in importing ${college} from collegedata.com`
+                //});
+            })
+    });
+
+
+    let timeoutCounter = 0;
+    let intervalID = setInterval(() => {
+        if (counter >= collegeList.length) {
+            clearInterval(intervalID);
+            res.status(200).send();
+        }
+        timeoutCounter++;
+        if (timeoutCounter >= 15) {//if func takes more than 15 seconds, timeout
+            clearInterval(intervalID);
+            res.status(500).send({
+                error: 'Error in scraping from collegeData'
+            });
+        }
+    }, 1000);
+
+    /*
+        db.getProfile(username, (err, result) => {
+            if (err) {
+                console.log(err);
+                res.status(500).send({
+                    error: err
+                });
+            }
+            else {
+                res.status(200).send(result);
+            }
+        });*/
+});
 /*
 app.post('/login', function (req, res) {
-	res.status(500).send({
+    res.status(500).send({
                 status: "LOGIN ERROR",
                 error: 'err'
             });
-	/*
+    /*
     var username = req.body.username;
     var password = req.body.password;
     console.log(req.body);
