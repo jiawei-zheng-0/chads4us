@@ -280,7 +280,7 @@ module.exports = {
         })
     },
     getAllColleges: (callback) => {
-        let getAllCollegesQuery = 'SELECT * FROM colleges ORDER BY ranking';
+        let getAllCollegesQuery = 'SELECT * FROM colleges ORDER BY rank';
         collegeDB.query(getAllCollegesQuery, (err, results) => {
             if (err) {
                 console.log(err);
