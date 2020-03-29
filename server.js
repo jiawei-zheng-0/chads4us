@@ -218,20 +218,20 @@ app.post('/editprofile/:username', function (req, res) {
 
 //Search for colleges
 app.post('/searchcolleges', function (req, res) {
-    db.searchColleges(req.body.isStrict, req.body.collegename, req.body.lowadmissionrate, req.body.highadmissionrate, 
-    req.body.costofattendance, req.body.location, req.body.major1, req.body.major2, req.body.lowranking,
-    req.body.highranking, req.body.lowsize, req.body.highsize, req.body.lowsatmath, req.body.highsatmath, 
-    req.body.lowsatebrw, req.body.highsatebrw, req.body.lowactcomposite, req.body.highactcomposite, (err, result) => {
-        if (err) {
-            console.log(err);
-            res.status(500).send({
-                error: 'Error in searching for colleges'
-            });
-        }
-        else {
-            res.status(200).send(result.rows);
-        }
-    });
+    db.searchColleges(req.body.isStrict, req.body.collegename, req.body.lowadmissionrate, req.body.highadmissionrate,
+        req.body.costofattendance, req.body.location, req.body.major1, req.body.major2, req.body.lowranking,
+        req.body.highranking, req.body.lowsize, req.body.highsize, req.body.lowsatmath, req.body.highsatmath,
+        req.body.lowsatebrw, req.body.highsatebrw, req.body.lowactcomposite, req.body.highactcomposite, (err, result) => {
+            if (err) {
+                console.log(err);
+                res.status(500).send({
+                    error: 'Error in searching for colleges'
+                });
+            }
+            else {
+                res.status(200).send(result.rows);
+            }
+        });
 });
 
 //DELETE ALL STUDENT PROFILES
@@ -240,6 +240,20 @@ app.post('/deleteprofiles', function (req, res) {
         if (err) {
             res.status(500).send({
                 error: 'Error in deleting profiles'
+            });
+        }
+        else {
+            res.status(200).send(result);
+        }
+    });
+});
+
+//GET ALL COLLEGE DATA
+app.post('/getallcolleges', function (req, res) {
+    db.getAllColleges((err, result) => {
+        if (err) {
+            res.status(500).send({
+                error: 'Error in retrieving all colleges'
             });
         }
         else {
@@ -413,6 +427,10 @@ app.post('/scrapecollegedata', function (req, res) {
     let counter = 0;
     collegeList.forEach(college => {
         //console.log(`${config.collegeDataSite}${college.replace(/ \& |\, | /gim, '-')}`);
+        // Replaces ' & ' and ', ' and ' ' with '-'
+        if (college.includes('SUNY')) {
+            college = college.replace('SUNY', 'State-University-of-New-York');
+        }
         let collegeURL = college.replace(/ \& |\, | /gim, '-');
         // If college name starts with 'The' and not on THE list, remove 'The'
         if (college.startsWith('The ') && !collegesWithThe.includes(college)) {
@@ -427,16 +445,41 @@ app.post('/scrapecollegedata', function (req, res) {
                 }
                 */
                 let percent;
-                let r = response.data.match(/<dt>Students Graduating Within 4 Years<\/dt>\s<dd> *\d{1,2}\.\d{1,2}%<\/dd>/gim);
-                if (r) {
-                    percent = r[0].match(/\d{1,2}\.\d{1,2}/gim);
+                let match = response.data.match(/<dt>Students Graduating Within 4 Years<\/dt>\s<dd> *\d{1,2}\.\d{1,2}%<\/dd>/gim);
+                if (match) {
+                    percent = match[0].match(/\d{1,2}\.\d{1,2}/gim);
                 } else {
                     percent = null;
                 }
-                console.log(`${college} - ${percent}`);
-                fourYearGradRate.push(percent);
-
-
+                //console.log(`${college} - ${percent}`);
+                if (percent) {
+                    fourYearGradRate.push(Number(percent));
+                } else {
+                    fourYearGradRate.push(null);
+                }
+                //Get cost of attendance
+                let costOfAttendanceInState = null;
+                let costOfAttendanceOutOfState = null;
+                let costMatch = response.data.match(/(<dt>Cost of Attendance<\/dt>\s<dd>In-state: \$\d*,?\d+<BR>Out-of-state: \$\d*,?\d+<\/dd>)|(<dt>Cost of Attendance<\/dt>\s<dd>\$\d*,?\d+<\/dd>)/gim);
+                //let costMatch = response.data.match(/<dt>Cost of Attendance<\/dt>\s.*\s<dt>Tuition/gim);
+                if (costMatch) {//if  match, college does report cost of attendance
+                    //console.log(`${college} - ${costMatch[0]}`)
+                    if (costMatch[0].includes('In-state')) {//college has seperate in state and out of state
+                        costOfAttendanceInState = Number(costMatch[0].match(/\d*,?\d+<BR>/gim)[0].slice(0, -4).replace(',', ''));
+                        costOfAttendanceOutOfState = Number(costMatch[0].match(/\d*,?\d+<\/dd/gim)[0].slice(0, -4).replace(',', ''));
+                        //console.log(`${college} - Instate - ${costOfAttendanceInState} Outofstate - ${costOfAttendanceOutOfState}`);
+                    } else {//college has one single COA
+                        costOfAttendanceInState = Number(costMatch[0].match(/\d*,?\d+<\/dd/gim)[0].slice(0, -4).replace(',', ''));
+                        costOfAttendanceOutOfState = costOfAttendanceInState
+                        //console.log(`${college} - ${costOfAttendanceInState}`);
+                    }
+                } else {
+                    costOfAttendanceInState = null;
+                    costOfAttendanceOutOfState = null;
+                    //console.log(`${college} - null`);
+                }
+                //
+                //<h3 class="h5">Undergraduate Majors<\/h3>[\s\S]*?Most Popular Disciplines
                 counter++;
             })
             .catch(function (error) {
@@ -497,7 +540,7 @@ app.post('/login', function (req, res) {
                 status: "LOGIN ERROR",
                 error: 'err'
             });
-    /*
+    
     var username = req.body.username;
     var password = req.body.password;
     console.log(req.body);
