@@ -141,7 +141,7 @@ module.exports = {
     },
     //Search for colleges
     searchColleges: (isStrict, collegename, lowadmissionrate, highadmissionrate, costofattendance, location, major1,
-        major2, lowranking, highranking, lowsize, highsize, lowsatmath, highsatmath, lowsatebrw, highsatebrw, lowactcomposite, highactcompsite, callback) => {
+        major2, lowranking, highranking, lowsize, highsize, lowsatmath, highsatmath, lowsatebrw, highsatebrw, lowactcomposite, highactcomposite, callback) => {
         let searchQuery = 'SELECT * FROM colleges WHERE 1=1';
         if (collegename) {
             if (isStrict)
@@ -280,7 +280,7 @@ module.exports = {
         })
     },
     getAllColleges: (callback) => {
-        let getAllCollegesQuery = 'SELECT * FROM colleges ORDER BY rank';
+        let getAllCollegesQuery = 'SELECT * FROM colleges ORDER BY ranking';
         collegeDB.query(getAllCollegesQuery, (err, results) => {
             if (err) {
                 console.log(err);
