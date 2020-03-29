@@ -141,7 +141,7 @@ module.exports = {
     },
     //Search for colleges
     searchColleges: (isStrict, collegename, lowadmissionrate, highadmissionrate, costofattendance, location, major1,
-        major2, lowranking, highranking, lowsize, highsize, lowsatmath, highsatmath, lowsatebrw, highsatebrw, lowactcomposite, highactcompsite, callback) => {
+        major2, lowranking, highranking, lowsize, highsize, lowsatmath, highsatmath, lowsatebrw, highsatebrw, lowactcomposite, highactcomposite, callback) => {
         let searchQuery = 'SELECT * FROM colleges WHERE 1=1';
         if (collegename) {
             if (isStrict)
@@ -203,11 +203,11 @@ module.exports = {
             else
                 searchQuery += ` AND satebrw IS NULL OR satebrw BETWEEN ${lowsatebrw} AND ${highsatebrw}`;
         }
-        if (lowactcomposite && highactcompsite) {
+        if (lowactcomposite && highactcomposite) {
             if (isStrict)
-                searchQuery += ` AND actcomposite IS NOT NULL AND actcomposite BETWEEN ${lowactcomposite} AND ${highactcompsite}`;
+                searchQuery += ` AND actcomposite IS NOT NULL AND actcomposite BETWEEN ${lowactcomposite} AND ${highactcomposite}`;
             else
-                searchQuery += ` AND actcomposite IS NULL OR actcomposite BETWEEN ${lowactcomposite} AND ${highactcompsite}`;
+                searchQuery += ` AND actcomposite IS NULL OR actcomposite BETWEEN ${lowactcomposite} AND ${highactcomposite}`;
         }
         console.log(searchQuery);
         collegeDB.query(searchQuery, (err, results) => {
