@@ -151,9 +151,9 @@ module.exports = {
         }
         if (lowadmissionrate && highadmissionrate) {
             if (isStrict)
-                searchQuery += ` AND admissionrate IS NOT NULL AND admissionrate BETWEEN ${lowadmissionrate} AND ${highadmissionrate}`;
+                searchQuery += ` AND admissionrate IS NOT NULL AND admissionrate BETWEEN ${lowadmissionrate/100} AND ${highadmissionrate/100}`;
             else
-                searchQuery += ` AND admissionrate IS NULL OR admissionrate BETWEEN ${lowadmissionrate} AND ${highadmissionrate}`;
+                searchQuery += ` AND admissionrate IS NULL OR admissionrate BETWEEN ${lowadmissionrate/100} AND ${highadmissionrate/100}`;
         }
         if (costofattendance) {
             if (isStrict)
