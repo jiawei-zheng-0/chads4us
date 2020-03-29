@@ -125,7 +125,7 @@ module.exports = {
     //Change password
     changePassword: (username, password, callback) => {
         let changePasswordQuery = `UPDATE users SET password = $2 WHERE username = $1`;
-        userDB.query(changePasswordQuery, [username,password], (err, results) => {
+        userDB.query(changePasswordQuery, [username, password], (err, results) => {
             if (err) {
                 callback(err);
             }
@@ -151,9 +151,9 @@ module.exports = {
         }
         if (lowadmissionrate && highadmissionrate) {
             if (isStrict)
-                searchQuery += ` AND admissionrate IS NOT NULL AND admissionrate BETWEEN ${lowadmissionrate/100} AND ${highadmissionrate/100}`;
+                searchQuery += ` AND admissionrate IS NOT NULL AND admissionrate BETWEEN ${lowadmissionrate / 100} AND ${highadmissionrate / 100}`;
             else
-                searchQuery += ` AND admissionrate IS NULL OR admissionrate BETWEEN ${lowadmissionrate/100} AND ${highadmissionrate/100}`;
+                searchQuery += ` AND admissionrate IS NULL OR admissionrate BETWEEN ${lowadmissionrate / 100} AND ${highadmissionrate / 100}`;
         }
         if (costofattendance) {
             if (isStrict)
@@ -279,6 +279,19 @@ module.exports = {
             }
         })
     },
+
+    importCollegeData: (collegename, graduationrate, costOfAttendanceInState, costOfAttendanceOutOfState, majors, satMathAvg, satEBRWAvg, actAvg, callback) => {
+        let importCollegeDataQuery = 'UPDATE colleges SET completionrate=$2, costofattendanceinstate = $3, costofattendanceoutofstate = $4, majors = $5, satmath = $6, satebrw = $7, actcomposite=$8 WHERE collegename = $1';
+        collegeDB.query(importCollegeDataQuery, [collegename, graduationrate, costOfAttendanceInState, costOfAttendanceOutOfState, majors, satMathAvg, satEBRWAvg, actAvg], (err, results) => {
+            if (err) {
+                console.log(err);
+                callback(err);
+            }
+            else {
+                callback(null);
+            }
+        })
+    },
     getAllColleges: (callback) => {
         let getAllCollegesQuery = 'SELECT * FROM colleges ORDER BY ranking';
         collegeDB.query(getAllCollegesQuery, (err, results) => {
@@ -287,7 +300,7 @@ module.exports = {
                 callback(err);
             }
             else {
-                callback(null,results.rows);
+                callback(null, results.rows);
             }
         })
     }
