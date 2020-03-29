@@ -238,18 +238,17 @@ module.exports = {
             }
         })
     },
-    //import college
-    /*
+    //import colleges
+
     importColleges: (colleges, callback) => {
-        let importCollegeRankingsQuery = 'INSERT INTO colleges (collegename, ranking) VALUES ';
+        let importCollegeRankingsQuery = 'INSERT INTO colleges (collegename) VALUES ';
         let counter = 1;
-        for (let i = 0; i < collegeRankings.length / 2; i++) {
-            importCollegeRankingsQuery += `($${counter++}, $${counter++}), `;
+        for (let i = 0; i < colleges.length; i++) {
+            importCollegeRankingsQuery += `($${counter++}), `;
         };
         importCollegeRankingsQuery = importCollegeRankingsQuery.slice(0, -2);
-        importCollegeRankingsQuery += ' ON CONFLICT (collegename) DO UPDATE SET ranking = EXCLUDED.ranking';
-
-        collegeDB.query(importCollegeRankingsQuery, collegeRankings, (err, results) => {
+        importCollegeRankingsQuery += 'ON CONFLICT DO NOTHING'
+        collegeDB.query(importCollegeRankingsQuery, colleges, (err, results) => {
             if (err) {
                 console.log(err);
                 callback(err);
@@ -259,7 +258,8 @@ module.exports = {
             }
         })
     },
-    */
+
+    //Import college rankings, on conflict, repalce ranking
     importCollegeRankings: (collegeRankings, callback) => {
         let importCollegeRankingsQuery = 'INSERT INTO colleges (collegename, ranking) VALUES ';
         let counter = 1;

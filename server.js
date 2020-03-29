@@ -49,25 +49,20 @@ app.get('/', sessionChecker, (req, res) => {
     res.sendFile(__dirname + "/public/" + "index.html");
 })
 */
-let collegesWithThe = [
-    'The Citadel',
-    'The Art Institute of Atlanta',
-    'The College of New Jersey',
-    'The Jewish Theological Seminary',
-    'The King\'s College',
-    'The New School: College of Performing Arts',
-    'The Restaurant School at Walnut Hill College',
-    'The Sage Colleges'
-]
 
 let collegeList = fs.readFileSync('colleges.txt').toString().split(/\r?\n/);
 collegeList = collegeList.filter(function (removeEmpty) {
     return removeEmpty != '';
 });
+db.importColleges(collegeList, (err, result) => {
+    if (err) {
+        console.log('Error importing all colleges');
+    }
+    else {
+        console.log(`All colleges imported`);
+    }
+});
 console.log(collegeList)
-
-let str = "<dd>90.0%</dd>\n<dt>Students Graduating Within 4 Years</dt>\n<dd> 52.8%</dd>";
-let completionrate = str.slice(str.indexOf("4 Years") + 18, str.indexOf("4 Years") + 22);
 
 app.post('/posttest', (req, res) => {
     res.status(200).send({
@@ -406,10 +401,11 @@ app.post('/scraperankings', function (req, res) {
             db.importCollegeRankings(collegeRankings, (err, result) => {
                 if (err) {
                     res.status(500).send({
-                        error: 'Error in importing rankings'
+                        error: 'Error in scraping rankings'
                     });
                 }
                 else {
+                    console.log('College Rankings updated')
                     res.status(200).send();
                 }
             });
@@ -432,17 +428,16 @@ app.post('/scrapecollegedata', (req, res) => {
     let actAvg = [];
     let counter = 0;
     collegeList.forEach(college => {
-        //console.log(`${config.collegeDataSite}${college.replace(/ \& |\, | /gim, '-')}`);
         // Replaces ' & ' and ', ' and ' ' with '-'
         if (college.includes('SUNY')) {
             college = college.replace('SUNY', 'State-University-of-New-York');
         }
         let collegeURL = college.replace(/ \& |\, | /gim, '-');
         // If college name starts with 'The' and not on THE list, remove 'The'
-        if (college.startsWith('The ') && !collegesWithThe.includes(college)) {
+        if (college.startsWith('The ') && !config.collegesWithThe.includes(college)) {
             collegeURL = collegeURL.slice(4);
         }
-        console.log(`${config.collegeDataSite}${collegeURL}`)
+        //console.log(`${config.collegeDataSite}${collegeURL}`)
         axios.get(`${config.collegeDataSite}${collegeURL}`)
             .then((response) => {
                 let percent;
@@ -484,7 +479,6 @@ app.post('/scrapecollegedata', (req, res) => {
                 //Get test avgs
                 let testScoresMatch = response.data.match(/<dt>Average GPA<\/dt>[\s\S]*<a class="upper-right-sm" data-toggle="toggletab" href="#profile-admission-tab">See more<\/a>/gim);
                 if (!testScoresMatch[0].includes('Not reported')) {//Test scores are reported
-                    console.log(`${college}`)
                     let satMathRange = (testScoresMatch[0].match(/(?<=SAT Math<\/dt>\s<dd>\s).+(?= range)/gim))[0].split("-");
                     satMathAvg.push(Math.round((Number(satMathRange[0]) + Number(satMathRange[1])) / 2));
                     let satEBRWMatch = (testScoresMatch[0].match(/(?<=SAT EBRW<\/dt>\s<dd>\s).+(?= average)/gim));// Test if EBRW is a number
@@ -524,9 +518,10 @@ app.post('/scrapecollegedata', (req, res) => {
 
     let timeoutCounter = 0;
     let intervalID = setInterval(() => {
-        if (counter >= collegeList.length) {
+        if (counter >= collegeList.length) {//if data for all colleges retrieved, store in db
             clearInterval(intervalID);
             //success in scraping all data
+            /*
             console.log(fourYearGradRate);
             console.log(costOfAttendanceInState);
             console.log(costOfAttendanceOutOfState);
@@ -534,6 +529,7 @@ app.post('/scrapecollegedata', (req, res) => {
             console.log(satMathAvg);
             console.log(satEBRWAvg);
             console.log(actAvg);
+            */
             collegeList.forEach(college => {
                 let i = collegeList.indexOf(college);
                 db.importCollegeData(college, fourYearGradRate[i], costOfAttendanceInState[i], costOfAttendanceOutOfState[i], majors[i], satMathAvg[i], satEBRWAvg[i], actAvg[i], (err, result) => {
@@ -547,6 +543,7 @@ app.post('/scrapecollegedata', (req, res) => {
                     }
                 });
             });
+            console.log('collegedata.com data scraped');
             res.status(200).send();
         }
         timeoutCounter++;

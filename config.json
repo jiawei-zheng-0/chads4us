@@ -11,6 +11,16 @@
     "collegeDBport": 5432,
     "studentProfileCSV": "students-1.csv",
     "collegeRankingSite": "http://allv22.all.cs.stonybrook.edu/~stoller/cse416/WSJ_THE/united_states_rankings_2020_limit0_25839923f8b1714cf54659d4e4af6c3b.json",
-    "collegeDataSite" : "http://www.collegedata.com/college/"
+    "collegeDataSite": "http://www.collegedata.com/college/",
+    "collegesWithThe": [
+        "The Citadel",
+        "The Art Institute of Atlanta",
+        "The College of New Jersey?",
+        "The Jewish Theological Seminary",
+        "The King's College?",
+        "The New School: College of Performing Arts",
+        "The Restaurant School at Walnut Hill College",
+        "The Sage Colleges"
+    ]
 
 }
