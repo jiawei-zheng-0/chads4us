@@ -1,0 +1,29 @@
+{
+  "files": {
+    "main.css": "/static/css/main.d579de68.chunk.css",
+    "main.js": "/static/js/main.aca8422f.chunk.js",
+    "main.js.map": "/static/js/main.aca8422f.chunk.js.map",
+    "runtime-main.js": "/static/js/runtime-main.edae25c4.js",
+    "runtime-main.js.map": "/static/js/runtime-main.edae25c4.js.map",
+    "static/js/2.db4117df.chunk.js": "/static/js/2.db4117df.chunk.js",
+    "static/js/2.db4117df.chunk.js.map": "/static/js/2.db4117df.chunk.js.map",
+    "index.html": "/index.html",
+    "precache-manifest.17c385e702226d4abeae2efd2d413703.js": "/precache-manifest.17c385e702226d4abeae2efd2d413703.js",
+    "service-worker.js": "/service-worker.js",
+    "static/css/main.d579de68.chunk.css.map": "/static/css/main.d579de68.chunk.css.map",
+    "static/js/2.db4117df.chunk.js.LICENSE.txt": "/static/js/2.db4117df.chunk.js.LICENSE.txt",
+    "static/media/abstrakt-design-03.png": "/static/media/abstrakt-design-03.8b89fa84.png",
+    "static/media/book.png": "/static/media/book.91f94de9.png",
+    "static/media/college.jpg": "/static/media/college.d1f917be.jpg",
+    "static/media/college.png": "/static/media/college.d37e3607.png",
+    "static/media/profile.css": "/static/media/spikes.5d213869.png",
+    "static/media/App.css": "/static/media/ralph.beb1c65e.jpg",
+    "static/media/women_hand.png": "/static/media/women_hand.eccae564.png"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.edae25c4.js",
+    "static/js/2.db4117df.chunk.js",
+    "static/css/main.d579de68.chunk.css",
+    "static/js/main.aca8422f.chunk.js"
+  ]
+}

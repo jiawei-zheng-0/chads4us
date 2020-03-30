@@ -9,7 +9,9 @@
     "collegeDBdatabase": "deb6sqefb9b45f",
     "collegeDBpassword": "86aff79764957d6b3ee6cd9f372d8140d422f0e96ee7765024dc98fccda607ad",
     "collegeDBport": 5432,
-    "studentProfileCSV": "students-1.csv",
+    "studentProfileCSV": "data/students.csv",
+    "outputProfileCSV": "data/studentsFormatted.csv",
+    "collegeFile" : "data/colleges.txt",
     "collegeRankingSite": "http://allv22.all.cs.stonybrook.edu/~stoller/cse416/WSJ_THE/united_states_rankings_2020_limit0_25839923f8b1714cf54659d4e4af6c3b.json",
     "collegeDataSite": "http://www.collegedata.com/college/",
     "collegesWithThe": [
@@ -22,5 +24,4 @@
         "The Restaurant School at Walnut Hill College",
         "The Sage Colleges"
     ]
-
 }

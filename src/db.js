@@ -1,5 +1,5 @@
-const { Pool, Client } = require('pg')
-const config = require('./config.json');
+const { Pool } = require('pg')
+const config = require('../data/config.json');
 
 const userDB = new Pool({
     user: config.userDBusername,
@@ -24,7 +24,7 @@ module.exports = {
     register: (username, hash, callback) => {
         const registerQuery = 'INSERT INTO users (username,password) VALUES($1, $2)';
         const createProfileQuery = 'INSERT INTO studentdata (username) VALUES ($1)';
-        userDB.query(registerQuery, [username, hash], (err, results) => {
+        userDB.query(registerQuery, [username, hash], (err) => {
             if (err) {
                 callback(err);
             }
@@ -43,7 +43,7 @@ module.exports = {
     importProfile: (username, hash, callback) => {
         const registerQuery = 'INSERT INTO users (username,password) VALUES($1, $2)  ON CONFLICT (username) DO UPDATE SET password = EXCLUDED.password';
         const createProfileQuery = 'INSERT INTO studentdata (username) VALUES ($1) ON CONFLICT DO NOTHING';
-        userDB.query(registerQuery, [username, hash], (err, results) => {
+        userDB.query(registerQuery, [username, hash], (err) => {
             if (err) {
                 callback(err);
             }
@@ -103,7 +103,6 @@ module.exports = {
             major1, major2, satEBRW, satMath, actEnglish, actMath, actReading, actScience, actComposite,
             satLiterature, satUSHistory, satWorldHistory, satMath1, satMath2, satEcoBio, satMolBio,
             satChem, satPhysics, numPassedAPs];
-        let counter = 2;
         let editQuery = `UPDATE studentData SET residencestate = $2, highschoolname = $3, highschoolcity = $4, highschoolstate = $5, GPA = $6,
         collegeclass = $7, major1 = $8, major2 = $9, satebrw = $10, satmath = $11, actenglish = $12, actmath = $13, actreading = $14, 
         actscience = $15, actcomposite = $16, satliterature = $17, satushistory = $18, satworldhistory = $19, satmath1 = $20, satmath2 = $21, 
@@ -222,12 +221,12 @@ module.exports = {
     deleteProfiles: (callback) => {
         const deleteProfilesQuery = 'DELETE FROM studentdata';
         const deleteAccountsQuery = 'DELETE FROM users';
-        userDB.query(deleteProfilesQuery, (err, results) => {
+        userDB.query(deleteProfilesQuery, (err) => {
             if (err) {
                 callback(err);
             }
             else {
-                userDB.query(deleteAccountsQuery, (err, results) => {
+                userDB.query(deleteAccountsQuery, (err) => {
                     if (err) {
                         callback(err);
                     }
@@ -238,17 +237,17 @@ module.exports = {
             }
         })
     },
-    //import colleges
 
+    //import colleges
     importColleges: (colleges, callback) => {
         let importCollegeRankingsQuery = 'INSERT INTO colleges (collegename) VALUES ';
         let counter = 1;
         for (let i = 0; i < colleges.length; i++) {
             importCollegeRankingsQuery += `($${counter++}), `;
-        };
+        }
         importCollegeRankingsQuery = importCollegeRankingsQuery.slice(0, -2);
         importCollegeRankingsQuery += 'ON CONFLICT DO NOTHING'
-        collegeDB.query(importCollegeRankingsQuery, colleges, (err, results) => {
+        collegeDB.query(importCollegeRankingsQuery, colleges, (err) => {
             if (err) {
                 console.log(err);
                 callback(err);
@@ -259,17 +258,46 @@ module.exports = {
         })
     },
 
+    //delete colleges data
+    deleteCollegeData: (colleges, callback) => {
+        let deleteCollegeData = 'DELETE FROM colleges';
+        collegeDB.query(deleteCollegeData, (err) => {
+            if (err) {
+                console.log(err);
+                callback(err);
+            }
+            else {
+                let importCollegeRankingsQuery = 'INSERT INTO colleges (collegename) VALUES ';
+                let counter = 1;
+                for (let i = 0; i < colleges.length; i++) {
+                    importCollegeRankingsQuery += `($${counter++}), `;
+                }
+                importCollegeRankingsQuery = importCollegeRankingsQuery.slice(0, -2);
+                importCollegeRankingsQuery += 'ON CONFLICT DO NOTHING'
+                collegeDB.query(importCollegeRankingsQuery, colleges, (err) => {
+                    if (err) {
+                        console.log(err);
+                        callback(err);
+                    }
+                    else {
+                        callback(null);
+                    }
+                })
+            }
+        })
+    },
+
     //Import college rankings, on conflict, repalce ranking
     importCollegeRankings: (collegeRankings, callback) => {
         let importCollegeRankingsQuery = 'INSERT INTO colleges (collegename, ranking) VALUES ';
         let counter = 1;
         for (let i = 0; i < collegeRankings.length / 2; i++) {
             importCollegeRankingsQuery += `($${counter++}, $${counter++}), `;
-        };
+        }
         importCollegeRankingsQuery = importCollegeRankingsQuery.slice(0, -2);
         importCollegeRankingsQuery += ' ON CONFLICT (collegename) DO UPDATE SET ranking = EXCLUDED.ranking';
 
-        collegeDB.query(importCollegeRankingsQuery, collegeRankings, (err, results) => {
+        collegeDB.query(importCollegeRankingsQuery, collegeRankings, (err) => {
             if (err) {
                 console.log(err);
                 callback(err);
@@ -282,7 +310,7 @@ module.exports = {
 
     importCollegeData: (collegename, graduationrate, costOfAttendanceInState, costOfAttendanceOutOfState, majors, satMathAvg, satEBRWAvg, actAvg, callback) => {
         let importCollegeDataQuery = 'UPDATE colleges SET completionrate=$2, costofattendanceinstate = $3, costofattendanceoutofstate = $4, majors = $5, satmath = $6, satebrw = $7, actcomposite=$8 WHERE collegename = $1';
-        collegeDB.query(importCollegeDataQuery, [collegename, graduationrate, costOfAttendanceInState, costOfAttendanceOutOfState, majors, satMathAvg, satEBRWAvg, actAvg], (err, results) => {
+        collegeDB.query(importCollegeDataQuery, [collegename, graduationrate, costOfAttendanceInState, costOfAttendanceOutOfState, majors, satMathAvg, satEBRWAvg, actAvg], (err) => {
             if (err) {
                 console.log(err);
                 callback(err);
