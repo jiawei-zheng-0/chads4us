@@ -80,35 +80,45 @@ app.post('/register', (req, res) => {
 app.post('/login', function (req, res) {
     const username = req.body.username;
     const password = req.body.password;
-    db.login(username, (err, hashedPW) => {
-        if (err) {
-            console.log('Username does not exist');
-            res.status(500).send({
-                error: 'Username does not exist',
-            });
+    if (username === config.adminUsername) {
+        bcrypt.compare(password, config.adminPW, (err, result) => {
+            if (result) {
+                res.status(200).send({
+                    isAdmin: true
+                });
+            } else {
+                console.log('Wrong password');
+                res.status(500).send({
+                    error: 'Wrong password',
+                });
+            }
+        });
+    }
+    else {
+        db.login(username, (err, hashedPW) => {
+            if (err) {
+                console.log('Username does not exist');
+                res.status(500).send({
+                    error: 'Username does not exist',
+                });
 
-        }
-        else {
-            bcrypt.compare(password, hashedPW, (err, result) => {
-                if (result) {
-                    if (username == 'admin') {
+            }
+            else {
+                bcrypt.compare(password, hashedPW, (err, result) => {
+                    if (result) {
                         res.status(200).send({
-                            isAdmin : true
+                            isAdmin: false
                         });
                     } else {
-                        res.status(200).send({
-                            isAdmin : false
+                        console.log('Wrong password');
+                        res.status(500).send({
+                            error: 'Wrong password',
                         });
                     }
-                } else {
-                    console.log('Wrong password');
-                    res.status(500).send({
-                        error: 'Wrong password',
-                    });
-                }
-            });
-        }
-    });
+                });
+            }
+        });
+    }
 });
 
 // GET STUDENT PROFILE
