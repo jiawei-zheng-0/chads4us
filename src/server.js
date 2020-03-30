@@ -1,13 +1,16 @@
+/* eslint-disable space-before-function-paren */
+/* eslint-disable indent */
+/* eslint-disable no-inline-comments */
 const express = require('express');
-const fs = require("fs");
+const fs = require('fs');
 const app = express();
-//const session = require('express-session');
+// const session = require('express-session');
 const bodyParser = require('body-parser');
-//const path = require('path');
-//const urlencodedParser = bodyParser.urlencoded({ extended: true })
+// const path = require('path');
+// const urlencodedParser = bodyParser.urlencoded({ extended: true })
 const bcrypt = require('bcrypt');
 const cookieParser = require('cookie-parser');
-//const { Pool, Client } = require('pg')
+// const { Pool, Client } = require('pg')
 const config = require('../data/config.json');
 const db = require('./db.js');
 const cors = require('cors');
@@ -29,47 +32,43 @@ db.importColleges(collegeList, (err) => {
         console.log('Error importing all colleges');
     }
     else {
-        console.log(`All colleges imported`);
+        console.log('All colleges imported');
     }
 });
-console.log(collegeList)
+console.log(collegeList);
 
 app.post('/posttest', (req, res) => {
     res.status(200).send({
-        status: "post response"
+        status: 'post response',
     });
-})
+});
 
 app.get('/gettest', (req, res) => {
     res.status(200).send({
-        status: "get response"
+        status: 'get response',
     });
-})
+});
 
 function number(val) {
-    if (val == '')
-        return null
-    else
-        return Number(val)
+    if (val == '') { return null; }
+    else { return Number(val); }
 }
 function detectNull(val) {
-    if (val == '')
-        return null
-    else
-        return (val)
+    if (val == '') { return null; }
+    else { return (val); }
 }
-//API
+// API
 
-//REGISTER
+// REGISTER
 app.post('/register', (req, res) => {
-    let username = req.body.username;
-    let password = req.body.password;
+    const username = req.body.username;
+    const password = req.body.password;
     bcrypt.hash(password, 10, (err, hash) => {
         db.register(username, hash, (err) => {
             if (err) {
                 console.log('Username already exists');
                 res.status(500).send({
-                    error: "Username already exists"
+                    error: 'Username already exists',
                 });
             }
             else {
@@ -80,15 +79,15 @@ app.post('/register', (req, res) => {
     });
 });
 
-//LOGIN
+// LOGIN
 app.post('/login', function (req, res) {
-    let username = req.body.username;
-    let password = req.body.password;
+    const username = req.body.username;
+    const password = req.body.password;
     db.login(username, (err, hashedPW) => {
         if (err) {
             console.log('Username does not exist');
             res.status(500).send({
-                error: "Username does not exist"
+                error: 'Username does not exist',
             });
 
         }
@@ -96,26 +95,27 @@ app.post('/login', function (req, res) {
             bcrypt.compare(password, hashedPW, (err, result) => {
                 if (result) {
                     res.status(200).send();
-                } else {
+                }
+                else {
                     console.log('Wrong password');
                     res.status(500).send({
-                        error: "Wrong password"
+                        error: 'Wrong password',
                     });
                 }
             });
         }
     });
-})
+});
 
-//GET STUDENT PROFILE
+// GET STUDENT PROFILE
 app.get('/profile/:username', function (req, res) {
-    //let username = req.body.username;
-    let username = req.params.username;
+    // let username = req.body.username;
+    const username = req.params.username;
     db.getProfile(username, (err, result) => {
         if (err) {
             console.log(err);
             res.status(500).send({
-                error: err
+                error: err,
             });
         }
         else {
@@ -124,17 +124,17 @@ app.get('/profile/:username', function (req, res) {
     });
 });
 
-//EDIT PROFILE
+// EDIT PROFILE
 app.post('/editprofile/:username', function (req, res) {
-    let username = req.params.username;
-    //if password in body, password is getting changed
-    let password = req.body.password;
+    const username = req.params.username;
+    // if password in body, password is getting changed
+    const password = req.body.password;
 
     db.getProfile(username, (err, result) => {
         if (err) {
             console.log(err);
             res.status(500).send({
-                error: 'no user exists'
+                error: 'no user exists',
             });
         }
         else {
@@ -151,7 +151,7 @@ app.post('/editprofile/:username', function (req, res) {
                         console.log('error in editing profile');
                         console.log(err);
                         res.status(500).send({
-                            error: 'error in editing profile'
+                            error: 'error in editing profile',
                         });
                     }
                     else {
@@ -162,7 +162,7 @@ app.post('/editprofile/:username', function (req, res) {
                                     if (err) {
                                         console.log(`error in changing password for ${username}`);
                                         res.status(500).send({
-                                            error: 'error in changing password'
+                                            error: 'error in changing password',
                                         });
                                     }
                                     else {
@@ -179,9 +179,9 @@ app.post('/editprofile/:username', function (req, res) {
                 });
         }
     });
-})
+});
 
-//Search for colleges
+// Search for colleges
 app.post('/searchcolleges', function (req, res) {
     db.searchColleges(req.body.isStrict, req.body.collegename, req.body.lowadmissionrate, req.body.highadmissionrate,
         req.body.costofattendance, req.body.location, req.body.major1, req.body.major2, req.body.lowranking,
@@ -190,7 +190,7 @@ app.post('/searchcolleges', function (req, res) {
             if (err) {
                 console.log(err);
                 res.status(500).send({
-                    error: 'Error in searching for colleges'
+                    error: 'Error in searching for colleges',
                 });
             }
             else {
@@ -199,12 +199,12 @@ app.post('/searchcolleges', function (req, res) {
         });
 });
 
-//DELETE ALL STUDENT PROFILES
+// DELETE ALL STUDENT PROFILES
 app.post('/deleteprofiles', function (req, res) {
     db.deleteProfiles((err, result) => {
         if (err) {
             res.status(500).send({
-                error: 'Error in deleting profiles'
+                error: 'Error in deleting profiles',
             });
         }
         else {
@@ -213,12 +213,12 @@ app.post('/deleteprofiles', function (req, res) {
     });
 });
 
-//GET ALL COLLEGE DATA
+// GET ALL COLLEGE DATA
 app.post('/getallcolleges', function (req, res) {
     db.getAllColleges((err, result) => {
         if (err) {
             res.status(500).send({
-                error: 'Error in retrieving all colleges'
+                error: 'Error in retrieving all colleges',
             });
         }
         else {
@@ -229,12 +229,12 @@ app.post('/getallcolleges', function (req, res) {
 
 // import profiles from file config.studentProfileCSV
 app.post('/importprofiles', (req, res) => {
-    fs.readFile(config.studentProfileCSV, 'utf-8', (err, data) => {//change to input csv
-        if (err) { throw err }
-        var newValue = data.replace(/ *, */gim, ',');//removes spaces next to commas in csv
+    fs.readFile(config.studentProfileCSV, 'utf-8', (err, data) => {// change to input csv
+        if (err) { throw err; }
+        const newValue = data.replace(/ *, */gim, ',');// removes spaces next to commas in csv
         fs.writeFile(config.outputProfileCSV, newValue, 'utf-8', function (err) {
-            if (err) { throw err }
-            let profiles = []
+            if (err) { throw err; }
+            const profiles = [];
             fs.createReadStream(config.outputProfileCSV)
                 .pipe(csv.parse({ headers: true }))
                 .on('error', error => console.error(error))
@@ -242,63 +242,63 @@ app.post('/importprofiles', (req, res) => {
                     profiles.push(row);
                 })
                 .on('end', () => {
-                    //rename csv columns to database columns
+                    // rename csv columns to database columns
                     profiles.forEach(profile => {
-                        profile.username = profile.userid
-                        delete profile.userid
-                        profile.residencestate = detectNull(profile.residence_state)
-                        delete profile.residence_state
-                        profile.highschoolname = detectNull(profile.high_school_name)
-                        delete profile.high_school_name
-                        profile.highschoolcity = detectNull(profile.high_school_city)
-                        delete profile.high_school_city
-                        profile.highschoolstate = detectNull(profile.high_school_state)
-                        delete profile.high_school_state
-                        profile.gpa = number(profile.GPA)
-                        delete profile.GPA
-                        profile.collegeclass = number(profile.college_class)
-                        delete profile.college_class
-                        profile.major1 = detectNull(profile.major_1)
-                        delete profile.major_1
-                        profile.major2 = detectNull(profile.major_2)
-                        delete profile.major_2
-                        profile.satmath = number(profile.SAT_math)
-                        delete profile.SAT_math
-                        profile.satebrw = number(profile.SAT_EBRW)
-                        delete profile.SAT_EBRW
-                        profile.actenglish = number(profile.ACT_English)
-                        delete profile.ACT_English
-                        profile.actmath = number(profile.ACT_math)
-                        delete profile.ACT_math
-                        profile.actreading = number(profile.ACT_reading)
-                        delete profile.ACT_reading
-                        profile.actscience = number(profile.ACT_science)
-                        delete profile.ACT_science
-                        profile.actcomposite = number(profile.ACT_composite)
-                        delete profile.ACT_composite
-                        profile.satliterature = number(profile.SAT_literature)
-                        delete profile.SAT_literature
-                        profile.satushistory = number(profile.SAT_US_hist)
-                        delete profile.SAT_US_hist
-                        profile.satworldhistory = number(profile.SAT_world_hist)
-                        delete profile.SAT_world_hist
-                        profile.satmath1 = number(profile.SAT_math_I)
-                        delete profile.SAT_math_I
-                        profile.satmath2 = number(profile.SAT_math_II)
-                        delete profile.SAT_math_II
-                        profile.satecobio = number(profile.SAT_eco_bio)
-                        delete profile.SAT_eco_bio
-                        profile.satmolbio = number(profile.SAT_mol_bio)
-                        delete profile.SAT_mol_bio
-                        profile.satchem = number(profile.SAT_chemistry)
-                        delete profile.SAT_chemistry
-                        profile.satphysics = number(profile.SAT_physics)
-                        delete profile.SAT_physics
-                        profile.numpassedaps = number(profile.num_AP_passed)
-                        delete profile.num_AP_passed
+                        profile.username = profile.userid;
+                        delete profile.userid;
+                        profile.residencestate = detectNull(profile.residence_state);
+                        delete profile.residence_state;
+                        profile.highschoolname = detectNull(profile.high_school_name);
+                        delete profile.high_school_name;
+                        profile.highschoolcity = detectNull(profile.high_school_city);
+                        delete profile.high_school_city;
+                        profile.highschoolstate = detectNull(profile.high_school_state);
+                        delete profile.high_school_state;
+                        profile.gpa = number(profile.GPA);
+                        delete profile.GPA;
+                        profile.collegeclass = number(profile.college_class);
+                        delete profile.college_class;
+                        profile.major1 = detectNull(profile.major_1);
+                        delete profile.major_1;
+                        profile.major2 = detectNull(profile.major_2);
+                        delete profile.major_2;
+                        profile.satmath = number(profile.SAT_math);
+                        delete profile.SAT_math;
+                        profile.satebrw = number(profile.SAT_EBRW);
+                        delete profile.SAT_EBRW;
+                        profile.actenglish = number(profile.ACT_English);
+                        delete profile.ACT_English;
+                        profile.actmath = number(profile.ACT_math);
+                        delete profile.ACT_math;
+                        profile.actreading = number(profile.ACT_reading);
+                        delete profile.ACT_reading;
+                        profile.actscience = number(profile.ACT_science);
+                        delete profile.ACT_science;
+                        profile.actcomposite = number(profile.ACT_composite);
+                        delete profile.ACT_composite;
+                        profile.satliterature = number(profile.SAT_literature);
+                        delete profile.SAT_literature;
+                        profile.satushistory = number(profile.SAT_US_hist);
+                        delete profile.SAT_US_hist;
+                        profile.satworldhistory = number(profile.SAT_world_hist);
+                        delete profile.SAT_world_hist;
+                        profile.satmath1 = number(profile.SAT_math_I);
+                        delete profile.SAT_math_I;
+                        profile.satmath2 = number(profile.SAT_math_II);
+                        delete profile.SAT_math_II;
+                        profile.satecobio = number(profile.SAT_eco_bio);
+                        delete profile.SAT_eco_bio;
+                        profile.satmolbio = number(profile.SAT_mol_bio);
+                        delete profile.SAT_mol_bio;
+                        profile.satchem = number(profile.SAT_chemistry);
+                        delete profile.SAT_chemistry;
+                        profile.satphysics = number(profile.SAT_physics);
+                        delete profile.SAT_physics;
+                        profile.numpassedaps = number(profile.num_AP_passed);
+                        delete profile.num_AP_passed;
 
                     });
-                    console.log(profiles)
+                    console.log(profiles);
 
                     let counter = 0;
                     profiles.forEach(profile => {
@@ -326,20 +326,20 @@ app.post('/importprofiles', (req, res) => {
                                 }
                             });
 
-                        })
+                        });
 
                     });
                     let timeoutCounter = 0;
-                    let intervalID = setInterval(() => {
+                    const intervalID = setInterval(() => {
                         if (counter >= profiles.length) {
                             clearInterval(intervalID);
                             res.status(200).send();
                         }
                         timeoutCounter++;
-                        if (timeoutCounter >= profiles.length) {//if func takes more than row # of seconds, timeout
+                        if (timeoutCounter >= profiles.length) {// if func takes more than row # of seconds, timeout
                             clearInterval(intervalID);
                             res.status(500).send({
-                                error: 'Error in importing profiles'
+                                error: 'Error in importing profiles',
                             });
                         }
                     }, 1000);
@@ -351,29 +351,31 @@ app.post('/importprofiles', (req, res) => {
 app.post('/scraperankings', function (req, res) {
     axios.get(config.collegeRankingSite)
         .then(function (response) {
-            let collegeRankings = []
+            const collegeRankings = [];
             response.data.data.forEach(college => {
                 if (collegeList.includes(college.name)) {
                     if (college.rank === '401-500') {
-                        college.rank = '401'
-                    } else if (college.rank === '501-600') {
-                        college.rank = '501'
-                    } else if (college.rank === '\u003E 600') {
-                        college.rank = '601'
+                        college.rank = '401';
+                    }
+                    else if (college.rank === '501-600') {
+                        college.rank = '501';
+                    }
+                    else if (college.rank === '\u003E 600') {
+                        college.rank = '601';
                     }
                     collegeRankings.push(college.name);
-                    collegeRankings.push(Number(college.rank.replace("=", "")));
+                    collegeRankings.push(Number(college.rank.replace('=', '')));
                 }
 
             });
             db.importCollegeRankings(collegeRankings, (err) => {
                 if (err) {
                     res.status(500).send({
-                        error: 'Error in scraping rankings'
+                        error: 'Error in scraping rankings',
                     });
                 }
                 else {
-                    console.log('College Rankings updated')
+                    console.log('College Rankings updated');
                     res.status(200).send();
                 }
             });
@@ -381,19 +383,19 @@ app.post('/scraperankings', function (req, res) {
         .catch(function (error) {
             console.error(error);
             res.status(500).send({
-                error: 'Error in scraping rankings'
+                error: 'Error in scraping rankings',
             });
-        })
+        });
 });
 
 app.post('/scrapecollegedata', (req, res) => {
-    let fourYearGradRate = [];
-    let costOfAttendanceInState = [];
-    let costOfAttendanceOutOfState = [];
-    let majors = [];
-    let satMathAvg = [];
-    let satEBRWAvg = [];
-    let actAvg = [];
+    const fourYearGradRate = [];
+    const costOfAttendanceInState = [];
+    const costOfAttendanceOutOfState = [];
+    const majors = [];
+    const satMathAvg = [];
+    const satEBRWAvg = [];
+    const actAvg = [];
     let counter = 0;
     collegeList.forEach(college => {
         // Replaces ' & ' and ', ' and ' ' with '-'
@@ -405,91 +407,95 @@ app.post('/scrapecollegedata', (req, res) => {
         if (college.startsWith('The ') && !config.collegesWithThe.includes(college)) {
             collegeURL = collegeURL.slice(4);
         }
-        //console.log(`${config.collegeDataSite}${collegeURL}`)
+        // console.log(`${config.collegeDataSite}${collegeURL}`)
         axios.get(`${config.collegeDataSite}${collegeURL}`)
             .then((response) => {
                 let percent;
-                let match = response.data.match(/<dt>Students Graduating Within 4 Years<\/dt>\s<dd> *\d{1,2}\.\d{1,2}%<\/dd>/gim);
+                const match = response.data.match(/<dt>Students Graduating Within 4 Years<\/dt>\s<dd> *\d{1,2}\.\d{1,2}%<\/dd>/gim);
                 if (match) {
                     percent = match[0].match(/\d{1,2}\.\d{1,2}/gim);
-                } else {
+                }
+                else {
                     percent = null;
                 }
-                //console.log(`${college} - ${percent}`);
+                // console.log(`${college} - ${percent}`);
                 if (percent) {
                     fourYearGradRate.push(Number(percent));
-                } else {
+                }
+                else {
                     fourYearGradRate.push(null);
                 }
-                //Get cost of attendance
-                let costMatch = response.data.match(/(<dt>Cost of Attendance<\/dt>\s<dd>In-state: \$\d*,?\d+<BR>Out-of-state: \$\d*,?\d+<\/dd>)|(<dt>Cost of Attendance<\/dt>\s<dd>\$\d*,?\d+<\/dd>)/gim);
-                if (costMatch) {//if  match, college does report cost of attendance
-                    //console.log(`${college} - ${costMatch[0]}`)
-                    if (costMatch[0].includes('In-state')) {//college has seperate in state and out of state
+                // Get cost of attendance
+                const costMatch = response.data.match(/(<dt>Cost of Attendance<\/dt>\s<dd>In-state: \$\d*,?\d+<BR>Out-of-state: \$\d*,?\d+<\/dd>)|(<dt>Cost of Attendance<\/dt>\s<dd>\$\d*,?\d+<\/dd>)/gim);
+                if (costMatch) {// if  match, college does report cost of attendance
+                    // console.log(`${college} - ${costMatch[0]}`)
+                    if (costMatch[0].includes('In-state')) {// college has seperate in state and out of state
                         costOfAttendanceInState.push(Number(costMatch[0].match(/\d*,?\d+<BR>/gim)[0].slice(0, -4).replace(',', '')));
                         costOfAttendanceOutOfState.push(Number(costMatch[0].match(/\d*,?\d+<\/dd/gim)[0].slice(0, -4).replace(',', '')));
-                        //console.log(`${college} - Instate - ${costOfAttendanceInState} Outofstate - ${costOfAttendanceOutOfState}`);
-                    } else {//college has one single COA
-                        let cost = Number(costMatch[0].match(/\d*,?\d+<\/dd/gim)[0].slice(0, -4).replace(',', ''));
+                        // console.log(`${college} - Instate - ${costOfAttendanceInState} Outofstate - ${costOfAttendanceOutOfState}`);
+                    }
+                    else {// college has one single COA
+                        const cost = Number(costMatch[0].match(/\d*,?\d+<\/dd/gim)[0].slice(0, -4).replace(',', ''));
                         costOfAttendanceInState.push(cost);
                         costOfAttendanceOutOfState.push(cost);
-                        //console.log(`${college} - ${costOfAttendanceInState}`);
+                        // console.log(`${college} - ${costOfAttendanceInState}`);
                     }
-                } else {
+                }
+                else {
                     costOfAttendanceInState.push(null);
                     costOfAttendanceOutOfState.push(null);
-                    //console.log(`${college} - null`);
+                    // console.log(`${college} - null`);
                 }
                 // Get Majors
-                let majorMatch = response.data.match(/<h3 class="h5">Undergraduate Majors<\/h3>[\s\S]*?Most Popular Disciplines/gim);
+                const majorMatch = response.data.match(/<h3 class="h5">Undergraduate Majors<\/h3>[\s\S]*?Most Popular Disciplines/gim);
                 majors.push(majorMatch[0].match(/(?<=<li>).+(?=<\/li>)/gim));
-                //console.log(majors)
-                //Get test avgs
-                let testScoresMatch = response.data.match(/<dt>Average GPA<\/dt>[\s\S]*<a class="upper-right-sm" data-toggle="toggletab" href="#profile-admission-tab">See more<\/a>/gim);
-                if (!testScoresMatch[0].includes('Not reported')) {//Test scores are reported
-                    let satMathRange = (testScoresMatch[0].match(/(?<=SAT Math<\/dt>\s<dd>\s).+(?= range)/gim))[0].split("-");
+                // console.log(majors)
+                // Get test avgs
+                const testScoresMatch = response.data.match(/<dt>Average GPA<\/dt>[\s\S]*<a class="upper-right-sm" data-toggle="toggletab" href="#profile-admission-tab">See more<\/a>/gim);
+                if (!testScoresMatch[0].includes('Not reported')) {// Test scores are reported
+                    const satMathRange = (testScoresMatch[0].match(/(?<=SAT Math<\/dt>\s<dd>\s).+(?= range)/gim))[0].split('-');
                     satMathAvg.push(Math.round((Number(satMathRange[0]) + Number(satMathRange[1])) / 2));
                     let satEBRWMatch = (testScoresMatch[0].match(/(?<=SAT EBRW<\/dt>\s<dd>\s).+(?= average)/gim));// Test if EBRW is a number
-                    if (satEBRWMatch) {//EBRW is a number
+                    if (satEBRWMatch) {// EBRW is a number
                         satEBRWAvg.push(Number(satEBRWMatch[0]));
                     }
-                    else {//EBRW is a range
-                        satEBRWMatch = (testScoresMatch[0].match(/(?<=SAT EBRW<\/dt>\s<dd>\s).+(?= range)/gim))[0].split("-");
+                    else {// EBRW is a range
+                        satEBRWMatch = (testScoresMatch[0].match(/(?<=SAT EBRW<\/dt>\s<dd>\s).+(?= range)/gim))[0].split('-');
                         satEBRWAvg.push(Math.round((Number(satEBRWMatch[0]) + Number(satEBRWMatch[1])) / 2));
                     }
                     let actMatch = (testScoresMatch[0].match(/(?<=ACT Composite<\/dt>\s<dd>).+(?= average)|(?<=ACT Composite<\/dt>\s <dd>).+(?= average)/gim));// Test if ACT is a number
-                    if (actMatch) {//ACT is a number
+                    if (actMatch) {// ACT is a number
                         actAvg.push(Number(actMatch[0]));
                     }
-                    else {//ACT is a range
-                        actMatch = (testScoresMatch[0].match(/(?<=ACT Composite<\/dt>\s<dd>).+(?= range)/gim))[0].split("-");
+                    else {// ACT is a range
+                        actMatch = (testScoresMatch[0].match(/(?<=ACT Composite<\/dt>\s<dd>).+(?= range)/gim))[0].split('-');
                         actAvg.push(Math.round((Number(actMatch[0]) + Number(actMatch[1])) / 2));
                     }
                 }
-                else {//test scores arent reported
+                else {// test scores arent reported
                     satMathAvg.push(null);
                     satEBRWAvg.push(null);
                     actAvg.push(null);
                 }
-                //console.log(`${college} - ${satMathAvg} - ${satEBRWAvg} - ${actAvg}`)
+                // console.log(`${college} - ${satMathAvg} - ${satEBRWAvg} - ${actAvg}`)
                 counter++;
             })
             .catch(function (error) {
                 console.error(error);
                 res.status(500).send({
-                    college: `Error in scraping ${college} from collegedata.com`
+                    college: `Error in scraping ${college} from collegedata.com`,
                 });
                 return;
-            })
+            });
     });
 
 
     let timeoutCounter = 0;
-    let intervalID = setInterval(() => {
-        if (counter >= collegeList.length) {//if data for all colleges retrieved, store in db
+    const intervalID = setInterval(() => {
+        if (counter >= collegeList.length) {// if data for all colleges retrieved, store in db
             clearInterval(intervalID);
-            //success in scraping all data
-            /*
+            // success in scraping all data
+			/*
             console.log(fourYearGradRate);
             console.log(costOfAttendanceInState);
             console.log(costOfAttendanceOutOfState);
@@ -499,12 +505,12 @@ app.post('/scrapecollegedata', (req, res) => {
             console.log(actAvg);
             */
             collegeList.forEach(college => {
-                let i = collegeList.indexOf(college);
+                const i = collegeList.indexOf(college);
                 db.importCollegeData(college, fourYearGradRate[i], costOfAttendanceInState[i], costOfAttendanceOutOfState[i], majors[i], satMathAvg[i], satEBRWAvg[i], actAvg[i], (err) => {
                     if (err) {
                         console.log(err);
                         res.status(500).send({
-                            error: err
+                            error: err,
                         });
                     }
                 });
@@ -513,21 +519,21 @@ app.post('/scrapecollegedata', (req, res) => {
             res.status(200).send();
         }
         timeoutCounter++;
-        if (timeoutCounter >= 15) {//if func takes more than 15 seconds, timeout
+        if (timeoutCounter >= 15) {// if func takes more than 15 seconds, timeout
             clearInterval(intervalID);
             res.status(500).send({
-                error: 'Error in scraping from collegeData'
+                error: 'Error in scraping from collegeData',
             });
         }
     }, 1000);
 });
 
-//GET ALL COLLEGE DATA
+// GET ALL COLLEGE DATA
 app.get('/getallcolleges', function (req, res) {
     db.getAllColleges((err, result) => {
         if (err) {
             res.status(500).send({
-                error: 'Error in retrieving all colleges'
+                error: 'Error in retrieving all colleges',
             });
         }
         else {
@@ -536,12 +542,12 @@ app.get('/getallcolleges', function (req, res) {
     });
 });
 
-//GET ALL COLLEGE DATA
+// GET ALL COLLEGE DATA
 app.delete('/deletecollegedata', function (req, res) {
     db.deleteCollegeData(collegeList, (err, result) => {
         if (err) {
             res.status(500).send({
-                error: 'Error in deleting college data'
+                error: 'Error in deleting college data',
             });
         }
         else {
@@ -550,6 +556,6 @@ app.delete('/deletecollegedata', function (req, res) {
     });
 });
 
-const PORT = process.env.PORT || 5000
+const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Listening on ${PORT}`));
 
