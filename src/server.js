@@ -91,7 +91,6 @@ app.post('/login', function (req, res) {
         else {
             bcrypt.compare(password, hashedPW, (err, result) => {
                 if (result) {
-<<<<<<< HEAD:server.js
                     if (username == 'admin') {
                         res.status(200).send({
                             isAdmin : true
@@ -102,11 +101,6 @@ app.post('/login', function (req, res) {
                         });
                     }
                 } else {
-=======
-                    res.status(200).send();
-                }
-                else {
->>>>>>> 8bc36cc8e769ed7694ae7a6ad9881c5d832af0a0:src/server.js
                     console.log('Wrong password');
                     res.status(500).send({
                         error: 'Wrong password',
