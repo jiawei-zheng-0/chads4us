@@ -412,6 +412,7 @@ app.post('/scrapecollegedata', (req, res) => {
     const actAvg = [];
     let counter = 0;
     collegeList.forEach(college => {
+        let index = collegeList.indexOf(college);
         // Replaces ' & ' and ', ' and ' ' with '-'
         if (college.includes('SUNY')) {
             college = college.replace('SUNY', 'State-University-of-New-York');
@@ -434,62 +435,64 @@ app.post('/scrapecollegedata', (req, res) => {
                 }
                 // console.log(`${college} - ${percent}`);
                 if (percent) {
-                    fourYearGradRate.push(Number(percent));
+                    fourYearGradRate[index] = (Number(percent));
                 }
                 else {
-                    fourYearGradRate.push(null);
+                    fourYearGradRate[index] = null;
                 }
                 // Get cost of attendance
                 const costMatch = response.data.match(/(<dt>Cost of Attendance<\/dt>\s<dd>In-state: \$\d*,?\d+<BR>Out-of-state: \$\d*,?\d+<\/dd>)|(<dt>Cost of Attendance<\/dt>\s<dd>\$\d*,?\d+<\/dd>)/gim);
                 if (costMatch) {// if  match, college does report cost of attendance
                     // console.log(`${college} - ${costMatch[0]}`)
                     if (costMatch[0].includes('In-state')) {// college has seperate in state and out of state
-                        costOfAttendanceInState.push(Number(costMatch[0].match(/\d*,?\d+<BR>/gim)[0].slice(0, -4).replace(',', '')));
-                        costOfAttendanceOutOfState.push(Number(costMatch[0].match(/\d*,?\d+<\/dd/gim)[0].slice(0, -4).replace(',', '')));
+                        costOfAttendanceInState[index] = (Number(costMatch[0].match(/\d*,?\d+<BR>/gim)[0].slice(0, -4).replace(',', '')));
+                        costOfAttendanceOutOfState[index] = (Number(costMatch[0].match(/\d*,?\d+<\/dd/gim)[0].slice(0, -4).replace(',', '')));
                         // console.log(`${college} - Instate - ${costOfAttendanceInState} Outofstate - ${costOfAttendanceOutOfState}`);
                     }
                     else {// college has one single COA
                         const cost = Number(costMatch[0].match(/\d*,?\d+<\/dd/gim)[0].slice(0, -4).replace(',', ''));
-                        costOfAttendanceInState.push(cost);
-                        costOfAttendanceOutOfState.push(cost);
+                        costOfAttendanceInState[index] = cost;
+                        costOfAttendanceOutOfState[index] = cost;
                         // console.log(`${college} - ${costOfAttendanceInState}`);
                     }
                 }
                 else {
-                    costOfAttendanceInState.push(null);
-                    costOfAttendanceOutOfState.push(null);
+                    costOfAttendanceInState[index] = null;
+                    costOfAttendanceOutOfState[index] = null;
                     // console.log(`${college} - null`);
                 }
                 // Get Majors
                 const majorMatch = response.data.match(/<h3 class="h5">Undergraduate Majors<\/h3>[\s\S]*?Most Popular Disciplines/gim);
-                majors.push(majorMatch[0].match(/(?<=<li>).+(?=<\/li>)/gim));
+                majors[index] = (majorMatch[0].match(/(?<=<li>).+(?=<\/li>)/gim));
                 // console.log(majors)
                 // Get test avgs
-                const testScoresMatch = response.data.match(/<dt>Average GPA<\/dt>[\s\S]*<a class="upper-right-sm" data-toggle="toggletab" href="#profile-admission-tab">See more<\/a>/gim);
-                if (!testScoresMatch[0].includes('Not reported')) {// Test scores are reported
+                const testScoresMatch = response.data.match(/SAT Math<\/dt>[\s\S]*<a class="upper-right-sm" data-toggle="toggletab" href="#profile-admission-tab">See more<\/a>/gim);
+                // console.log(testScoresMatch)
+                if (!(testScoresMatch[0].includes('Not reported'))) {// Test scores are reported
                     const satMathRange = (testScoresMatch[0].match(/(?<=SAT Math<\/dt>\s<dd>\s).+(?= range)/gim))[0].split('-');
-                    satMathAvg.push(Math.round((Number(satMathRange[0]) + Number(satMathRange[1])) / 2));
+                    satMathAvg[index] = (Math.round((Number(satMathRange[0]) + Number(satMathRange[1])) / 2));
                     let satEBRWMatch = (testScoresMatch[0].match(/(?<=SAT EBRW<\/dt>\s<dd>\s).+(?= average)/gim));// Test if EBRW is a number
                     if (satEBRWMatch) {// EBRW is a number
-                        satEBRWAvg.push(Number(satEBRWMatch[0]));
+                        satEBRWAvg[index] = (Number(satEBRWMatch[0]));
                     }
                     else {// EBRW is a range
                         satEBRWMatch = (testScoresMatch[0].match(/(?<=SAT EBRW<\/dt>\s<dd>\s).+(?= range)/gim))[0].split('-');
-                        satEBRWAvg.push(Math.round((Number(satEBRWMatch[0]) + Number(satEBRWMatch[1])) / 2));
+                        satEBRWAvg[index] = (Math.round((Number(satEBRWMatch[0]) + Number(satEBRWMatch[1])) / 2));
                     }
                     let actMatch = (testScoresMatch[0].match(/(?<=ACT Composite<\/dt>\s<dd>).+(?= average)|(?<=ACT Composite<\/dt>\s <dd>).+(?= average)/gim));// Test if ACT is a number
                     if (actMatch) {// ACT is a number
-                        actAvg.push(Number(actMatch[0]));
+                        actAvg[index] = (Number(actMatch[0]));
                     }
                     else {// ACT is a range
                         actMatch = (testScoresMatch[0].match(/(?<=ACT Composite<\/dt>\s<dd>).+(?= range)/gim))[0].split('-');
-                        actAvg.push(Math.round((Number(actMatch[0]) + Number(actMatch[1])) / 2));
+                        actAvg[index] = (Math.round((Number(actMatch[0]) + Number(actMatch[1])) / 2));
                     }
                 }
                 else {// test scores arent reported
-                    satMathAvg.push(null);
-                    satEBRWAvg.push(null);
-                    actAvg.push(null);
+                    //console.log(`no test scores reported for ${college}`);
+                    satMathAvg[index] = (null);
+                    satEBRWAvg[index] = (null);
+                    actAvg[index] = (null);
                 }
                 // console.log(`${college} - ${satMathAvg} - ${satEBRWAvg} - ${actAvg}`)
                 counter++;
@@ -509,15 +512,15 @@ app.post('/scrapecollegedata', (req, res) => {
         if (counter >= collegeList.length) {// if data for all colleges retrieved, store in db
             clearInterval(intervalID);
             // success in scraping all data
-			/*
-            console.log(fourYearGradRate);
-            console.log(costOfAttendanceInState);
-            console.log(costOfAttendanceOutOfState);
-            console.log(majors);
-            console.log(satMathAvg);
-            console.log(satEBRWAvg);
-            console.log(actAvg);
-            */
+            //console.log(collegeList[46]);
+            //console.log(fourYearGradRate);
+            //console.log(costOfAttendanceInState);
+            //console.log(costOfAttendanceOutOfState);
+            //console.log(majors);
+            //console.log(satMathAvg[46]);
+            //console.log(satEBRWAvg[46]);
+            //console.log(actAvg[46]);
+
             collegeList.forEach(college => {
                 const i = collegeList.indexOf(college);
                 db.importCollegeData(college, fourYearGradRate[i], costOfAttendanceInState[i], costOfAttendanceOutOfState[i], majors[i], satMathAvg[i], satEBRWAvg[i], actAvg[i], (err) => {

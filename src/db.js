@@ -139,7 +139,7 @@ module.exports = {
         })
     },
     //Search for colleges
-    searchColleges: (isStrict, collegename, lowadmissionrate, highadmissionrate, costofattendance, location, major1,
+    searchColleges: (isStrict, collegename, lowadmissionrate, highadmissionrate, costofattendanceinstate, costofattendanceoutofstate, location, major1,
         major2, lowranking, highranking, lowsize, highsize, lowsatmath, highsatmath, lowsatebrw, highsatebrw, lowactcomposite, highactcomposite, callback) => {
         let params = [];
         let counter = 1;
@@ -156,12 +156,19 @@ module.exports = {
             else
                 searchQuery += ` AND admissionrate IS NULL OR admissionrate BETWEEN $${counter++} AND $${counter++}`;
         }
-        if (costofattendance) {
-            params.push(highadmissionrate);
+        if (costofattendanceinstate) {
+            params.push(costofattendanceinstate);
             if (isStrict)
-                searchQuery += ` AND costofattendance IS NOT NULL AND costofattendance <= $${counter++}`;
+                searchQuery += ` AND costofattendanceinstate IS NOT NULL AND costofattendanceinstate <= $${counter++}`;
             else
-                searchQuery += ` AND costofattendance IS NULL OR costofattendance <= $${counter++}`;
+                searchQuery += ` AND costofattendanceinstate IS NULL OR costofattendanceinstate <= $${counter++}`;
+        }
+        if (costofattendanceoutofstate) {
+            params.push(costofattendanceoutofstate);
+            if (isStrict)
+                searchQuery += ` AND costofattendanceoutofstate IS NOT NULL AND costofattendanceoutofstate <= $${counter++}`;
+            else
+                searchQuery += ` AND costofattendanceoutofstate IS NULL OR costofattendanceoutofstate <= $${counter++}`;
         }
         if (location) {
             params.push(location);
