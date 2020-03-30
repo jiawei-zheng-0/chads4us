@@ -1,60 +1,30 @@
 const express = require('express');
 const fs = require("fs");
 const app = express();
-const session = require('express-session');
+//const session = require('express-session');
 const bodyParser = require('body-parser');
-const path = require('path');
-const urlencodedParser = bodyParser.urlencoded({ extended: true })
+//const path = require('path');
+//const urlencodedParser = bodyParser.urlencoded({ extended: true })
 const bcrypt = require('bcrypt');
 const cookieParser = require('cookie-parser');
-const { Pool, Client } = require('pg')
-const config = require('./config.json');
+//const { Pool, Client } = require('pg')
+const config = require('../data/config.json');
 const db = require('./db.js');
 const cors = require('cors');
 const csv = require('fast-csv');
 const axios = require('axios');
-
 
 app.use(cors());
 app.use(express.static(__dirname + '/public'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
-/*
-app.use(session({
-    key: 'chads4me_session',
-    secret: 'chads',
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-        expires: 600000
-    }
-}));
-app.use((req, res, next) => {
-    if (req.cookies.user_sid && !req.session.user) {
-        res.clearCookie('user_sid');
-    }
-    next();
-});
-//if user is already logged in
-let sessionChecker = (req, res, next) => {
-    if (req.session.user && req.cookies.user_sid) {
-        res.redirect('/public/index.html');
-    } else {
-        next();
-    }
-};
 
-app.get('/', sessionChecker, (req, res) => {
-    res.sendFile(__dirname + "/public/" + "index.html");
-})
-*/
-
-let collegeList = fs.readFileSync('colleges.txt').toString().split(/\r?\n/);
+let collegeList = fs.readFileSync(config.collegeFile).toString().split(/\r?\n/);
 collegeList = collegeList.filter(function (removeEmpty) {
     return removeEmpty != '';
 });
-db.importColleges(collegeList, (err, result) => {
+db.importColleges(collegeList, (err) => {
     if (err) {
         console.log('Error importing all colleges');
     }
@@ -95,7 +65,7 @@ app.post('/register', (req, res) => {
     let username = req.body.username;
     let password = req.body.password;
     bcrypt.hash(password, 10, (err, hash) => {
-        db.register(username, hash, (err, result) => {
+        db.register(username, hash, (err) => {
             if (err) {
                 console.log('Username already exists');
                 res.status(500).send({
@@ -176,7 +146,7 @@ app.post('/editprofile/:username', function (req, res) {
             db.editProfile(username, result.residencestate, result.highschoolname, result.highschoolcity, result.highschoolstate, result.gpa, result.collegeclass,
                 result.major1, result.major2, result.satebrw, result.satmath, result.actenglish, result.actmath, result.actreading, result.actscience, result.actcomposite,
                 result.satliterature, result.satushistory, result.satworldhistory, result.satmath1, result.satmath2, result.satecobio, result.satmolbio,
-                result.satchem, result.satphysics, result.numpassedaps, (err, result) => {
+                result.satchem, result.satphysics, result.numpassedaps, (err) => {
                     if (err) {
                         console.log('error in editing profile');
                         console.log(err);
@@ -188,7 +158,7 @@ app.post('/editprofile/:username', function (req, res) {
                         console.log(`User ${username} profile updated`);
                         if (password) {
                             bcrypt.hash(password, 10, (err, hash) => {
-                                db.changePassword(username, hash, (err, result) => {
+                                db.changePassword(username, hash, (err) => {
                                     if (err) {
                                         console.log(`error in changing password for ${username}`);
                                         res.status(500).send({
@@ -260,20 +230,18 @@ app.post('/getallcolleges', function (req, res) {
 // import profiles from file config.studentProfileCSV
 app.post('/importprofiles', (req, res) => {
     fs.readFile(config.studentProfileCSV, 'utf-8', (err, data) => {//change to input csv
-        if (err) { throw err };
-
-        var newValue = data.replace(/\ *,\ */gim, ',');//removes spaces next to commas in csv
-
-        fs.writeFile('formattedCSV.csv', newValue, 'utf-8', function (err) {
-            if (err) { throw err };
+        if (err) { throw err }
+        var newValue = data.replace(/ *, */gim, ',');//removes spaces next to commas in csv
+        fs.writeFile(config.outputProfileCSV, newValue, 'utf-8', function (err) {
+            if (err) { throw err }
             let profiles = []
-            fs.createReadStream(path.resolve(__dirname, 'formattedCSV.csv'))
+            fs.createReadStream(config.outputProfileCSV)
                 .pipe(csv.parse({ headers: true }))
                 .on('error', error => console.error(error))
                 .on('data', row => {
                     profiles.push(row);
                 })
-                .on('end', rowCount => {
+                .on('end', () => {
                     //rename csv columns to database columns
                     profiles.forEach(profile => {
                         profile.username = profile.userid
@@ -336,7 +304,7 @@ app.post('/importprofiles', (req, res) => {
                     profiles.forEach(profile => {
                         bcrypt.hash(profile.password, 10, (err, hash) => {
                             profile.password = hash;
-                            db.importProfile(profile.username, hash, (err, result) => {
+                            db.importProfile(profile.username, hash, (err) => {
                                 if (err) {
                                     console.log('Username already exists');
                                 }
@@ -345,7 +313,7 @@ app.post('/importprofiles', (req, res) => {
                                     db.editProfile(profile.username, profile.residencestate, profile.highschoolname, profile.highschoolcity, profile.highschoolstate, profile.gpa, profile.collegeclass,
                                         profile.major1, profile.major2, profile.satebrw, profile.satmath, profile.actenglish, profile.actmath, profile.actreading, profile.actscience, profile.actcomposite,
                                         profile.satliterature, profile.satushistory, profile.satworldhistory, profile.satmath1, profile.satmath2, profile.satecobio, profile.satmolbio,
-                                        profile.satchem, profile.satphysics, profile.numpassedaps, (err, result) => {
+                                        profile.satchem, profile.satphysics, profile.numpassedaps, (err) => {
                                             if (err) {
                                                 console.log('error in editing profile');
                                                 console.error(err);
@@ -398,7 +366,7 @@ app.post('/scraperankings', function (req, res) {
                 }
 
             });
-            db.importCollegeRankings(collegeRankings, (err, result) => {
+            db.importCollegeRankings(collegeRankings, (err) => {
                 if (err) {
                     res.status(500).send({
                         error: 'Error in scraping rankings'
@@ -432,7 +400,7 @@ app.post('/scrapecollegedata', (req, res) => {
         if (college.includes('SUNY')) {
             college = college.replace('SUNY', 'State-University-of-New-York');
         }
-        let collegeURL = college.replace(/ \& |\, | /gim, '-');
+        let collegeURL = college.replace(/ & |, | /gim, '-');
         // If college name starts with 'The' and not on THE list, remove 'The'
         if (college.startsWith('The ') && !config.collegesWithThe.includes(college)) {
             collegeURL = collegeURL.slice(4);
@@ -532,14 +500,12 @@ app.post('/scrapecollegedata', (req, res) => {
             */
             collegeList.forEach(college => {
                 let i = collegeList.indexOf(college);
-                db.importCollegeData(college, fourYearGradRate[i], costOfAttendanceInState[i], costOfAttendanceOutOfState[i], majors[i], satMathAvg[i], satEBRWAvg[i], actAvg[i], (err, result) => {
+                db.importCollegeData(college, fourYearGradRate[i], costOfAttendanceInState[i], costOfAttendanceOutOfState[i], majors[i], satMathAvg[i], satEBRWAvg[i], actAvg[i], (err) => {
                     if (err) {
                         console.log(err);
                         res.status(500).send({
                             error: err
                         });
-                    }
-                    else {
                     }
                 });
             });
@@ -584,41 +550,6 @@ app.delete('/deletecollegedata', function (req, res) {
     });
 });
 
-/*
-app.post('/login', function (req, res) {
-    res.status(500).send({
-                status: "LOGIN ERROR",
-                error: 'err'
-            });
-    
-    var username = req.body.username;
-    var password = req.body.password;
-    console.log(req.body);
-    console.log('login request: username:' + username + password);
-    db.login(username, password, (err, result) => {
-        if (err) {
-            res.status(500).send({
-                status: "error",
-                error: 'err'
-            });
-        }
-        else if (result == 1) {
-            req.session.loggedin = true;
-            req.session.username = username;
-            res.status(200).send({
-                status: "OK"
-            });
-        }
-        else {
-            res.status(500).send({
-                status: "error",
-                error: "WRONG LOGIN"
-            });
-        }
-    });
-	
-})
-*/
 const PORT = process.env.PORT || 5000
-var server = app.listen(PORT, () => console.log(`Listening on ${PORT}`));
+app.listen(PORT, () => console.log(`Listening on ${PORT}`));
 
