@@ -1,0 +1,125 @@
+.collegeResult {
+    width: 100%;
+    position: relative;
+}
+
+
+.collegeResultWrap {
+
+    display: flex;
+    font-size: .875rem;
+    flex-direction: column;
+
+}
+
+.collegeHeadingText {
+    margin-top: 1rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    position: relative;
+}
+
+.collegeHeading div {
+    font-size: .875rem;
+}
+
+
+
+.collegeImage {
+    width: 100%;
+    max-width: 100%;
+    vertical-align: middle;
+    height: auto;
+}
+
+
+.collegeLogoWrap {
+    background-color: white;
+    height: 4.5rem;
+    width: 4.5rem;
+    margin: 0;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 1px 0 rgba(48,50,100,.14), 
+                0 2px 1px -1px rgba(48,50,100,.14), 
+                0 1px 8px 0 rgba(48,50,100,.14);
+
+    order: 1;
+    justify-content: center;
+    position: absolute;
+    display: block;
+    top: -3.5rem;
+    right: 2.5rem;
+}
+
+.collegeLogo {
+    display: block;
+    height: 4rem;
+    width: 4rem;
+    border: 0;
+    padding: 0;
+    margin: auto;
+}
+
+.collegeTitle {
+    font-size: 20px;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-weight: bold;
+    margin-bottom: .2rem;
+}
+
+
+.collegeDetail {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
+.colegeTypeRateWrap {
+    div {
+        width: 100%;
+    }
+}
+
+.collegeDetailWrap {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.collegeDetailRank {
+    border: 0.5px solid black;
+    border-radius: 1.5rem;
+    width: 3rem;
+    height: 3rem;
+    background-color: red;
+    margin-right: 2rem;
+}
+
+.collegeRecScore {
+    text-align: center;
+}
+
+.moreInfo {
+    display: flex;
+    margin-bottom: 1rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    
+    .popoutLink {
+        width: 6rem;
+        cursor: pointer;
+    }
+
+    .popoutLink:hover {
+        color: rgb(0, 217, 255);
+    }
+}
+
+.collegePopout {
+
+}
+
