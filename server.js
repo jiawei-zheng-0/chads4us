@@ -125,7 +125,15 @@ app.post('/login', function (req, res) {
         else {
             bcrypt.compare(password, hashedPW, (err, result) => {
                 if (result) {
-                    res.status(200).send();
+                    if (username == 'admin') {
+                        res.status(200).send({
+                            isAdmin : true
+                        });
+                    } else {
+                        res.status(200).send({
+                            isAdmin : false
+                        });
+                    }
                 } else {
                     console.log('Wrong password');
                     res.status(500).send({
@@ -214,7 +222,7 @@ app.post('/editprofile/:username', function (req, res) {
 //Search for colleges
 app.post('/searchcolleges', function (req, res) {
     db.searchColleges(req.body.isStrict, req.body.collegename, req.body.lowadmissionrate, req.body.highadmissionrate,
-        req.body.costofattendance, req.body.location, req.body.major1, req.body.major2, req.body.lowranking,
+        req.body.costofattendanceinstate, req.body.costofattendanceoutofstate, req.body.location, req.body.major1, req.body.major2, req.body.lowranking,
         req.body.highranking, req.body.lowsize, req.body.highsize, req.body.lowsatmath, req.body.highsatmath,
         req.body.lowsatebrw, req.body.highsatebrw, req.body.lowactcomposite, req.body.highactcomposite, (err, result) => {
             if (err) {
