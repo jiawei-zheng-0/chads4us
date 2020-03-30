@@ -238,8 +238,8 @@ module.exports = {
             }
         })
     },
-    //import colleges
 
+    //import colleges
     importColleges: (colleges, callback) => {
         let importCollegeRankingsQuery = 'INSERT INTO colleges (collegename) VALUES ';
         let counter = 1;
@@ -255,6 +255,35 @@ module.exports = {
             }
             else {
                 callback(null);
+            }
+        })
+    },
+
+    //delete colleges data
+    deleteCollegeData: (colleges, callback) => {
+        let deleteCollegeData = 'DELETE FROM colleges';
+        collegeDB.query(deleteCollegeData, (err, results) => {
+            if (err) {
+                console.log(err);
+                callback(err);
+            }
+            else {
+                let importCollegeRankingsQuery = 'INSERT INTO colleges (collegename) VALUES ';
+                let counter = 1;
+                for (let i = 0; i < colleges.length; i++) {
+                    importCollegeRankingsQuery += `($${counter++}), `;
+                };
+                importCollegeRankingsQuery = importCollegeRankingsQuery.slice(0, -2);
+                importCollegeRankingsQuery += 'ON CONFLICT DO NOTHING'
+                collegeDB.query(importCollegeRankingsQuery, colleges, (err, results) => {
+                    if (err) {
+                        console.log(err);
+                        callback(err);
+                    }
+                    else {
+                        callback(null);
+                    }
+                })
             }
         })
     },

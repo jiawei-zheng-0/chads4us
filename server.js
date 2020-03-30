@@ -570,6 +570,20 @@ app.get('/getallcolleges', function (req, res) {
     });
 });
 
+//GET ALL COLLEGE DATA
+app.delete('/deletecollegedata', function (req, res) {
+    db.deleteCollegeData(collegeList, (err, result) => {
+        if (err) {
+            res.status(500).send({
+                error: 'Error in deleting college data'
+            });
+        }
+        else {
+            res.status(200).send(result);
+        }
+    });
+});
+
 /*
 app.post('/login', function (req, res) {
     res.status(500).send({
