@@ -1,12 +1,9 @@
-/* eslint-disable space-before-function-paren */
-/* eslint-disable indent */
-/* eslint-disable no-inline-comments */
 const express = require('express');
 const fs = require('fs');
 const app = express();
 // const session = require('express-session');
 const bodyParser = require('body-parser');
-// const path = require('path');
+const path = require('path');
 // const urlencodedParser = bodyParser.urlencoded({ extended: true })
 const bcrypt = require('bcrypt');
 const cookieParser = require('cookie-parser');
@@ -18,7 +15,7 @@ const csv = require('fast-csv');
 const axios = require('axios');
 
 app.use(cors());
-app.use(express.static(__dirname + '/public'));
+app.use(express.static(path.join(__dirname, '../public')));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
