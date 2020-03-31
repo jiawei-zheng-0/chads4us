@@ -146,73 +146,73 @@ module.exports = {
             if (isStrict)
                 searchQuery += ` AND collegename IS NOT NULL AND collegename LIKE '%${collegename}%'`;
             else
-                searchQuery += ` AND collegename IS NULL OR collegename LIKE '%${collegename}%'`;
+                searchQuery += ` AND (collegename IS NULL OR collegename LIKE '%${collegename}%')`;
         }
         if (lowadmissionrate && highadmissionrate) {
             if (isStrict)
                 searchQuery += ` AND admissionrate IS NOT NULL AND admissionrate BETWEEN ${lowadmissionrate / 100} AND ${highadmissionrate / 100}`;
             else
-                searchQuery += ` AND admissionrate IS NULL OR admissionrate BETWEEN ${lowadmissionrate / 100} AND ${highadmissionrate / 100}`;
+                searchQuery += ` AND (admissionrate IS NULL OR admissionrate BETWEEN ${lowadmissionrate / 100} AND ${highadmissionrate / 100})`;
         }
         if (costofattendanceinstate) {
             if (isStrict)
                 searchQuery += ` AND costofattendanceinstate IS NOT NULL AND costofattendanceinstate <= ${costofattendanceinstate}`;
             else
-                searchQuery += ` AND costofattendanceinstate IS NULL OR costofattendanceinstate <= ${costofattendanceinstate}`;
+                searchQuery += ` AND (costofattendanceinstate IS NULL OR costofattendanceinstate <= ${costofattendanceinstate})`;
         }
         if (costofattendanceoutofstate){
             if (isStrict)
                 searchQuery += ` AND costofattendanceoutofstate IS NOT NULL AND costofattendanceoutofstate <= ${costofattendanceoutofstate}`;
             else
-                searchQuery += ` AND costofattendanceoutofstate IS NULL OR costofattendanceoutofstate <= ${costofattendanceoutofstate}`;
+                searchQuery += ` AND (costofattendanceoutofstate IS NULL OR costofattendanceoutofstate <= ${costofattendanceoutofstate})`;
         }
         if (location) {
             if (isStrict)
                 searchQuery += ` AND location IS NOT NULL AND location='${location}'`;
             else
-                searchQuery += ` AND location IS NULL OR location='${location}'`;
+                searchQuery += ` AND (location IS NULL OR location='${location}')`;
         }
         if (major1) {
             if (isStrict)
                 searchQuery += ` AND majors IS NOT NULL AND array_to_string(majors, ',') LIKE '%${major1}%'`;
             else
-                searchQuery += ` AND majors IS NULL OR array_to_string(majors, ',') LIKE '%${major1}%'`;
+                searchQuery += ` AND (majors IS NULL OR array_to_string(majors, ',') LIKE '%${major1}%')`;
         }
         if (major2) {
             if (isStrict)
                 searchQuery += ` AND majors IS NOT NULL AND array_to_string(majors, ',') LIKE '%${major2}%'`;
             else
-                searchQuery += ` AND majors IS NULL OR array_to_string(majors, ',') LIKE '%${major2}%'`;
+                searchQuery += ` AND (majors IS NULL OR array_to_string(majors, ',') LIKE '%${major2}%')`;
         }
         if (lowranking && highranking) {
             if (isStrict)
                 searchQuery += ` AND ranking IS NOT NULL AND ranking BETWEEN ${lowranking} AND ${highranking}`;
             else
-                searchQuery += ` AND ranking IS NULL OR ranking BETWEEN ${lowranking} AND ${highranking}`;
+                searchQuery += ` AND (ranking IS NULL OR ranking BETWEEN ${lowranking} AND ${highranking})`;
         }
         if (lowsize && highsize) {
             if (isStrict)
                 searchQuery += ` AND size IS NOT NULL AND size BETWEEN ${lowsize} AND ${highsize}`;
             else
-                searchQuery += ` AND size IS NULL OR size BETWEEN ${lowsize} AND ${highsize}`;
+                searchQuery += ` AND (size IS NULL OR size BETWEEN ${lowsize} AND ${highsize})`;
         }
         if (lowsatmath && highsatmath) {
             if (isStrict)
                 searchQuery += ` AND satmath IS NOT NULL AND satmath BETWEEN ${lowsatmath} AND ${highsatmath}`;
             else
-                searchQuery += ` AND satmath IS NULL OR satmath BETWEEN ${lowsatmath} AND ${highsatmath}`;
+                searchQuery += ` AND (satmath IS NULL OR satmath BETWEEN ${lowsatmath} AND ${highsatmath})`;
         }
         if (lowsatebrw && highsatebrw) {
             if (isStrict)
                 searchQuery += ` AND satebrw IS NOT NULL AND satebrw BETWEEN ${lowsatebrw} AND ${highsatebrw}`;
             else
-                searchQuery += ` AND satebrw IS NULL OR satebrw BETWEEN ${lowsatebrw} AND ${highsatebrw}`;
+                searchQuery += ` AND (satebrw IS NULL OR satebrw BETWEEN ${lowsatebrw} AND ${highsatebrw})`;
         }
         if (lowactcomposite && highactcomposite) {
             if (isStrict)
                 searchQuery += ` AND actcomposite IS NOT NULL AND actcomposite BETWEEN ${lowactcomposite} AND ${highactcomposite}`;
             else
-                searchQuery += ` AND actcomposite IS NULL OR actcomposite BETWEEN ${lowactcomposite} AND ${highactcomposite}`;
+                searchQuery += ` AND (actcomposite IS NULL OR actcomposite BETWEEN ${lowactcomposite} AND ${highactcomposite})`;
         }
         console.log(searchQuery);
         collegeDB.query(searchQuery, (err, results) => {
