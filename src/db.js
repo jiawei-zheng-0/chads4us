@@ -370,40 +370,39 @@ module.exports = {
                             }
                             else {
                                 studentsatEBRWScore = results.rows[0].satebrw;
+                                collegeDB.query(collegeACTCompQuery, [collegename], (err, results) => {
+                                    if (err) {
+                                        callback(err);
+                                    }
+                                    else {
+                                        collegeactCompScore = results.rows[0].actcomposite;
+                                        collegeDB.query(collegeSATMathQuery, [collegename], (err, results) => {
+                                            if (err) {
+                                                callback(err);
+                                            }
+                                            else {
+                                                collegesatMathScore = results.rows[0].satmath;
+                                                collegeDB.query(collegeSATEBRWQuery, [collegename], (err, results) => {
+                                                    if (err) {
+                                                        callback(err);
+                                                    }
+                                                    else {
+                                                        collegesatEBRWScore = results.rows[0].satebrw;
+                                                        let decisionScore = Math.max((collegeactCompScore-studentactCompScore)/collegeactCompScore, (collegesatMathScore-studentsatMathScore)/collegesatMathScore, (collegesatEBRWScore-studentsatEBRWScore)/collegesatEBRWScore);
+                                                        let flag = decisionScore >= 0.12 ? true : false;
+                                                        callback(null, flag);
+                                                    }
+                                                })
+                                            }
+                                        })
+                                    }
+                                });
                             }
                         })
                     }
                 })
             }
         });
-        collegeDB.query(collegeACTCompQuery, [collegename], (err, results) => {
-            if (err) {
-                callback(err);
-            }
-            else {
-                collegeactCompScore = results.rows[0].actcomposite;
-                collegeDB.query(collegeSATMathQuery, [collegename], (err, results) => {
-                    if (err) {
-                        callback(err);
-                    }
-                    else {
-                        collegesatMathScore = results.rows[0].satmath;
-                        collegeDB.query(collegeSATEBRWQuery, [collegename], (err, results) => {
-                            if (err) {
-                                callback(err);
-                            }
-                            else {
-                                collegesatEBRWScore = results.rows[0].satebrw;
-                            }
-                        })
-                    }
-                })
-            }
-        });
-        console.log(collegeactCompScore);
-        let decisionScore = Math.max((collegeactCompScore-studentactCompScore)/collegeactCompScore, (collegesatMathScore-studentsatMathScore)/collegesatMathScore, (collegesatEBRWScore-studentsatEBRWScore)/collegesatEBRWScore);
-        let flag = decisionScore >= 0.12 ? true : false;
-        console.log(decisionScore);
-        callback(null, flag);
+        
     }
 };
