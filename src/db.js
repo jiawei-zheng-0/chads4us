@@ -344,62 +344,63 @@ module.exports = {
     },
     //Review questionable acceptance decisions
     reviewDecisions: (username, collegename, callback) => {
-        let studentACTCompQuery = 'SELECT actcomposite FROM studentdata WHERE username = $1';
-        let studentSATMathQuery = 'SELECT satmath FROM studentdata WHERE username = $1';
-        let studentSATEBRWQuery = 'SELECT satebrw FROM studentdata WHERE username = $1';
-        let collegeACTCompQuery = 'SELECT actcomposite FROM colleges WHERE collegename = $2';
-        let collegeSATMathQuery = 'SELECT satmath FROM colleges WHERE collegename = $2';
-        let collegeSATEBRWQuery = 'SELECT satebrw FROM colleges WHERE collegename = $2';
+        let studentACTCompQuery = `SELECT actcomposite FROM studentdata WHERE username = $1`;
+        let studentSATMathQuery = `SELECT satmath FROM studentdata WHERE username = $1`;
+        let studentSATEBRWQuery = `SELECT satebrw FROM studentdata WHERE username = $1`;
+        let collegeACTCompQuery = `SELECT actcomposite FROM colleges WHERE collegename = $1`;
+        let collegeSATMathQuery = `SELECT satmath FROM colleges WHERE collegename = $1`;
+        let collegeSATEBRWQuery = `SELECT satebrw FROM colleges WHERE collegename = $1`;
         let studentactCompScore, studentsatMathScore, studentsatEBRWScore, collegeactCompScore, collegesatMathScore, collegesatEBRWScore;
 
-        userDB.query(studentACTCompQuery, [username, collegename], (err, results) => {
-            if (err) {
-                console.log(err);
-            }
-            else {
-                studentactCompScore = results;
-                userDB.query(studentSATMathQuery, [username, collegename], (err, results) => {
-                    if (err) {
-                        callback(err);
-                    }
-                    else {
-                        studentsatMathScore = results;
-                        userDB.query(studentSATEBRWQuery, [username, collegename], (err, results) => {
-                            if (err) {
-                                callback(err);
-                            }
-                            else {
-                                studentsatEBRWScore = results;
-                            }
-                        })
-                    }
-                })
-            }
-        });
-        collegeDB.query(collegeACTCompQuery, [username, collegename], (err, results) => {
+        userDB.query(studentACTCompQuery, [username], (err, results) => {
             if (err) {
                 callback(err);
             }
             else {
-                collegeactCompScore = results;
-                collegeDB.query(collegeSATMathQuery, [username, collegename], (err, results) => {
+                studentactCompScore = results.rows[0].actcomposite;
+                userDB.query(studentSATMathQuery, [username], (err, results) => {
                     if (err) {
                         callback(err);
                     }
                     else {
-                        collegesatMathScore = results;
-                        collegeDB.query(collegeSATEBRWQuery, [username, collegename], (err, results) => {
+                        studentsatMathScore = results.rows[0].satmath;
+                        userDB.query(studentSATEBRWQuery, [username], (err, results) => {
                             if (err) {
                                 callback(err);
                             }
                             else {
-                                collegesatEBRWScore = results;
+                                studentsatEBRWScore = results.rows[0].satebrw;
                             }
                         })
                     }
                 })
             }
         });
+        collegeDB.query(collegeACTCompQuery, [collegename], (err, results) => {
+            if (err) {
+                callback(err);
+            }
+            else {
+                collegeactCompScore = results.rows[0].actcomposite;
+                collegeDB.query(collegeSATMathQuery, [collegename], (err, results) => {
+                    if (err) {
+                        callback(err);
+                    }
+                    else {
+                        collegesatMathScore = results.rows[0].satmath;
+                        collegeDB.query(collegeSATEBRWQuery, [collegename], (err, results) => {
+                            if (err) {
+                                callback(err);
+                            }
+                            else {
+                                collegesatEBRWScore = results.rows[0].satebrw;
+                            }
+                        })
+                    }
+                })
+            }
+        });
+        console.log(collegeactCompScore);
         let decisionScore = Math.max((collegeactCompScore-studentactCompScore)/collegeactCompScore, (collegesatMathScore-studentsatMathScore)/collegesatMathScore, (collegesatEBRWScore-studentsatEBRWScore)/collegesatEBRWScore);
         let flag = decisionScore >= 0.12 ? true : false;
         console.log(decisionScore);
