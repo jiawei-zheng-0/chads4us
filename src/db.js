@@ -160,7 +160,7 @@ module.exports = {
             else
                 searchQuery += ` AND (costofattendanceinstate IS NULL OR costofattendanceinstate <= ${costofattendanceinstate})`;
         }
-        if (costofattendanceoutofstate){
+        if (costofattendanceoutofstate) {
             if (isStrict)
                 searchQuery += ` AND costofattendanceoutofstate IS NOT NULL AND costofattendanceoutofstate <= ${costofattendanceoutofstate}`;
             else
@@ -222,6 +222,10 @@ module.exports = {
                 callback(null, results);
             }
         });
+    },
+    //College recommender
+    collegeRecommender: (callback) => {
+
     },
     //Delete profiles (admin)
     deleteProfiles: (callback) => {
@@ -337,5 +341,68 @@ module.exports = {
                 callback(null, results.rows);
             }
         })
+    },
+    //Review questionable acceptance decisions
+    reviewDecisions: (username, collegename, callback) => {
+        let studentACTCompQuery = 'SELECT actcomposite FROM studentdata WHERE username = $1';
+        let studentSATMathQuery = 'SELECT satmath FROM studentdata WHERE username = $1';
+        let studentSATEBRWQuery = 'SELECT satebrw FROM studentdata WHERE username = $1';
+        let collegeACTCompQuery = 'SELECT actcomposite FROM colleges WHERE collegename = $2';
+        let collegeSATMathQuery = 'SELECT satmath FROM colleges WHERE collegename = $2';
+        let collegeSATEBRWQuery = 'SELECT satebrw FROM colleges WHERE collegename = $2';
+        let studentactCompScore, studentsatMathScore, studentsatEBRWScore, collegeactCompScore, collegesatMathScore, collegesatEBRWScore;
+
+        userDB.query(studentACTCompQuery, [username, collegename], (err, results) => {
+            if (err) {
+                console.log(err);
+            }
+            else {
+                studentactCompScore = results;
+                userDB.query(studentSATMathQuery, [username, collegename], (err, results) => {
+                    if (err) {
+                        callback(err);
+                    }
+                    else {
+                        studentsatMathScore = results;
+                        userDB.query(studentSATEBRWQuery, [username, collegename], (err, results) => {
+                            if (err) {
+                                callback(err);
+                            }
+                            else {
+                                studentsatEBRWScore = results;
+                            }
+                        })
+                    }
+                })
+            }
+        });
+        collegeDB.query(collegeACTCompQuery, [username, collegename], (err, results) => {
+            if (err) {
+                callback(err);
+            }
+            else {
+                collegeactCompScore = results;
+                collegeDB.query(collegeSATMathQuery, [username, collegename], (err, results) => {
+                    if (err) {
+                        callback(err);
+                    }
+                    else {
+                        collegesatMathScore = results;
+                        collegeDB.query(collegeSATEBRWQuery, [username, collegename], (err, results) => {
+                            if (err) {
+                                callback(err);
+                            }
+                            else {
+                                collegesatEBRWScore = results;
+                            }
+                        })
+                    }
+                })
+            }
+        });
+        let decisionScore = Math.max((collegeactCompScore-studentactCompScore)/collegeactCompScore, (collegesatMathScore-studentsatMathScore)/collegesatMathScore, (collegesatEBRWScore-studentsatEBRWScore)/collegesatEBRWScore);
+        let flag = decisionScore >= 0.12 ? true : false;
+        console.log(decisionScore);
+        callback(null, flag);
     }
 };

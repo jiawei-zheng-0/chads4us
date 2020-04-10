@@ -559,7 +559,7 @@ app.get('/getallcolleges', function (req, res) {
     });
 });
 
-// GET ALL COLLEGE DATA
+// DELETE ALL COLLEGE DATA
 app.delete('/deletecollegedata', function (req, res) {
     db.deleteCollegeData(collegeList, (err, result) => {
         if (err) {
@@ -569,6 +569,22 @@ app.delete('/deletecollegedata', function (req, res) {
         }
         else {
             res.status(200).send(result);
+        }
+    });
+});
+
+app.post('/reviewdecisions/:username', function (req, res) {
+    db.reviewDecisions(req.params.username, req.body.collegename, (err, result) => {
+        if (err) {
+            res.status(500).send({
+                error: 'Error in reviewing questionable acceptance decisions',
+            });
+        }
+        else {
+            console.log(result);
+            res.status(200).send({
+                flag : result
+            });
         }
     });
 });
