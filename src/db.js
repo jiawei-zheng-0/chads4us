@@ -578,9 +578,9 @@ module.exports = {
         })
     },
 
-    importCollegeData: (collegename, graduationrate, costOfAttendanceInState, costOfAttendanceOutOfState, majors, satMathAvg, satEBRWAvg, actAvg, callback) => {
-        let importCollegeDataQuery = 'UPDATE colleges SET completionrate=$2, costofattendanceinstate = $3, costofattendanceoutofstate = $4, majors = $5, satmath = $6, satebrw = $7, actcomposite=$8 WHERE collegename = $1';
-        collegeDB.query(importCollegeDataQuery, [collegename, graduationrate, costOfAttendanceInState, costOfAttendanceOutOfState, majors, satMathAvg, satEBRWAvg, actAvg], (err) => {
+    importCollegeData: (collegename, graduationrate, costOfAttendanceInState, costOfAttendanceOutOfState, majors, satMathAvg, satEBRWAvg, actAvg, gpa, callback) => {
+        let importCollegeDataQuery = 'UPDATE colleges SET completionrate=$2, costofattendanceinstate = $3, costofattendanceoutofstate = $4, majors = $5, satmath = $6, satebrw = $7, actcomposite=$8, gpa=$9 WHERE collegename = $1';
+        collegeDB.query(importCollegeDataQuery, [collegename, graduationrate, costOfAttendanceInState, costOfAttendanceOutOfState, majors, satMathAvg, satEBRWAvg, actAvg, gpa], (err) => {
             if (err) {
                 console.log(err);
                 callback(err);
@@ -625,6 +625,18 @@ module.exports = {
                 callback(null, results.rows);
             }
         });
-    }
+    },
+    importCollegeScorecard: (collegename, institutionType, medianDebt, admissionRate, state, region, size, callback) => {
+        let importCollegeScorecardQuery = 'UPDATE colleges SET institutiontype=$2, mediandebt = $3, admissionrate = $4, state = $5, region = $6, size = $7 WHERE collegename = $1';
+        collegeDB.query(importCollegeScorecardQuery, [collegename, institutionType, medianDebt, admissionRate, state, region, size], (err) => {
+            if (err) {
+                console.log(err);
+                callback(err);
+            }
+            else {
+                callback(null);
+            }
+        })
+    },
     
 };
