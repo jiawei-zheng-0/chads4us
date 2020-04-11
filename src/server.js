@@ -617,6 +617,20 @@ app.get('/reviewdecisions', function (req, res) {
     });
 });
 
+app.post('/validatedecision', function (req, res) {
+    let applicationid = req.body.applicationid;
+    db.validateDecision(applicationid, (err, result) => {
+        if (err) {
+            res.status(500).send({
+                error: 'Error in validating questionable acceptance decision'
+            });
+        }
+        else {
+            res.status(200).send(result);
+        }
+    });
+});
+
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Listening on ${PORT}`));
 

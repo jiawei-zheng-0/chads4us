@@ -194,7 +194,7 @@ module.exports = {
                                                                                 collegesatEBRWScore = results.rows[0].satebrw;
                                                                                 let decisionScore = Math.max((collegeactCompScore - studentactCompScore) / collegeactCompScore, (collegesatMathScore - studentsatMathScore) / collegesatMathScore, (collegesatEBRWScore - studentsatEBRWScore) / collegesatEBRWScore);
                                                                                 let flag = decisionScore >= 0.12 ? true : false;
-                                                                                let flagQuery = `UPDATE applications SET questionable = TRUE WHERE username = $1 AND collegename = $2`;
+                                                                                let flagQuery = `UPDATE applications SET questionable = ${flag} WHERE username = $1 AND collegename = $2`;
                                                                                 userDB.query(flagQuery, [username, collegename], (err, results) => {
                                                                                     if (err) {
                                                                                         callback(err);
@@ -221,7 +221,6 @@ module.exports = {
                     });
                 }
                 else {
-                    console.log("HI")
                     if (status == 'accepted') {
                         let studentACTCompQuery = `SELECT actcomposite FROM studentdata WHERE username = $1`;
                         let studentSATMathQuery = `SELECT satmath FROM studentdata WHERE username = $1`;
@@ -269,7 +268,7 @@ module.exports = {
                                                                         collegesatEBRWScore = results.rows[0].satebrw;
                                                                         let decisionScore = Math.max((collegeactCompScore - studentactCompScore) / collegeactCompScore, (collegesatMathScore - studentsatMathScore) / collegesatMathScore, (collegesatEBRWScore - studentsatEBRWScore) / collegesatEBRWScore);
                                                                         let flag = decisionScore >= 0.12 ? true : false;
-                                                                        let flagQuery = `UPDATE applications SET questionable = TRUE WHERE username = $1 AND collegename = $2`;
+                                                                        let flagQuery = `UPDATE applications SET questionable = ${flag} WHERE username = $1 AND collegename = $2`;
                                                                         userDB.query(flagQuery, [username, collegename], (err, results) => {
                                                                             if (err) {
                                                                                 callback(err);
@@ -537,6 +536,17 @@ module.exports = {
             }
         });
     },
-    //Review questionable acceptance decisions
+    //Validate decisions
+    validateDecision: (applicationid, callback) => {
+        let validateDecisionQuery = `UPDATE applications SET questionable = FALSE WHERE applicationid = $1`;
+        userDB.query(validateDecisionQuery, [applicationid], (err, results) => {
+            if (err) {
+                callback(err);
+            }
+            else {
+                callback(null, results.rows);
+            }
+        });
+    }
     
 };
