@@ -440,6 +440,7 @@ app.post('/scrapecollegedata', (req, res) => {
     const satMathAvg = [];
     const satEBRWAvg = [];
     const actAvg = [];
+    const gpa = [];
     let counter = 0;
     collegeList.forEach(college => {
         let index = collegeList.indexOf(college);
@@ -524,6 +525,15 @@ app.post('/scrapecollegedata', (req, res) => {
                     satEBRWAvg[index] = (null);
                     actAvg[index] = (null);
                 }
+                const gpaMatch = response.data.match(/<dt>Average GPA<\/dt>\s\S* ?\S*\s ?<dt>SAT Math<\/dt>/gim);
+                if (!(gpaMatch[0].includes('Not reported'))) {//GPA resported
+                    gpa[index] = (Number(gpaMatch[0].match(/\d\.\d{2}/gim)));
+                }
+                else {
+                    gpa[index] = (null);
+                }
+
+
                 // console.log(`${college} - ${satMathAvg} - ${satEBRWAvg} - ${actAvg}`)
                 counter++;
             })
@@ -550,10 +560,11 @@ app.post('/scrapecollegedata', (req, res) => {
             //console.log(satMathAvg[46]);
             //console.log(satEBRWAvg[46]);
             //console.log(actAvg[46]);
+            console.log(gpa)
 
             collegeList.forEach(college => {
                 const i = collegeList.indexOf(college);
-                db.importCollegeData(college, fourYearGradRate[i], costOfAttendanceInState[i], costOfAttendanceOutOfState[i], majors[i], satMathAvg[i], satEBRWAvg[i], actAvg[i], (err) => {
+                db.importCollegeData(college, fourYearGradRate[i], costOfAttendanceInState[i], costOfAttendanceOutOfState[i], majors[i], satMathAvg[i], satEBRWAvg[i], actAvg[i], gpa[i], (err) => {
                     if (err) {
                         console.log(err);
                         res.status(500).send({
@@ -566,7 +577,7 @@ app.post('/scrapecollegedata', (req, res) => {
             res.status(200).send();
         }
         timeoutCounter++;
-        if (timeoutCounter >= 15) {// if func takes more than 15 seconds, timeout
+        if (timeoutCounter >= collegeList.length) {// if func takes more than 15 seconds, timeout
             clearInterval(intervalID);
             res.status(500).send({
                 error: 'Error in scraping from collegeData',
