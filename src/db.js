@@ -59,6 +59,17 @@ module.exports = {
             }
         })
     },
+    importApplication: (username, collegename, status, callback) => {
+        const importApplicationQuery = `INSERT INTO applications (username,collegename,status) VALUES($1,$2,$3)`;
+        userDB.query(importApplicationQuery, [username, collegename, status], (err, results) => {
+            if (err) {
+                callback(err);
+            }
+            else {
+                callback(null, results);
+            }
+        }); 
+    },
     //Get hashed password
     login: (username, callback) => {
         const loginQuery = 'SELECT password FROM users WHERE username=$1';

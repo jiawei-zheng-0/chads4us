@@ -11,6 +11,7 @@
     "collegeDBport": 5432,
     "studentProfileCSV": "data/students.csv",
     "outputProfileCSV": "data/studentsFormatted.csv",
+    "applicationCSV" : "data/applications-1.csv",
     "collegeFile" : "data/colleges.txt",
     "collegeRankingSite": "http://allv22.all.cs.stonybrook.edu/~stoller/cse416/WSJ_THE/united_states_rankings_2020_limit0_25839923f8b1714cf54659d4e4af6c3b.json",
     "collegeDataSite": "http://www.collegedata.com/college/",

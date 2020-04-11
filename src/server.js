@@ -12,6 +12,7 @@ const config = require('../data/config.json');
 const db = require('./db.js');
 const cors = require('cors');
 const csv = require('fast-csv');
+const csvParser = require('csv-parser');
 const axios = require('axios');
 
 app.use(cors());
@@ -241,8 +242,27 @@ app.post('/getallcolleges', function (req, res) {
     });
 });
 
-// import profiles from file config.studentProfileCSV
+// import profiles from file config.studentProfileCSV and config.applicationCSV
 app.post('/importprofiles', (req, res) => {
+    //import applications
+    fs.readFile(config.applicationCSV, 'utf-8', (err, data) => {
+        const newValue = data.replace(/ *, */gim, ',');// removes spaces next to commas in csv
+        fs.createReadStream(config.applicationCSV)
+            .pipe(csvParser())
+            .on('data', (row) => {
+                console.log(row);
+                db.importApplication(row.userid, row.college, row.status, (err) => {
+                    if (err) {
+                        console.log('Error in importing applications');
+                    }
+                });
+            })
+            .on('end', () => {
+                console.log('CSV file read finished');
+            });
+    });
+
+    //import profiles
     fs.readFile(config.studentProfileCSV, 'utf-8', (err, data) => {// change to input csv
         if (err) { throw err; }
         const newValue = data.replace(/ *, */gim, ',');// removes spaces next to commas in csv
