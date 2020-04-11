@@ -192,7 +192,7 @@ app.post('/editprofile/:username', function (req, res) {
                             res.status(200).send();
                         }
                     }
-            });
+                });
             // edit applications
             db.editApplications(username, req.body.collegename, req.body.status, (err, result) => {
                 if (err) {
@@ -560,7 +560,7 @@ app.post('/scrapecollegedata', (req, res) => {
             //console.log(satMathAvg[46]);
             //console.log(satEBRWAvg[46]);
             //console.log(actAvg[46]);
-            console.log(gpa)
+            //console.log(gpa)
 
             collegeList.forEach(college => {
                 const i = collegeList.indexOf(college);
@@ -584,6 +584,107 @@ app.post('/scrapecollegedata', (req, res) => {
             });
         }
     }, 1000);
+});
+
+//imports college scorecard
+app.post('/importscorecard', (req, res) => {
+    const colleges = [];
+    fs.createReadStream(config.collegeScorecard1)
+        .pipe(csv.parse({ headers: true }))
+        .on('data', (row) => {
+            if (collegeList.includes(row.INSTNM)) {//if row in scorecard is in collegelist, match
+                //console.log(row.INSTNM);
+                colleges.push(row);
+            }
+            else if (config.collegeScorecardNames.includes(row.INSTNM)) {//match with different name
+                row.INSTNM = config.fixedCollegeNames[config.collegeScorecardNames.indexOf(row.INSTNM)];//change college name
+                //console.log(row.INSTNM);
+                colleges.push(row);
+            }
+        })
+        .on('end', () => {
+            console.log('scorecard1 read finished');
+
+            fs.createReadStream(config.collegeScorecard2)
+                .pipe(csv.parse({ headers: true }))
+                .on('data', (row) => {
+                    if (collegeList.includes(row.INSTNM)) {//if row in scorecard is in collegelist, match
+                        //console.log(row.INSTNM);
+                        colleges.push(row);
+                    }
+                    else if (config.collegeScorecardNames.includes(row.INSTNM)) {//match with different name
+                        row.INSTNM = config.fixedCollegeNames[config.collegeScorecardNames.indexOf(row.INSTNM)];//change college name
+                        //console.log(row.INSTNM);
+                        colleges.push(row);
+                    }
+                })
+                .on('end', () => {
+                    console.log('scorecard2 read finished');
+                    const collegeNames = [];
+                    const institutionTypes = [];
+                    const medianDebt = [];
+                    const admissionRate = [];
+                    const state = [];
+                    const region = [];
+                    const size = [];
+                    colleges.forEach(college => {
+                        collegeNames.push(college.INSTNM)
+                        if (college.CONTROL === '1') {
+                            institutionTypes.push('Public');
+                        } else if (college.CONTROL === '2') {
+                            institutionTypes.push('Private nonprofit');
+                        } else if (college.CONTROL === '3') {
+                            institutionTypes.push('Private for-profit');
+                        }
+                        if (college.GRAD_DEBT_MDN != 'NULL') {
+                            medianDebt.push(college.GRAD_DEBT_MDN);
+                        }
+                        else{
+                            medianDebt.push(null);
+                        }
+                        if (college.ADM_RATE != 'NULL') {
+                            admissionRate.push(college.ADM_RATE);
+                        }
+                        else{
+                            admissionRate.push(null);
+                        }
+                        state.push(college.STABBR);
+                        if (config.Northeast.includes(college.STABBR)) {
+                            region.push('Northeast')
+                        } else if (config.Midwest.includes(college.STABBR)) {
+                            region.push('Midwest')
+                        } else if (config.South.includes(college.STABBR)) {
+                            region.push('South')
+                        } else if (config.West.includes(college.STABBR)) {
+                            region.push('West')
+                        }
+                        size.push(college.UGDS);
+                    });
+                    //console.log(collegeNames);
+                    //console.log(institutionTypes);
+                    //console.log(medianDebt);
+                    //console.log(admissionRate);
+                    //console.log(state);
+                    //console.log(region);
+                    //console.log(size);
+
+
+                    collegeNames.forEach(collegename => {
+                        const i = collegeNames.indexOf(collegename);
+                        db.importCollegeScorecard(collegename, institutionTypes[i], medianDebt[i], admissionRate[i], state[i], region[i], size[i], (err) => {
+                            if (err) {
+                                console.log(err);
+                                res.status(500).send({
+                                    error: err,
+                                });
+                            }
+                        });
+                    });
+                    console.log("College Scorecard imported");
+                    res.status(200).send();
+
+                });
+        });
 });
 
 // GET ALL COLLEGE DATA

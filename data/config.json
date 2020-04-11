@@ -11,8 +11,10 @@
     "collegeDBport": 5432,
     "studentProfileCSV": "data/students.csv",
     "outputProfileCSV": "data/studentsFormatted.csv",
-    "applicationCSV" : "data/applications-1.csv",
-    "collegeFile" : "data/colleges.txt",
+    "applicationCSV": "data/applications-1.csv",
+    "collegeFile": "data/colleges.txt",
+    "collegeScorecard1": "data/collegescorecard1.csv",
+    "collegeScorecard2": "data/collegescorecard2.csv",
     "collegeRankingSite": "http://allv22.all.cs.stonybrook.edu/~stoller/cse416/WSJ_THE/united_states_rankings_2020_limit0_25839923f8b1714cf54659d4e4af6c3b.json",
     "collegeDataSite": "http://www.collegedata.com/college/",
     "collegesWithThe": [
@@ -25,6 +27,42 @@
         "The Restaurant School at Walnut Hill College",
         "The Sage Colleges"
     ],
-    "adminUsername":"admin",
-    "adminPW":"$2b$10$6aQRFEwpl9tjfdQ8PNVJSelI2MQE5OZBkBbmT44EicyxsnzQ8045m"
+    "collegeScorecardNames": [
+        "California State University-East Bay",
+        "California State University-Fresno",
+        "California State University-Monterey Bay",
+        "Franklin and Marshall College",
+        "Indiana University-Bloomington",
+        "The College of Saint Scholastica",
+        "The University of Alabama",
+        "University of California-Davis",
+        "University of California-Santa Barbara",
+        "University of California-Santa Cruz",
+        "University of Massachusetts-Amherst",
+        "The University of Montana",
+        "University of Nevada-Las Vegas",
+        "University of Nevada-Reno"
+    ],
+    "fixedCollegeNames": [
+        "California State University, East Bay",
+        "California State University, Fresno",
+        "California State University, Monterey Bay",
+        "Franklin & Marshall College",
+        "Indiana University Bloomington",
+        "The College of St Scholastica",
+        "University of Alabama",
+        "University of California, Davis",
+        "University of California, Santa Barbara",
+        "University of California, Santa Cruz",
+        "University of Massachusetts Amherst",
+        "University of Montana",
+        "University of Nevada, Las Vegas",
+        "University of Nevada, Reno"
+    ],
+    "Northeast": ["CT", "DE", "MA", "ME", "NH", "NJ", "NY", "PA", "RI", "VT"],
+    "Midwest": ["ND", "SD", "NE", "KS", "MO", "IA", "MN", "WI", "MI", "IL", "IN", "OH"],
+    "South": ["MD", "DE", "VA", "WV", "KY", "TN", "NC", "SC", "FL", "GA", "AL", "MS", "LA", "AK", "TX", "OK", "DC", "AR"],
+    "West": ["AZ", "CA", "CO", "HI", "ID", "MT", "NV", "NM", "OR", "UT", "WA", "WY"],
+    "adminUsername": "admin",
+    "adminPW": "$2b$10$6aQRFEwpl9tjfdQ8PNVJSelI2MQE5OZBkBbmT44EicyxsnzQ8045m"
 }
