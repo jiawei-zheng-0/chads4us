@@ -158,6 +158,7 @@ app.post('/editprofile/:username', function (req, res) {
                 result[key] = req.body[key];
             });
             console.log(result);
+            // edit profile
             db.editProfile(username, result.residencestate, result.highschoolname, result.highschoolcity, result.highschoolstate, result.gpa, result.collegeclass,
                 result.major1, result.major2, result.satebrw, result.satmath, result.actenglish, result.actmath, result.actreading, result.actscience, result.actcomposite,
                 result.satliterature, result.satushistory, result.satworldhistory, result.satmath1, result.satmath2, result.satecobio, result.satmolbio,
@@ -191,7 +192,16 @@ app.post('/editprofile/:username', function (req, res) {
                             res.status(200).send();
                         }
                     }
-                });
+            });
+            // edit applications
+            db.editApplications(username, req.body.collegename, req.body.status, (err, result) => {
+                if (err) {
+                    console.log(err);
+                }
+                else {
+                    res.status(200).send();
+                }
+            });
         }
     });
 });
@@ -593,18 +603,16 @@ app.delete('/deletecollegedata', function (req, res) {
     });
 });
 
-app.post('/reviewdecisions/:username', function (req, res) {
-    db.reviewDecisions(req.params.username, req.body.collegename, (err, result) => {
+// GET LIST OF QUESTIONABLE APPLICATIONS
+app.get('/reviewdecisions', function (req, res) {
+    db.getAllQuestionableDecisions((err, result) => {
         if (err) {
             res.status(500).send({
-                error: 'Error in reviewing questionable acceptance decisions',
+                error: 'Error in retrieving questionable decisions',
             });
         }
         else {
-            console.log(result);
-            res.status(200).send({
-                flag : result
-            });
+            res.status(200).send(result);
         }
     });
 });
