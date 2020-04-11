@@ -224,6 +224,23 @@ app.post('/searchcolleges', function (req, res) {
         });
 });
 
+// Find similar high schools
+app.post('/findsimilarhs', function (req, res) {
+    db.findSimilarHighSchools(req.body.highschool1, req.body.highschool2, (err, result) => {
+        if (err) {
+            console.log(err);
+            res.status(500).send({
+                error: 'Error in finding similar high schools',
+            });
+        }
+        else {
+            res.status(200).send({
+                score : result
+            });
+        }
+    });
+});
+
 // DELETE ALL STUDENT PROFILES
 app.post('/deleteprofiles', function (req, res) {
     db.deleteProfiles((err, result) => {

@@ -401,6 +401,84 @@ module.exports = {
     collegeRecommender: (callback) => {
 
     },
+    //Find similar high schools
+    findSimilarHighSchools: (highschool1, highschool2, callback) => {
+        const gpaQuery = 'SELECT hsavggpa FROM highschools WHERE hsname = $1';
+        const nicheGradeQuery = 'SELECT hsnichegrade FROM highschools WHERE hsname = $1';
+        const satQuery = 'SELECT hsavgsat FROM highschools WHERE hsname = $1';
+        let gpa1, gpa2, niche1, niche2, sat1, sat2;
+        let gpaPoints, nichePoints, satPoints;
+
+        const getGPA = function () {
+            collegeDB.query(gpaQuery, [highschool1], (err, results) => {
+                if (err) {
+                    callback(err);
+                }
+                else {
+                    gpa1 = results.rows[0].hsavggpa;
+                    collegeDB.query(gpaQuery, [highschool2], (err, results) => {
+                        if (err) {
+                            callback(err);
+                        }
+                        else {
+                            gpa2 = results.rows[0].hsavggpa;
+                            getNicheGrade();      
+                        }
+                    });
+                }
+            });
+        }
+        const getNicheGrade = function () {
+            collegeDB.query(nicheGradeQuery, [highschool1], (err, results) => {
+                if (err) {
+                    callback(err);
+                }
+                else {
+                    niche1 = results.rows[0].hsnichegrade;
+                    collegeDB.query(nicheGradeQuery, [highschool2], (err, results) => {
+                        if (err) {
+                            callback(err);
+                        }
+                        else {
+                            niche2 = results.rows[0].hsnichegrade;
+                            getSAT();      
+                        }
+                    });
+                }
+            });
+        }
+        const getSAT = function () {
+            collegeDB.query(satQuery, [highschool1], (err, results) => {
+                if (err) {
+                    callback(err);
+                }
+                else {
+                    sat1 = results.rows[0].hsavgsat;
+                    collegeDB.query(satQuery, [highschool2], (err, results) => {
+                        if (err) {
+                            callback(err);
+                        }
+                        else {
+                            sat2 = results.rows[0].hsavgsat;
+                            // Calculate points
+                            let score = calculateSimHSScore();
+                            callback(null, score);   
+                        }
+                    });
+                }
+            });
+        }
+        function calculateSimHSScore () {
+            gpaPoints = (1 - (Math.abs(gpa1 - gpa2)) / 4.0) * 20;
+            let nicheGrades = { "A+" : 11, "A" : 10, "A-" : 9, "B+" : 8, "B" : 7, "B-" : 6, "C+" : 5, "C" : 4, "C-" : 3, "D+" : 2, "D" : 1, "D-" : 0 }
+            nichePoints = (1 - (Math.abs(nicheGrades[niche1] - nicheGrades[niche2])) / 11) * 30;
+            satPoints = (1 - (Math.abs(sat1 - sat2)) / 1600) * 50;
+            let overallScore = Math.round(gpaPoints + nichePoints + satPoints);
+            return overallScore;
+        }
+
+        getGPA();
+    },
     //Delete profiles (admin)
     deleteProfiles: (callback) => {
         const deleteProfilesQuery = 'DELETE FROM studentdata';
