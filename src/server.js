@@ -224,6 +224,22 @@ app.post('/searchcolleges', function (req, res) {
         });
 });
 
+// College Recommendation Score
+app.post('/collegerecommender/:username', function (req, res) {
+    db.collegeRecommender(req.params.username, req.body.collegename, (err, result) => {
+        if (err) {
+            console.log(err);
+            res.status(500).send({
+                error: 'Error in calculating college recommendation score',
+            });
+        }
+        else {
+            res.status(200).send({
+                score : result
+            });
+        }
+    });
+});
 // Find similar high schools
 app.post('/findsimilarhs', function (req, res) {
     db.findSimilarHighSchools(req.body.highschool1, req.body.highschool2, (err, result) => {

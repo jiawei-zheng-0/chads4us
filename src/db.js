@@ -313,8 +313,8 @@ module.exports = {
         })
     },
     //Search for colleges
-    searchColleges: (isStrict, collegename, lowadmissionrate, highadmissionrate, costofattendance, region, major1,
-        major2, lowranking, highranking, lowsize, highsize, lowsatmath, highsatmath, lowsatebrw, highsatebrw, lowactcomposite, highactcomposite, callback) => {
+    searchColleges: (isStrict, collegename, lowadmissionrate, highadmissionrate, costofattendance, region, major1, major2, lowranking, highranking,
+        lowsize, highsize, lowsatmath, highsatmath, lowsatebrw, highsatebrw, lowactcomposite, highactcomposite, callback) => {
         let searchQuery = 'SELECT * FROM colleges WHERE 1=1';
         if (collegename) {
             if (isStrict)
@@ -328,6 +328,7 @@ module.exports = {
             else
                 searchQuery += ` AND (admissionrate IS NULL OR admissionrate BETWEEN ${lowadmissionrate / 100.0} AND ${highadmissionrate / 100.0})`;
         }
+        //TODO : public uni cost 
         if (costofattendance) {
             if (isStrict)
                 searchQuery += ` AND costofattendanceinstate IS NOT NULL AND costofattendanceinstate <= ${costofattendance}`;
@@ -392,8 +393,190 @@ module.exports = {
         });
     },
     //College recommender
-    collegeRecommender: (callback) => {
+    collegeRecommender: (username, collegename, callback) => {
+        const rankingQuery = 'SELECT ranking FROM colleges WHERE collegename = $1';
+        const stateQuery = 'SELECT highschoolstate FROM studentdata WHERE username = $1';
+        const sameStateQuery = 'SELECT * FROM studentdata WHERE highschoolstate = $1 AND username <> $2';
+        const sameCollegeQuery = 'SELECT username FROM applications WHERE username = $1 AND collegename = $2';
+        const studentGPAQuery = 'SELECT gpa FROM studentdata WHERE username = $1';
+        const collegeGPAQuery = 'SELECT gpa FROM colleges WHERE collegename = $1';
+        const studentSATQuery = 'SELECT SUM(satmath + satebrw) FROM studentdata WHERE username = $1';
+        const studentACTQuery = 'SELECT actcomposite FROM studentdata WHERE username = $1';
+        const collegeSATQuery = 'SELECT SUM(satmath + satebrw) FROM colleges WHERE collegename = $1';
+        const collegeACTQuery = 'SELECT actcomposite FROM colleges WHERE collegename = $1';
+        let ranking, numSimStudents, numSimStudentsSameCollege, studentGPA, collegeGPA, studentSAT, studentACT, collegeSAT, collegeACT;
+        let higherTest; 
+        let rankingPoints, popularityPoints, gpaPoints, satactPoints;
 
+        const getSAT = function () {
+            userDB.query(studentSATQuery, [username], (err, results) => {
+                if (err) {
+                    callback(err);
+                }
+                else {
+                    studentSAT = results;
+                    collegeDB.query(collegeSATQuery, [collegename], (err, results) => {
+                        if (err) {
+                            callback(err);
+                        }
+                        else {
+                            collegeGPA = results; 
+                            getACT();
+                        }
+                    });
+                }
+            });
+        }
+        const getACT = function () {
+            userDB.query(studentACTQuery, [username], (err, results) => {
+                if (err) {
+                    callback(err);
+                }
+                else {
+                    studentACT = results.rows[0].actcomposite;
+                    collegeDB.query(collegeACTQuery, [collegename], (err, results) => {
+                        if (err) {
+                            callback(err);
+                        }
+                        else {
+                            collegeACT = results.rows[0].actcomposite;
+                            higherTest = studentSAT/1600.0 >= studentACT/36.0 ? "SAT" : "ACT"; 
+                            getRanking(); 
+                        }
+                    });
+                }
+            });
+        }
+        const getRanking = function () {
+            collegeDB.query(rankingQuery, [collegename], (err, results) => {
+                if (err) {
+                    callback(err);
+                }
+                else {
+                    ranking = results.rows[0].ranking;
+                    getSimStudents();
+                }
+            });
+        }
+        const getSimStudents = function () {
+            userDB.query(stateQuery, [username], (err, results) => {
+                if (err) {
+                    callback(err);
+                }
+                else {
+                    userDB.query(sameStateQuery, [results.rows[0].highschoolstate, username], (err, results) => {
+                        if (err) {
+                            callback(err);
+                        }
+                        else {
+                            // get similar students
+                            numSimStudents = 0;
+                            let simStudentsList = [];
+                            for (let i = 0; i < results.rows.length; i++) {
+                                if (higherTest == "SAT") {
+                                    if (studentSAT >= ((results.rows[i].satmath + results.rows[i].satebrw) * 0.9) && studentSAT <= ((results.rows[i].satmath + results.rows[i].satebrw) * 1.1)) {
+                                        numSimStudents++;
+                                        simStudentsList.push(results.rows[i]);
+                                    }
+                                }
+                                else {
+                                    if (studentACT >= (results.rows[i].actcomposite * 0.9) && studentACT <= (results.rows[i].actcomposite * 1.1)) {
+                                        numSimStudents++;
+                                        simStudentsList.push(results.rows[i]);
+                                    }
+                                }                    
+                            }
+                            // get num of similar students that applied to the same college
+                            numSimStudentsSameCollege = 0;
+                            for (let j = 0; j < simStudentsList.length; j++) {
+                                userDB.query(sameCollegeQuery, [simStudentsList[j].username, collegename], (err, results) => {
+                                    if (err) {
+                                        callback(err);
+                                    }
+                                    else {
+                                        if (results.rows) {
+                                            numSimStudentsSameCollege++;
+                                        }
+                                    }
+                                });
+                            }
+                        }
+                    });
+                }
+                getGPA();
+            });
+        }
+        const getGPA = function () {
+            userDB.query(studentGPAQuery, [username], (err, results) => {
+                if (err) {
+                    callback(err);
+                }
+                else {
+                    studentGPA = results.rows[0].gpa;
+                    collegeDB.query(collegeGPAQuery, [collegename], (err, results) => {
+                        if (err) {
+                            callback(err);
+                        }
+                        else {
+                            collegeGPA = results.rows[0].gpa; 
+                            // Calculate points
+                            let score = calculateCollegeRecommendationScore();
+                            callback(null, score);
+                        }
+                    });
+                }
+            });
+        }
+        
+        function calculateCollegeRecommendationScore () {
+            // WSJ has 801 college rankings
+            rankingPoints = ((801 - ranking) / 801) * 10;
+            // Half points for similar students if there are no simular students
+            if (numSimStudents == 0 || numSimStudentsSameCollege == 0) {
+                popularityPoints = 15;
+            }
+            else {
+                popularityPoints = (numSimStudentsSameCollege / numSimStudents) * 30;
+            }
+            // If student GPA >= College GPA, max points
+            if (studentGPA >= collegeGPA) {
+                gpaPoints = 40;
+            }
+            // If student GPA <= 0.7 * College GPA, no points
+            else if (studentGPA <= 0.7 * collegeGPA) {
+                gpaPoints = 0;
+            }
+            else {
+                gpaPoints = 0.4 * ((100 / (0.3 * collegeGPA)) * studentGPA - (700 / 3));
+            }
+            // Use higher of SAT or ACT
+            if (higherTest == "SAT") {
+                if (studentSAT >= collegeSAT) {
+                    satactPoints = 20;
+                }
+                else if (studentSAT <= 0.7 * collegeSAT) {
+                    satactPoints = 0;
+                }
+                else {
+                    satactPoints = 0.2 * ((100 / (0.3 * collegeSAT)) * studentSAT - (700 / 3));
+                }
+            }
+            else {
+                if (studentACT >= collegeACT) {
+                    satactPoints = 20;
+                }
+                else if (studentACT <= 0.7 * collegeACT) {
+                    satactPoints = 0;
+                }
+                else {
+                    satactPoints = 0.2 * ((100 / (0.3 * collegeACT)) * studentACT - (700 / 3));
+                }
+            }
+            let overallScore = Math.round(rankingPoints + popularityPoints + gpaPoints + satactPoints);
+            return overallScore;
+        }
+        
+        getSAT();
     },
     //Find similar high schools
     findSimilarHighSchools: (highschool1, highschool2, callback) => {
@@ -471,7 +654,7 @@ module.exports = {
             return overallScore;
         }
 
-        getGPA();
+        getSAT();
     },
     //Delete profiles (admin)
     deleteProfiles: (callback) => {
