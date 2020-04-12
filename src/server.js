@@ -235,7 +235,7 @@ app.post('/collegerecommender/:username', function (req, res) {
         }
         else {
             res.status(200).send({
-                score : result
+                score: result
             });
         }
     });
@@ -251,7 +251,7 @@ app.post('/findsimilarhs', function (req, res) {
         }
         else {
             res.status(200).send({
-                score : result
+                score: result
             });
         }
     });
@@ -490,22 +490,16 @@ app.post('/scrapecollegedata', (req, res) => {
         axios.get(`${config.collegeDataSite}${collegeURL}`)
             .then((response) => {
                 let percent;
-                const match = response.data.match(/<dt>Students Graduating Within 4 Years<\/dt>\s<dd> *\d{1,2}\.\d{1,2}%<\/dd>/gim);
+                const match = response.data.match(/<dt>Students Graduating Within 4 Years<\/dt>\s*<dd> *\d{1,2}\.\d{1,2}%<\/dd>/gim);
                 if (match) {
                     percent = match[0].match(/\d{1,2}\.\d{1,2}/gim);
-                }
-                else {
-                    percent = null;
-                }
-                // console.log(`${college} - ${percent}`);
-                if (percent) {
                     fourYearGradRate[index] = (Number(percent));
                 }
                 else {
                     fourYearGradRate[index] = null;
                 }
                 // Get cost of attendance
-                const costMatch = response.data.match(/(<dt>Cost of Attendance<\/dt>\s<dd>In-state: \$\d*,?\d+<BR>Out-of-state: \$\d*,?\d+<\/dd>)|(<dt>Cost of Attendance<\/dt>\s<dd>\$\d*,?\d+<\/dd>)/gim);
+                const costMatch = response.data.match(/(<dt>Cost of Attendance<\/dt>\s*<dd>In-state: \$\d*,?\d+<BR>Out-of-state: \$\d*,?\d+<\/dd>)|(<dt>Cost of Attendance<\/dt>\s*<dd>\$\d*,?\d+<\/dd>)/gim);
                 if (costMatch) {// if  match, college does report cost of attendance
                     // console.log(`${college} - ${costMatch[0]}`)
                     if (costMatch[0].includes('In-state')) {// college has seperate in state and out of state
@@ -533,22 +527,22 @@ app.post('/scrapecollegedata', (req, res) => {
                 const testScoresMatch = response.data.match(/SAT Math<\/dt>[\s\S]*<a class="upper-right-sm" data-toggle="toggletab" href="#profile-admission-tab">See more<\/a>/gim);
                 // console.log(testScoresMatch)
                 if (!(testScoresMatch[0].includes('Not reported'))) {// Test scores are reported
-                    const satMathRange = (testScoresMatch[0].match(/(?<=SAT Math<\/dt>\s<dd>\s).+(?= range)/gim))[0].split('-');
+                    const satMathRange = ((testScoresMatch[0].match(/(?<=SAT Math<\/dt>)\s*<dd>\s*.+(?= range)/gim))[0].match(/\d+-\d+/gim))[0].split('-');
                     satMathAvg[index] = (Math.round((Number(satMathRange[0]) + Number(satMathRange[1])) / 2));
-                    let satEBRWMatch = (testScoresMatch[0].match(/(?<=SAT EBRW<\/dt>\s<dd>\s).+(?= average)/gim));// Test if EBRW is a number
+                    let satEBRWMatch = (testScoresMatch[0].match(/(?<=SAT EBRW<\/dt>)\s*<dd>\s*.+(?= average)/gim));// Test if EBRW is a number
                     if (satEBRWMatch) {// EBRW is a number
-                        satEBRWAvg[index] = (Number(satEBRWMatch[0]));
+                        satEBRWAvg[index] = (Number(satEBRWMatch[0].match(/\d+/gim)[0]));
                     }
                     else {// EBRW is a range
-                        satEBRWMatch = (testScoresMatch[0].match(/(?<=SAT EBRW<\/dt>\s<dd>\s).+(?= range)/gim))[0].split('-');
+                        satEBRWMatch = (testScoresMatch[0].match(/(?<=SAT EBRW<\/dt>)\s*<dd>\s*.+(?= range)/gim)[0]).match(/\d+-\d+/gim)[0].split('-');
                         satEBRWAvg[index] = (Math.round((Number(satEBRWMatch[0]) + Number(satEBRWMatch[1])) / 2));
                     }
-                    let actMatch = (testScoresMatch[0].match(/(?<=ACT Composite<\/dt>\s<dd>).+(?= average)|(?<=ACT Composite<\/dt>\s <dd>).+(?= average)/gim));// Test if ACT is a number
+                    let actMatch = (testScoresMatch[0].match(/(?<=ACT Composite<\/dt>)\s*<dd>.+(?= average)/gim));// Test if ACT is a number
                     if (actMatch) {// ACT is a number
-                        actAvg[index] = (Number(actMatch[0]));
+                        actAvg[index] = (Number((actMatch[0]).match(/\d+/gim)));
                     }
                     else {// ACT is a range
-                        actMatch = (testScoresMatch[0].match(/(?<=ACT Composite<\/dt>\s<dd>).+(?= range)/gim))[0].split('-');
+                        actMatch = (testScoresMatch[0].match(/(?<=ACT Composite<\/dt>)\s*<dd>.+(?= range)/gim))[0].match(/\d+-\d+/gim)[0].split('-');
                         actAvg[index] = (Math.round((Number(actMatch[0]) + Number(actMatch[1])) / 2));
                     }
                 }
@@ -558,12 +552,12 @@ app.post('/scrapecollegedata', (req, res) => {
                     satEBRWAvg[index] = (null);
                     actAvg[index] = (null);
                 }
-                const gpaMatch = response.data.match(/<dt>Average GPA<\/dt>\s\S* ?\S*\s ?<dt>SAT Math<\/dt>/gim);
-                if (!(gpaMatch[0].includes('Not reported'))) {//GPA resported
-                    gpa[index] = (Number(gpaMatch[0].match(/\d\.\d{2}/gim)));
+                const gpaMatch = response.data.match(/<dt>Average GPA<\/dt>\s*\S* ?\S*\s* ?<dt>SAT Math<\/dt>/gim);
+                if (gpaMatch[0].includes('Not reported')) {//GPA not reported
+                    gpa[index] = (null);
                 }
                 else {
-                    gpa[index] = (null);
+                    gpa[index] = (Number(gpaMatch[0].match(/\d\.\d{2}/gim)));
                 }
 
 
@@ -585,15 +579,15 @@ app.post('/scrapecollegedata', (req, res) => {
         if (counter >= collegeList.length) {// if data for all colleges retrieved, store in db
             clearInterval(intervalID);
             // success in scraping all data
-            //console.log(collegeList[46]);
-            //console.log(fourYearGradRate);
-            //console.log(costOfAttendanceInState);
-            //console.log(costOfAttendanceOutOfState);
-            //console.log(majors);
-            //console.log(satMathAvg[46]);
-            //console.log(satEBRWAvg[46]);
-            //console.log(actAvg[46]);
-            //console.log(gpa)
+            console.log(collegeList);
+            console.log(fourYearGradRate);
+            console.log(costOfAttendanceInState);
+            console.log(costOfAttendanceOutOfState);
+            console.log(majors);
+            console.log(satMathAvg);
+            console.log(satEBRWAvg);
+            console.log(actAvg);
+            console.log(gpa)
 
             collegeList.forEach(college => {
                 const i = collegeList.indexOf(college);
@@ -610,7 +604,7 @@ app.post('/scrapecollegedata', (req, res) => {
             res.status(200).send();
         }
         timeoutCounter++;
-        if (timeoutCounter >= collegeList.length) {// if func takes more than 15 seconds, timeout
+        if (timeoutCounter >= collegeList.length + 2) {// if func takes long time, timeout
             clearInterval(intervalID);
             res.status(500).send({
                 error: 'Error in scraping from collegeData',
@@ -672,13 +666,13 @@ app.post('/importscorecard', (req, res) => {
                         if (college.GRAD_DEBT_MDN != 'NULL') {
                             medianDebt.push(college.GRAD_DEBT_MDN);
                         }
-                        else{
+                        else {
                             medianDebt.push(null);
                         }
                         if (college.ADM_RATE != 'NULL') {
                             admissionRate.push(college.ADM_RATE);
                         }
-                        else{
+                        else {
                             admissionRate.push(null);
                         }
                         state.push(college.STABBR);

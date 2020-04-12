@@ -16,7 +16,7 @@
     "collegeScorecard1": "data/collegescorecard1.csv",
     "collegeScorecard2": "data/collegescorecard2.csv",
     "collegeRankingSite": "http://allv22.all.cs.stonybrook.edu/~stoller/cse416/WSJ_THE/united_states_rankings_2020_limit0_25839923f8b1714cf54659d4e4af6c3b.json",
-    "collegeDataSite": "http://www.collegedata.com/college/",
+    "collegeDataSite": "http://allv22.all.cs.stonybrook.edu/~stoller/cse416/collegedata/",
     "collegesWithThe": [
         "The Citadel",
         "The Art Institute of Atlanta",
