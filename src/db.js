@@ -414,13 +414,13 @@ module.exports = {
                     callback(err);
                 }
                 else {
-                    studentSAT = results;
+                    studentSAT = results.rows[0].sum;
                     collegeDB.query(collegeSATQuery, [collegename], (err, results) => {
                         if (err) {
                             callback(err);
                         }
                         else {
-                            collegeGPA = results; 
+                            collegeSAT = results.rows[0].sum;
                             getACT();
                         }
                     });
