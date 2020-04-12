@@ -234,19 +234,39 @@ app.post('/searchcolleges', function (req, res) {
 
 // College Recommendation Score
 app.post('/collegerecommender/:username', function (req, res) {
-    db.collegeRecommender(req.params.username, req.body.collegename, (err, result) => {
-        if (err) {
-            console.log(err);
-            res.status(500).send({
-                error: 'Error in calculating college recommendation score',
-            });
-        }
-        else {
-            res.status(200).send({
-                score: result
-            });
-        }
+    let counter = 0;
+    let collegeScores = {}
+    collegeList.forEach(college => {
+        db.collegeRecommender(req.params.username, college, (err, result) => {
+            if (err) {
+                console.log(err);
+                res.status(500).send({
+                    error: `Error in calculating college recommendation score for ${college}`,
+                });
+            }
+            else {
+                console.log(collegeScores)
+                counter++;
+                collegeScores[college] = result;
+            }
+        });
     });
+
+    let timeoutCounter = 0;
+    const intervalID = setInterval(() => {
+        if (counter >= collegeList.length) {
+            clearInterval(intervalID);
+            res.status(200).send(collegeScores);
+        }
+        timeoutCounter++;
+        if (timeoutCounter >= collegeList.length) {// if func takes long time, timeouut
+            clearInterval(intervalID);
+            res.status(500).send({
+                error: 'Error in calculating college scores',
+            });
+        }
+    }, 1000);
+
 });
 // Find similar high schools
 app.post('/findsimilarhs', function (req, res) {
