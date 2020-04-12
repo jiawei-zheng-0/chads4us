@@ -222,14 +222,7 @@ module.exports = {
                                 else {
                                     collegesatEBRWScore = results.rows[0].satebrw;
                                     // report questionable decisions
-                                    userDB.query(flagQuery, [flag(), username, collegename], (err, results) => {
-                                        if (err) {
-                                            callback(err);
-                                        }
-                                        else {
-                                            callback(err, results);
-                                        }
-                                    });
+                                    userDB.query(flagQuery, [flag(), username, collegename]);
                                 }
                             });
                         }
@@ -603,7 +596,7 @@ module.exports = {
             return overallScore;
         }
 
-        getSAT();
+        getGPA();
     },
     //Delete profiles (admin)
     deleteProfiles: (callback) => {
