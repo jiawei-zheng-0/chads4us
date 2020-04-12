@@ -587,15 +587,15 @@ app.post('/scrapecollegedata', (req, res) => {
         if (counter >= collegeList.length) {// if data for all colleges retrieved, store in db
             clearInterval(intervalID);
             // success in scraping all data
-            console.log(collegeList);
-            console.log(fourYearGradRate);
-            console.log(costOfAttendanceInState);
-            console.log(costOfAttendanceOutOfState);
-            console.log(majors);
-            console.log(satMathAvg);
-            console.log(satEBRWAvg);
-            console.log(actAvg);
-            console.log(gpa)
+            //console.log(collegeList);
+            //console.log(fourYearGradRate);
+            //console.log(costOfAttendanceInState);
+            //console.log(costOfAttendanceOutOfState);
+            //console.log(majors);
+            //console.log(satMathAvg);
+            //console.log(satEBRWAvg);
+            //console.log(actAvg);
+            //console.log(gpa)
 
             collegeList.forEach(college => {
                 const i = collegeList.indexOf(college);
