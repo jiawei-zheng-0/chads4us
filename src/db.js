@@ -501,15 +501,12 @@ module.exports = {
             // Use higher of SAT or ACT
             if (higherTest == "SAT") {
                 if (studentSAT >= collegeSAT) {
-                    console.log('student sat is higher than college sat')
                     satactPoints = 20;
                 }
                 else if (studentSAT <= 0.7 * collegeSAT) {
-                    console.log('student sat is less than college sat*.7')
                     satactPoints = 0;
                 }
                 else {
-                    console.log('not above conditions')
                     //console.log(`${collegename} colleg sat:${collegeSAT} student sat:${studentSAT}`)
                     satactPoints = 0.2 * ((100 / (0.3 * collegeSAT)) * studentSAT - (700 / 3));
                 }
