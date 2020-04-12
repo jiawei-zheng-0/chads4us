@@ -193,15 +193,23 @@ app.post('/editprofile/:username', function (req, res) {
                         }
                     }
                 });
-            // edit applications
-            db.editApplications(username, req.body.collegename, req.body.status, (err, result) => {
-                if (err) {
-                    console.log(err);
-                }
-                else {
-                    res.status(200).send();
-                }
+        }
+    });
+});
+
+// EDIT APPLICATIONS
+app.post('/editapplication/:username', function (req, res) {
+    const username = req.params.username;
+    // edit applications
+    db.editApplications(username, req.body.collegename, req.body.status, (err, result) => {
+        if (err) {
+            console.log(err);
+            res.status(500).send({
+                error: 'Error in editing applications',
             });
+        }
+        else {
+            res.status(200).send();
         }
     });
 });
