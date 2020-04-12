@@ -136,6 +136,17 @@ module.exports = {
     editApplications: (username, collegename, status, callback) => {
         let updateApplicationQuery = `UPDATE applications SET username = $1, collegename = $2, status = $3 WHERE username = $1 AND collegename = $2`;
         let addApplicationQuery = `INSERT INTO applications (username, collegename, status) VALUES ($1,$2,$3)`;
+
+        let studentACTCompQuery = `SELECT actcomposite FROM studentdata WHERE username = $1`;
+        let studentSATMathQuery = `SELECT satmath FROM studentdata WHERE username = $1`;
+        let studentSATEBRWQuery = `SELECT satebrw FROM studentdata WHERE username = $1`;
+        let collegeACTCompQuery = `SELECT actcomposite FROM colleges WHERE collegename = $1`;
+        let collegeSATMathQuery = `SELECT satmath FROM colleges WHERE collegename = $1`;
+        let collegeSATEBRWQuery = `SELECT satebrw FROM colleges WHERE collegename = $1`;
+        let flagQuery = `UPDATE applications SET questionable = $1 WHERE username = $2 AND collegename = $3`;
+
+        let studentactCompScore, studentsatMathScore, studentsatEBRWScore, collegeactCompScore, collegesatMathScore, collegesatEBRWScore;
+
         userDB.query(updateApplicationQuery, [username, collegename, status], (err, results) => {
             if (err) {
                 callback(err);
@@ -148,73 +159,7 @@ module.exports = {
                         }
                         else {
                             if (status == 'accepted') {
-                                let studentACTCompQuery = `SELECT actcomposite FROM studentdata WHERE username = $1`;
-                                let studentSATMathQuery = `SELECT satmath FROM studentdata WHERE username = $1`;
-                                let studentSATEBRWQuery = `SELECT satebrw FROM studentdata WHERE username = $1`;
-                                let collegeACTCompQuery = `SELECT actcomposite FROM colleges WHERE collegename = $1`;
-                                let collegeSATMathQuery = `SELECT satmath FROM colleges WHERE collegename = $1`;
-                                let collegeSATEBRWQuery = `SELECT satebrw FROM colleges WHERE collegename = $1`;
-                                let studentactCompScore, studentsatMathScore, studentsatEBRWScore, collegeactCompScore, collegesatMathScore, collegesatEBRWScore;
-                        
-                                userDB.query(studentACTCompQuery, [username], (err, results) => {
-                                    if (err) {
-                                        callback(err);
-                                    }
-                                    else {
-                                        studentactCompScore = results.rows[0].actcomposite;
-                                        userDB.query(studentSATMathQuery, [username], (err, results) => {
-                                            if (err) {
-                                                callback(err);
-                                            }
-                                            else {
-                                                studentsatMathScore = results.rows[0].satmath;
-                                                userDB.query(studentSATEBRWQuery, [username], (err, results) => {
-                                                    if (err) {
-                                                        callback(err);
-                                                    }
-                                                    else {
-                                                        studentsatEBRWScore = results.rows[0].satebrw;
-                                                        collegeDB.query(collegeACTCompQuery, [collegename], (err, results) => {
-                                                            if (err) {
-                                                                callback(err);
-                                                            }
-                                                            else {
-                                                                collegeactCompScore = results.rows[0].actcomposite;
-                                                                collegeDB.query(collegeSATMathQuery, [collegename], (err, results) => {
-                                                                    if (err) {
-                                                                        callback(err);
-                                                                    }
-                                                                    else {
-                                                                        collegesatMathScore = results.rows[0].satmath;
-                                                                        collegeDB.query(collegeSATEBRWQuery, [collegename], (err, results) => {
-                                                                            if (err) {
-                                                                                callback(err);
-                                                                            }
-                                                                            else {
-                                                                                collegesatEBRWScore = results.rows[0].satebrw;
-                                                                                let decisionScore = Math.max((collegeactCompScore - studentactCompScore) / collegeactCompScore, (collegesatMathScore - studentsatMathScore) / collegesatMathScore, (collegesatEBRWScore - studentsatEBRWScore) / collegesatEBRWScore);
-                                                                                let flag = decisionScore >= 0.12 ? true : false;
-                                                                                let flagQuery = `UPDATE applications SET questionable = ${flag} WHERE username = $1 AND collegename = $2`;
-                                                                                userDB.query(flagQuery, [username, collegename], (err, results) => {
-                                                                                    if (err) {
-                                                                                        callback(err);
-                                                                                    }
-                                                                                    else {
-                                                                                        callback(err, results);
-                                                                                    }
-                                                                                });
-                                                                            }
-                                                                        })
-                                                                    }
-                                                                })
-                                                            }
-                                                        });
-                                                    }
-                                                })
-                                            }
-                                        })
-                                    }
-                                });
+                                studentTests();
                             }
                             callback(null, results);
                         }
@@ -222,78 +167,82 @@ module.exports = {
                 }
                 else {
                     if (status == 'accepted') {
-                        let studentACTCompQuery = `SELECT actcomposite FROM studentdata WHERE username = $1`;
-                        let studentSATMathQuery = `SELECT satmath FROM studentdata WHERE username = $1`;
-                        let studentSATEBRWQuery = `SELECT satebrw FROM studentdata WHERE username = $1`;
-                        let collegeACTCompQuery = `SELECT actcomposite FROM colleges WHERE collegename = $1`;
-                        let collegeSATMathQuery = `SELECT satmath FROM colleges WHERE collegename = $1`;
-                        let collegeSATEBRWQuery = `SELECT satebrw FROM colleges WHERE collegename = $1`;
-                        let studentactCompScore, studentsatMathScore, studentsatEBRWScore, collegeactCompScore, collegesatMathScore, collegesatEBRWScore;
-                
-                        userDB.query(studentACTCompQuery, [username], (err, results) => {
-                            if (err) {
-                                callback(err);
-                            }
-                            else {
-                                studentactCompScore = results.rows[0].actcomposite;
-                                userDB.query(studentSATMathQuery, [username], (err, results) => {
-                                    if (err) {
-                                        callback(err);
-                                    }
-                                    else {
-                                        studentsatMathScore = results.rows[0].satmath;
-                                        userDB.query(studentSATEBRWQuery, [username], (err, results) => {
-                                            if (err) {
-                                                callback(err);
-                                            }
-                                            else {
-                                                studentsatEBRWScore = results.rows[0].satebrw;
-                                                collegeDB.query(collegeACTCompQuery, [collegename], (err, results) => {
-                                                    if (err) {
-                                                        callback(err);
-                                                    }
-                                                    else {
-                                                        collegeactCompScore = results.rows[0].actcomposite;
-                                                        collegeDB.query(collegeSATMathQuery, [collegename], (err, results) => {
-                                                            if (err) {
-                                                                callback(err);
-                                                            }
-                                                            else {
-                                                                collegesatMathScore = results.rows[0].satmath;
-                                                                collegeDB.query(collegeSATEBRWQuery, [collegename], (err, results) => {
-                                                                    if (err) {
-                                                                        callback(err);
-                                                                    }
-                                                                    else {
-                                                                        collegesatEBRWScore = results.rows[0].satebrw;
-                                                                        let decisionScore = Math.max((collegeactCompScore - studentactCompScore) / collegeactCompScore, (collegesatMathScore - studentsatMathScore) / collegesatMathScore, (collegesatEBRWScore - studentsatEBRWScore) / collegesatEBRWScore);
-                                                                        let flag = decisionScore >= 0.12 ? true : false;
-                                                                        let flagQuery = `UPDATE applications SET questionable = ${flag} WHERE username = $1 AND collegename = $2`;
-                                                                        userDB.query(flagQuery, [username, collegename], (err, results) => {
-                                                                            if (err) {
-                                                                                callback(err);
-                                                                            }
-                                                                            else {
-                                                                                callback(err, results);
-                                                                            }
-                                                                        });
-                                                                    }
-                                                                })
-                                                            }
-                                                        })
-                                                    }
-                                                });
-                                            }
-                                        })
-                                    }
-                                })
-                            }
-                        });
+                        studentTests();
                     }
                     callback(null, results);
                 }
             }
         });
+
+        const studentTests = function () {
+            userDB.query(studentACTCompQuery, [username], (err, results) => {
+                if (err) {
+                    callback(err);
+                }
+                else {
+                    studentactCompScore = results.rows[0].actcomposite;
+                    userDB.query(studentSATMathQuery, [username], (err, results) => {
+                        if (err) {
+                            callback(err);
+                        }
+                        else {
+                            studentsatMathScore = results.rows[0].satmath;
+                            userDB.query(studentSATEBRWQuery, [username], (err, results) => {
+                                if (err) {
+                                    callback(err);
+                                }
+                                else {
+                                    studentsatEBRWScore = results.rows[0].satebrw;
+                                    collegeTests();
+                                }
+                            });
+                        }
+                    });
+                }
+            });
+        }
+
+        const collegeTests = function () {
+            collegeDB.query(collegeACTCompQuery, [collegename], (err, results) => {
+                if (err) {
+                    callback(err);
+                }
+                else {
+                    collegeactCompScore = results.rows[0].actcomposite;
+                    collegeDB.query(collegeSATMathQuery, [collegename], (err, results) => {
+                        if (err) {
+                            callback(err);
+                        }
+                        else {
+                            collegesatMathScore = results.rows[0].satmath;
+                            collegeDB.query(collegeSATEBRWQuery, [collegename], (err, results) => {
+                                if (err) {
+                                    callback(err);
+                                }
+                                else {
+                                    collegesatEBRWScore = results.rows[0].satebrw;
+                                    // report questionable decisions
+                                    userDB.query(flagQuery, [flag(), username, collegename], (err, results) => {
+                                        if (err) {
+                                            callback(err);
+                                        }
+                                        else {
+                                            callback(err, results);
+                                        }
+                                    });
+                                }
+                            });
+                        }
+                    });
+                }
+            }); 
+        }
+
+        const flag = function () {
+            let decisionScore = Math.max((collegeactCompScore - studentactCompScore) / collegeactCompScore, (collegesatMathScore - studentsatMathScore) / collegesatMathScore, (collegesatEBRWScore - studentsatEBRWScore) / collegesatEBRWScore);
+            let flag = decisionScore >= 0.12 ? true : false;
+            return flag;
+        }
     },
     //Change password
     changePassword: (username, password, callback) => {
