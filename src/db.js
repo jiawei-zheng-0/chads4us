@@ -161,7 +161,7 @@ module.exports = {
                             if (status == 'accepted') {
                                 studentTests();
                             }
-                            callback(null, results);
+                            callback(null, true);
                         }
                     });
                 }
@@ -169,7 +169,7 @@ module.exports = {
                     if (status == 'accepted') {
                         studentTests();
                     }
-                    callback(null, results);
+                    callback(null, false);
                 }
             }
         });
@@ -734,7 +734,17 @@ module.exports = {
             }
         })
     },
-
+    getAllApplications: (username, callback) => {
+        const getAllAppsQuery = 'SELECT * FROM applications WHERE username = $1';
+        userDB.query(getAllAppsQuery, [username], (err, results) => {
+            if (err) {
+                callback(err);
+            }
+            else {
+                callback(null, results.rows);
+            }
+        });
+    },
     getAllQuestionableDecisions: (callback) => {
         let getAllQuestionableDecisionsQuery = 'SELECT * FROM applications WHERE questionable = TRUE';
         userDB.query(getAllQuestionableDecisionsQuery, (err, results) => {
