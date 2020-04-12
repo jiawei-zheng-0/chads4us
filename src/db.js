@@ -313,7 +313,7 @@ module.exports = {
         })
     },
     //Search for colleges
-    searchColleges: (isStrict, collegename, lowadmissionrate, highadmissionrate, costofattendanceinstate, costofattendanceoutofstate, location, major1,
+    searchColleges: (isStrict, collegename, lowadmissionrate, highadmissionrate, costofattendance, region, major1,
         major2, lowranking, highranking, lowsize, highsize, lowsatmath, highsatmath, lowsatebrw, highsatebrw, lowactcomposite, highactcomposite, callback) => {
         let searchQuery = 'SELECT * FROM colleges WHERE 1=1';
         if (collegename) {
@@ -324,27 +324,21 @@ module.exports = {
         }
         if (lowadmissionrate && highadmissionrate) {
             if (isStrict)
-                searchQuery += ` AND admissionrate IS NOT NULL AND admissionrate BETWEEN ${lowadmissionrate / 100} AND ${highadmissionrate / 100}`;
+                searchQuery += ` AND admissionrate IS NOT NULL AND admissionrate BETWEEN ${lowadmissionrate / 100.0} AND ${highadmissionrate / 100.0}`;
             else
-                searchQuery += ` AND (admissionrate IS NULL OR admissionrate BETWEEN ${lowadmissionrate / 100} AND ${highadmissionrate / 100})`;
+                searchQuery += ` AND (admissionrate IS NULL OR admissionrate BETWEEN ${lowadmissionrate / 100.0} AND ${highadmissionrate / 100.0})`;
         }
-        if (costofattendanceinstate) {
+        if (costofattendance) {
             if (isStrict)
-                searchQuery += ` AND costofattendanceinstate IS NOT NULL AND costofattendanceinstate <= ${costofattendanceinstate}`;
+                searchQuery += ` AND costofattendanceinstate IS NOT NULL AND costofattendanceinstate <= ${costofattendance}`;
             else
-                searchQuery += ` AND (costofattendanceinstate IS NULL OR costofattendanceinstate <= ${costofattendanceinstate})`;
+                searchQuery += ` AND (costofattendanceinstate IS NULL OR costofattendanceinstate <= ${costofattendance})`;
         }
-        if (costofattendanceoutofstate) {
+        if (region) {
             if (isStrict)
-                searchQuery += ` AND costofattendanceoutofstate IS NOT NULL AND costofattendanceoutofstate <= ${costofattendanceoutofstate}`;
+                searchQuery += ` AND region IS NOT NULL AND region='${region}'`;
             else
-                searchQuery += ` AND (costofattendanceoutofstate IS NULL OR costofattendanceoutofstate <= ${costofattendanceoutofstate})`;
-        }
-        if (location) {
-            if (isStrict)
-                searchQuery += ` AND location IS NOT NULL AND location='${location}'`;
-            else
-                searchQuery += ` AND (location IS NULL OR location='${location}')`;
+                searchQuery += ` AND (region IS NULL OR region='${region}')`;
         }
         if (major1) {
             if (isStrict)
