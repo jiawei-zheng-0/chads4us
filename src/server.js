@@ -209,7 +209,9 @@ app.post('/editapplication/:username', function (req, res) {
             });
         }
         else {
-            res.status(200).send();
+            res.status(200).send({
+                isNew : result
+            });
         }
     });
 });
@@ -734,6 +736,20 @@ app.get('/getallcolleges', function (req, res) {
         if (err) {
             res.status(500).send({
                 error: 'Error in retrieving all colleges',
+            });
+        }
+        else {
+            res.status(200).send(result);
+        }
+    });
+});
+
+// GET ALL APPS FOR A USER
+app.get('/getallapplications/:username', function (req, res) {
+    db.getAllApplications(req.params.username, (err, result) => {
+        if (err) {
+            res.status(500).send({
+                error: 'Error in retrieving all applications',
             });
         }
         else {
