@@ -356,13 +356,13 @@ module.exports = {
                     callback(err);
                 }
                 else {
-                    studentSAT = results.rows[0].sum;
+                    studentSAT = Number(results.rows[0].sum);
                     collegeDB.query(collegeSATQuery, [collegename], (err, results) => {
                         if (err) {
                             callback(err);
                         }
                         else {
-                            collegeSAT = results.rows[0].sum;
+                            collegeSAT = Number(results.rows[0].sum);
                             getACT();
                         }
                     });
@@ -375,13 +375,13 @@ module.exports = {
                     callback(err);
                 }
                 else {
-                    studentACT = results.rows[0].actcomposite;
+                    studentACT = Number(results.rows[0].actcomposite);
                     collegeDB.query(collegeACTQuery, [collegename], (err, results) => {
                         if (err) {
                             callback(err);
                         }
                         else {
-                            collegeACT = results.rows[0].actcomposite;
+                            collegeACT = Number(results.rows[0].actcomposite);
                             higherTest = studentSAT/1600.0 >= studentACT/36.0 ? "SAT" : "ACT"; 
                             getRanking(); 
                         }
@@ -500,6 +500,7 @@ module.exports = {
                     satactPoints = 0;
                 }
                 else {
+                    //console.log(`${collegename} colleg sat:${collegeSAT} student sat:${studentSAT}`)
                     satactPoints = 0.2 * ((100 / (0.3 * collegeSAT)) * studentSAT - (700 / 3));
                 }
             }
@@ -511,9 +512,11 @@ module.exports = {
                     satactPoints = 0;
                 }
                 else {
+                    console.log(`${collegename} ${collegeACT} ${studentACT}`)
                     satactPoints = 0.2 * ((100 / (0.3 * collegeACT)) * studentACT - (700 / 3));
                 }
             }
+            //console.log(`${collegename}= ${rankingPoints}, ${popularityPoints}, ${gpaPoints}, ${satactPoints}`);
             let overallScore = Math.round(rankingPoints + popularityPoints + gpaPoints + satactPoints);
             return overallScore;
         }

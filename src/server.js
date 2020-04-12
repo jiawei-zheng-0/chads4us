@@ -247,7 +247,7 @@ app.post('/collegerecommender/:username', function (req, res) {
                 });
             }
             else {
-                console.log(collegeScores)
+                //console.log(collegeScores)
                 counter++;
                 collegeScores[college] = result;
             }
