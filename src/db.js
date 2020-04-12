@@ -60,13 +60,26 @@ module.exports = {
         })
     },
     importApplication: (username, collegename, status, callback) => {
-        const importApplicationQuery = `INSERT INTO applications (username,collegename,status) VALUES($1,$2,$3)`;
-        userDB.query(importApplicationQuery, [username, collegename, status], (err, results) => {
+        const importApplicationUpdateQuery = `UPDATE applications SET status = $3 WHERE username = $1 AND collegename = $2`;
+        const importApplicationNewQuery = 'INSERT INTO applications (username,collegename,status) VALUES ($1,$2,$3)';
+        userDB.query(importApplicationUpdateQuery, [username, collegename, status], (err, results) => {
             if (err) {
                 callback(err);
             }
             else {
-                callback(null, results);
+                if (results.rowCount == 0) {
+                    userDB.query(importApplicationNewQuery, [username, collegename, status], (err, results) => {
+                        if (err) {
+                            callback(err);
+                        }
+                        else {
+                            callback(null, results);
+                        }
+                    }); 
+                }
+                else {
+                    callback(null, results);
+                }
             }
         }); 
     },
@@ -134,7 +147,7 @@ module.exports = {
     },
     //Edit applications
     editApplications: (username, collegename, status, callback) => {
-        let updateApplicationQuery = `UPDATE applications SET username = $1, collegename = $2, status = $3 WHERE username = $1 AND collegename = $2`;
+        let updateApplicationQuery = `UPDATE applications SET status = $3 WHERE username = $1 AND collegename = $2`;
         let addApplicationQuery = `INSERT INTO applications (username, collegename, status) VALUES ($1,$2,$3)`;
 
         let studentACTCompQuery = `SELECT actcomposite FROM studentdata WHERE username = $1`;

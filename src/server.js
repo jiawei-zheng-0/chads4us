@@ -323,7 +323,7 @@ app.post('/importprofiles', (req, res) => {
         fs.createReadStream(config.applicationCSV)
             .pipe(csvParser())
             .on('data', (row) => {
-                console.log(row);
+                //console.log(row);
                 db.importApplication(row.userid, row.college, row.status, (err) => {
                     if (err) {
                         console.log('Error in importing applications');
