@@ -134,10 +134,11 @@ app.get('/profile/:username', function (req, res) {
 
 //Given a high school name, converts it to proper format, checks if in highschools.txt, scrapes data from niche, inserts into db
 function importHighSchool(highschoolname, highschoolcity, highschoolstate, callback) {
-    if (highschoolname == null){
+    if (highschoolname == null) {
         callback(null);
         return;
     }
+    highschoolcity = highschoolcity.replace(/ /g, '-');
     const hsname = `${highschoolname.replace(/ /g, '-')}-${highschoolcity}-${highschoolstate}`.toLowerCase();
     console.log(hsname);
     if (!highSchoolList.includes(hsname)) {//if high school does not exist
@@ -160,13 +161,13 @@ function importHighSchool(highschoolname, highschoolcity, highschoolstate, callb
                                     //console.log(response.data);
                                     //Get niche score
                                     const grade = hspage.data.match(/\w[+-]?(?=<\/div>Overall Grade<\/span>)/gim)[0];
-                                    console.log(grade);
+                                    //console.log(grade);
                                     const avgSAT = Number(academicspg.data.match(/(?<=Average SAT composite score out of 1600, as reported by Niche users from this school\.<\/div><\/div><\/div><div class="scalar__value">)\d+/gim));
-                                    console.log(avgSAT);
+                                    //console.log(avgSAT);
                                     const avgACT = Number(academicspg.data.match(/(?<=Average ACT composite score out of 36, as reported by Niche users from this school\.<\/div><\/div><\/div><div class="scalar__value">)\d+/gim));
-                                    console.log(avgACT);
+                                    //console.log(avgACT);
                                     const graduationRate = Number(academicspg.data.match(/(?<=graduation rates differently, use caution when comparing this data to data from another state\.<\/div><\/div><\/div><div class="scalar__value"><span>)\d+(?=%)/gim));
-                                    console.log(graduationRate);
+                                    //console.log(graduationRate);
                                     db.addHighSchool(highschoolname, highschoolcity, highschoolstate, grade, avgSAT, graduationRate, avgACT, (err, result) => {
                                         if (err) {
                                             callback(`error in adding hs ${highschoolname} to db`);
@@ -180,12 +181,12 @@ function importHighSchool(highschoolname, highschoolcity, highschoolstate, callb
                                 })
                                 .catch(function (error) {
                                     console.error(error);
-                                    callback(`high school does not exist ${highschoolname}`);
+                                    callback(`high school page does not exist ${highschoolname}`);
                                 });
                         })
                         .catch(function (error) {
                             console.error(error);
-                            callback(`high school does not exist ${highschoolname}`);
+                            callback(`high school page does not exist ${highschoolname}`);
                         });
 
                 }
@@ -235,7 +236,7 @@ app.post('/editprofile/:username', function (req, res) {
                         console.log(`User ${username} profile updated`);
                         //If user's gpa changed, update avg gpa of high school
                         //console.log(`${result.gpa} = ${ req.body.gpa}`)
-                        if (oldGPA != req.body.gpa){
+                        if (oldGPA != req.body.gpa) {
                             db.recalculateHSGPA(result.highschoolname, (err, result) => {
                                 if (err) {
                                     console.log('error in caluclating HS GPA');
@@ -540,12 +541,19 @@ app.post('/importprofiles', (req, res) => {
                     console.log(profiles);
 
                     let counter = 0;
+                    let listOfUpdatedHighSchools = [];
+                    let listOfUpdatedHighSchoolCity = [];
+                    let listOfUpdatedHighSchoolState = [];
                     profiles.forEach(profile => {
                         bcrypt.hash(profile.password, 10, (err, hash) => {
                             profile.password = hash;
                             db.importProfile(profile.username, hash, (err) => {
                                 if (err) {
                                     console.log('Username already exists');
+                                    res.status(500).send({
+                                        error: `Username ${profile.username} already exists`,
+                                    });
+                                    return;
                                 }
                                 else {
                                     console.log(`New user ${profile.username} registered`);
@@ -556,9 +564,18 @@ app.post('/importprofiles', (req, res) => {
                                             if (err) {
                                                 console.log('error in editing profile');
                                                 console.error(err);
+                                                res.status(500).send({
+                                                    error: `Username ${profile.username} already exists`,
+                                                });
+                                                return;
                                             }
                                             else {
                                                 console.log(`User ${profile.username} profile updated`);
+                                                if (!listOfUpdatedHighSchools.includes(profile.highschoolname)) {
+                                                    listOfUpdatedHighSchools.push(profile.highschoolname);
+                                                    listOfUpdatedHighSchoolCity.push(profile.highschoolcity);
+                                                    listOfUpdatedHighSchoolState.push(profile.highschoolstate);
+                                                }
                                                 counter++;
                                             }
                                         });
@@ -571,11 +588,38 @@ app.post('/importprofiles', (req, res) => {
                     let timeoutCounter = 0;
                     const intervalID = setInterval(() => {
                         if (counter >= profiles.length) {
-                            clearInterval(intervalID);
-                            res.status(200).send();
+                            //console.log(listOfUpdatedHighSchools)
+                            //console.log(listOfUpdatedHighSchoolCity)
+                            //console.log(listOfUpdatedHighSchoolState)
+
+                            listOfUpdatedHighSchools.forEach(highSchool => {
+                                let i = listOfUpdatedHighSchools.indexOf(highSchool);
+                                importHighSchool(highSchool, listOfUpdatedHighSchoolCity[i], listOfUpdatedHighSchoolState[i], (err, result) => {
+                                    if (err) {
+                                        console.log(`error in importing hs ${highSchool}`);
+                                        res.status(500).send({
+                                            error: err,
+                                        });
+                                    }
+                                    else {
+                                        db.recalculateHSGPA(highSchool, (err, result) => {
+                                            if (err) {
+                                                console.log('error in recaluclating HS GPA');
+                                                res.status(500).send({
+                                                    error: err,
+                                                });
+                                            }
+                                            else {
+                                                clearInterval(intervalID);
+                                                res.status(200).send();
+                                            }
+                                        });
+                                    }
+                                });
+                            });
                         }
                         timeoutCounter++;
-                        if (timeoutCounter >= profiles.length) {// if func takes more than row # of seconds, timeout
+                        if (timeoutCounter >= profiles.length+5) {// if func takes more than row # of seconds, timeout
                             clearInterval(intervalID);
                             res.status(500).send({
                                 error: 'Error in importing profiles',
