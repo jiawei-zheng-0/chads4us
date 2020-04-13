@@ -138,8 +138,7 @@ function importHighSchool(highschoolname, highschoolcity, highschoolstate, callb
         callback(null);
         return;
     }
-    highschoolcity = highschoolcity.replace(/ /g, '-');
-    const hsname = `${highschoolname.replace(/ /g, '-')}-${highschoolcity}-${highschoolstate}`.toLowerCase();
+    const hsname = `${highschoolname.replace(/ /g, '-')}-${highschoolcity.replace(/ /g, '-')}-${highschoolstate}`.toLowerCase();
     console.log(hsname);
     if (!highSchoolList.includes(hsname)) {//if high school does not exist
         console.log(`high school does not exist ${hsname}`);
