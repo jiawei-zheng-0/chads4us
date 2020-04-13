@@ -783,5 +783,26 @@ module.exports = {
             }
         })
     },
-    
 };
+
+// Calculate HS avg GPA
+const calculateHSGPA = function (highschoolname) {
+    let getHSGPAQuery = 'SELECT AVG(gpa) FROM studentdata WHERE highschoolname = $1';
+    let importHSGPAQuery = 'UPDATE highschools SET hsavggpa = $1 WHERE hsname = $2';
+
+    userDB.query(getHSGPAQuery, [highschoolname], (err, results) => {
+        if (err) {
+            callback(err);
+        }
+        else {
+            collegeDB.query(importHSGPAQuery, [results.rows[0].avg, highschoolname], (err, results) => {
+                if (err) {
+                    callback(err);
+                }
+                else {
+                    callback(err, results);
+                }
+            });
+        }
+    });
+}
