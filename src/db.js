@@ -795,9 +795,9 @@ module.exports = {
             }
         })
     },
-    addHighSchool: (highschoolname,highschoolcity,highschoolstate,highschoolgrade,highschoolsat,highschoolgradrate,highschoolact, callback) => {
+    addHighSchool: (highschoolname, highschoolcity, highschoolstate, highschoolgrade, highschoolsat, highschoolgradrate, highschoolact, callback) => {
         let addHighSchoolQuery = 'INSERT INTO highschools (hsname,hscity,hsstate,hsnichegrade,hsavgsat,gradrate,avgact) VALUES ($1,$2,$3,$4,$5,$6,$7) ON CONFLICT DO NOTHING';
-        collegeDB.query(addHighSchoolQuery, [highschoolname,highschoolcity,highschoolstate,highschoolgrade,highschoolsat,highschoolgradrate,highschoolact], (err, results) => {
+        collegeDB.query(addHighSchoolQuery, [highschoolname, highschoolcity, highschoolstate, highschoolgrade, highschoolsat, highschoolgradrate, highschoolact], (err, results) => {
             if (err) {
                 console.log(err);
                 callback(err);
@@ -822,6 +822,9 @@ module.exports = {
     },
     // Calculate HS avg GPA
     recalculateHSGPA: (highschoolname, callback) => {
+        if (highschoolname == null) {
+            callback(null)
+        }
         let getHSGPAQuery = 'SELECT AVG(gpa) FROM studentdata WHERE highschoolname = $1';
         let importHSGPAQuery = 'UPDATE highschools SET hsavggpa = $1 WHERE hsname = $2';
 
@@ -835,7 +838,7 @@ module.exports = {
                         callback(err);
                     }
                     else {
-                        callback(err, results);
+                        callback(null, results);
                     }
                 });
             }
