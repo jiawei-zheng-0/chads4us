@@ -60,13 +60,26 @@ module.exports = {
         })
     },
     importApplication: (username, collegename, status, callback) => {
-        const importApplicationQuery = `INSERT INTO applications (username,collegename,status) VALUES($1,$2,$3)`;
-        userDB.query(importApplicationQuery, [username, collegename, status], (err, results) => {
+        const importApplicationUpdateQuery = `UPDATE applications SET status = $3 WHERE username = $1 AND collegename = $2`;
+        const importApplicationNewQuery = 'INSERT INTO applications (username,collegename,status) VALUES ($1,$2,$3)';
+        userDB.query(importApplicationUpdateQuery, [username, collegename, status], (err, results) => {
             if (err) {
                 callback(err);
             }
             else {
-                callback(null, results);
+                if (results.rowCount == 0) {
+                    userDB.query(importApplicationNewQuery, [username, collegename, status], (err, results) => {
+                        if (err) {
+                            callback(err);
+                        }
+                        else {
+                            callback(null, results);
+                        }
+                    });
+                }
+                else {
+                    callback(null, results);
+                }
             }
         });
     },
@@ -134,7 +147,7 @@ module.exports = {
     },
     //Edit applications
     editApplications: (username, collegename, status, callback) => {
-        let updateApplicationQuery = `UPDATE applications SET username = $1, collegename = $2, status = $3 WHERE username = $1 AND collegename = $2`;
+        let updateApplicationQuery = `UPDATE applications SET status = $3 WHERE username = $1 AND collegename = $2`;
         let addApplicationQuery = `INSERT INTO applications (username, collegename, status) VALUES ($1,$2,$3)`;
 
         let studentACTCompQuery = `SELECT actcomposite FROM studentdata WHERE username = $1`;
@@ -222,14 +235,7 @@ module.exports = {
                                 else {
                                     collegesatEBRWScore = results.rows[0].satebrw;
                                     // report questionable decisions
-                                    userDB.query(flagQuery, [flag(), username, collegename], (err, results) => {
-                                        if (err) {
-                                            callback(err);
-                                        }
-                                        else {
-                                            callback(err, results);
-                                        }
-                                    });
+                                    userDB.query(flagQuery, [flag(), username, collegename]);
                                 }
                             });
                         }
@@ -606,7 +612,7 @@ module.exports = {
             return overallScore;
         }
 
-        getSAT();
+        getGPA();
     },
     //Delete profiles (admin)
     deleteProfiles: (callback) => {
@@ -797,9 +803,31 @@ module.exports = {
                 callback(err);
             }
             else {
-                callback(null , results.rows);
+                callback(null, results.rows);
             }
         })
     },
 
-};
+    // Calculate HS avg GPA
+    calculateHSGPA: (highschoolname, callback) => {
+        let getHSGPAQuery = 'SELECT AVG(gpa) FROM studentdata WHERE highschoolname = $1';
+        let importHSGPAQuery = 'UPDATE highschools SET hsavggpa = $1 WHERE hsname = $2';
+
+        userDB.query(getHSGPAQuery, [highschoolname], (err, results) => {
+            if (err) {
+                callback(err);
+            }
+            else {
+                collegeDB.query(importHSGPAQuery, [results.rows[0].avg, highschoolname], (err, results) => {
+                    if (err) {
+                        callback(err);
+                    }
+                    else {
+                        callback(err, results);
+                    }
+                });
+            }
+        });
+
+    }
+}
