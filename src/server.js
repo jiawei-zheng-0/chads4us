@@ -35,6 +35,11 @@ db.importColleges(collegeList, (err) => {
 });
 console.log(collegeList);
 
+let highSchoolList = fs.readFileSync(config.highSchoolFile).toString().split(/\r?\n/);
+collegeList = collegeList.filter(function (removeEmpty) {
+    return removeEmpty != '';
+});
+
 app.post('/posttest', (req, res) => {
     res.status(200).send({
         status: 'post response',
@@ -139,6 +144,46 @@ app.get('/profile/:username', function (req, res) {
     });
 });
 
+//Given a high school name, converts it to proper format, checks if in highschools.txt, scrapes data from niche, inserts into db
+function importHighSchool(highschoolname, highschoolcity, highschoolstate, callback) {
+    const hsname = `${highschoolname.replace(/ /g, '-')}-${highschoolcity}-${highschoolstate}`.toLowerCase();
+    console.log(hsname);
+    if (!highSchoolList.includes(hsname)) {//if high school does not exist
+        console.log(`high school does not exist ${hsname}`);
+        callback(`high school does not exist ${highschoolname}`);
+    } else {//if high school does exist
+        db.checkHighSchoolExists(highschoolname, (err, result) => {//check if hs data already in system
+            if (err) {
+                //console.log(err)
+                res.status(500).send({
+                    error: 'error in checking if hs exists in db',
+                });
+            }
+            else {
+                if (result.length == 0) {//if high school is not in db, scrape from niche
+                    axios.get(`${config.highSchoolSite}${hsname}`)
+                        .then((response) => {
+                            //console.log(response.data);
+                            //Get niche score
+                            const grade = response.data.match(/\w[+-]?(?=<\/div>Overall Grade<\/span>)/gim);
+                            console.log(grade);
+
+                            
+                        })
+                        .catch(function (error) {
+                            console.error(error);
+                            callback(`high school does not exist ${highschoolname}`);
+                        });
+
+                }
+                else {//if hs data already in system, no need to scrape
+
+                }
+            }
+        });
+    }
+}
+
 // EDIT PROFILE
 app.post('/editprofile/:username', function (req, res) {
     const username = req.params.username;
@@ -172,25 +217,39 @@ app.post('/editprofile/:username', function (req, res) {
                     }
                     else {
                         console.log(`User ${username} profile updated`);
-                        if (password) {
-                            bcrypt.hash(password, 10, (err, hash) => {
-                                db.changePassword(username, hash, (err) => {
-                                    if (err) {
-                                        console.log(`error in changing password for ${username}`);
-                                        res.status(500).send({
-                                            error: 'error in changing password',
-                                        });
-                                    }
-                                    else {
-                                        console.log(`User ${username} password changed`);
-                                        res.status(200).send();
-                                    }
+                        //CHECK IF HIGH SCHOOL IS VALID HERE, if not in highschoo.txt error
+                        //build hishschool name
+                        importHighSchool(req.body.highschoolname, req.body.highschoolcity, req.body.highschoolstate, (err, result) => {
+                            if (err) {
+                                console.log('error in importing hs');
+                                res.status(500).send({
+                                    error: 'error in importing hs',
                                 });
-                            });
-                        }
-                        else {
-                            res.status(200).send();
-                        }
+                            }
+                            else {
+
+                                if (password) {//if password needs to be changed
+                                    bcrypt.hash(password, 10, (err, hash) => {
+                                        db.changePassword(username, hash, (err) => {
+                                            if (err) {
+                                                console.log(`error in changing password for ${username}`);
+                                                res.status(500).send({
+                                                    error: 'error in changing password',
+                                                });
+                                            }
+                                            else {
+                                                console.log(`User ${username} password changed`);
+                                                res.status(200).send();
+                                            }
+                                        });
+                                    });
+                                }
+                                else {//if password unmodified
+                                    res.status(200).send();
+                                }
+                            }
+
+                        });
                     }
                 });
         }
@@ -210,7 +269,7 @@ app.post('/editapplication/:username', function (req, res) {
         }
         else {
             res.status(200).send({
-                isNew : result
+                isNew: result
             });
         }
     });

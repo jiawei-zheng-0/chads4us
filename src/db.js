@@ -68,7 +68,7 @@ module.exports = {
             else {
                 callback(null, results);
             }
-        }); 
+        });
     },
     //Get hashed password
     login: (username, callback) => {
@@ -235,7 +235,7 @@ module.exports = {
                         }
                     });
                 }
-            }); 
+            });
         }
 
         const flag = function () {
@@ -354,7 +354,7 @@ module.exports = {
         const collegeSATQuery = 'SELECT SUM(satmath + satebrw) FROM colleges WHERE collegename = $1';
         const collegeACTQuery = 'SELECT actcomposite FROM colleges WHERE collegename = $1';
         let ranking, numSimStudents, numSimStudentsSameCollege, studentGPA, collegeGPA, studentSAT, studentACT, collegeSAT, collegeACT;
-        let higherTest; 
+        let higherTest;
         let rankingPoints, popularityPoints, gpaPoints, satactPoints;
 
         const getSAT = function () {
@@ -389,8 +389,8 @@ module.exports = {
                         }
                         else {
                             collegeACT = Number(results.rows[0].actcomposite);
-                            higherTest = studentSAT/1600.0 >= studentACT/36.0 ? "SAT" : "ACT"; 
-                            getRanking(); 
+                            higherTest = studentSAT / 1600.0 >= studentACT / 36.0 ? "SAT" : "ACT";
+                            getRanking();
                         }
                     });
                 }
@@ -433,7 +433,7 @@ module.exports = {
                                         numSimStudents++;
                                         simStudentsList.push(results.rows[i]);
                                     }
-                                }                    
+                                }
                             }
                             // get num of similar students that applied to the same college
                             numSimStudentsSameCollege = 0;
@@ -467,7 +467,7 @@ module.exports = {
                             callback(err);
                         }
                         else {
-                            collegeGPA = results.rows[0].gpa; 
+                            collegeGPA = results.rows[0].gpa;
                             // Calculate points
                             let score = calculateCollegeRecommendationScore();
                             callback(null, score);
@@ -476,8 +476,8 @@ module.exports = {
                 }
             });
         }
-        
-        function calculateCollegeRecommendationScore () {
+
+        function calculateCollegeRecommendationScore() {
             // WSJ has 801 college rankings
             rankingPoints = ((801 - ranking) / 801) * 10;
             // Half points for similar students if there are no simular students
@@ -519,7 +519,7 @@ module.exports = {
                     satactPoints = 0;
                 }
                 else {
-                    console.log(`${collegename} ${collegeACT} ${studentACT}`)
+                    //console.log(`${collegename} ${collegeACT} ${studentACT}`)
                     satactPoints = 0.2 * ((100 / (0.3 * collegeACT)) * studentACT - (700 / 3));
                 }
             }
@@ -527,7 +527,7 @@ module.exports = {
             let overallScore = Math.round(rankingPoints + popularityPoints + gpaPoints + satactPoints);
             return overallScore;
         }
-        
+
         getSAT();
     },
     //Find similar high schools
@@ -551,7 +551,7 @@ module.exports = {
                         }
                         else {
                             gpa2 = results.rows[0].hsavggpa;
-                            getNicheGrade();      
+                            getNicheGrade();
                         }
                     });
                 }
@@ -570,7 +570,7 @@ module.exports = {
                         }
                         else {
                             niche2 = results.rows[0].hsnichegrade;
-                            getSAT();      
+                            getSAT();
                         }
                     });
                 }
@@ -591,15 +591,15 @@ module.exports = {
                             sat2 = results.rows[0].hsavgsat;
                             // Calculate points
                             let score = calculateSimHSScore();
-                            callback(null, score);   
+                            callback(null, score);
                         }
                     });
                 }
             });
         }
-        function calculateSimHSScore () {
+        function calculateSimHSScore() {
             gpaPoints = (1 - (Math.abs(gpa1 - gpa2)) / 4.0) * 20;
-            let nicheGrades = { "A+" : 11, "A" : 10, "A-" : 9, "B+" : 8, "B" : 7, "B-" : 6, "C+" : 5, "C" : 4, "C-" : 3, "D+" : 2, "D" : 1, "D-" : 0 }
+            let nicheGrades = { "A+": 11, "A": 10, "A-": 9, "B+": 8, "B": 7, "B-": 6, "C+": 5, "C": 4, "C-": 3, "D+": 2, "D": 1, "D-": 0 }
             nichePoints = (1 - (Math.abs(nicheGrades[niche1] - nicheGrades[niche2])) / 11) * 30;
             satPoints = (1 - (Math.abs(sat1 - sat2)) / 1600) * 50;
             let overallScore = Math.round(gpaPoints + nichePoints + satPoints);
@@ -777,5 +777,29 @@ module.exports = {
             }
         })
     },
-    
+    checkHighSchoolExists: (highschool, callback) => {
+        let checkHSexistsQuery = 'SELECT * FROM highschools WHERE hsname = $1';
+        collegeDB.query(checkHSexistsQuery, [highschool], (err, results) => {
+            if (err) {
+                console.log(err);
+                callback(err);
+            }
+            else {
+                callback(null, results.rows);
+            }
+        })
+    },
+    addHighSchool: (highschool, callback) => {
+        let checkHSexistsQuery = 'SELECT * FROM highschools WHERE hsname = $1';
+        collegeDB.query(checkHSexistsQuery, [highschool], (err, results) => {
+            if (err) {
+                console.log(err);
+                callback(err);
+            }
+            else {
+                callback(null , results.rows);
+            }
+        })
+    },
+
 };
