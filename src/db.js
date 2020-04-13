@@ -159,6 +159,7 @@ module.exports = {
         let flagQuery = `UPDATE applications SET questionable = $1 WHERE username = $2 AND collegename = $3`;
 
         let studentactCompScore, studentsatMathScore, studentsatEBRWScore, collegeactCompScore, collegesatMathScore, collegesatEBRWScore;
+        let questionable;
 
         userDB.query(updateApplicationQuery, [username, collegename, status], (err, results) => {
             if (err) {
@@ -174,7 +175,7 @@ module.exports = {
                             if (status == 'accepted') {
                                 studentTests();
                             }
-                            callback(null, true);
+                            callback(null, questionable);
                         }
                     });
                 }
@@ -182,7 +183,7 @@ module.exports = {
                     if (status == 'accepted') {
                         studentTests();
                     }
-                    callback(null, false);
+                    callback(null, questionable);
                 }
             }
         });
@@ -247,6 +248,7 @@ module.exports = {
         const flag = function () {
             let decisionScore = Math.max((collegeactCompScore - studentactCompScore) / collegeactCompScore, (collegesatMathScore - studentsatMathScore) / collegesatMathScore, (collegesatEBRWScore - studentsatEBRWScore) / collegesatEBRWScore);
             let flag = decisionScore >= 0.12 ? true : false;
+            questionable = flag;
             return flag;
         }
     },

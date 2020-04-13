@@ -257,7 +257,7 @@ app.post('/editapplication/:username', function (req, res) {
         }
         else {
             res.status(200).send({
-                isNew: result
+                questionable : result
             });
         }
     });
