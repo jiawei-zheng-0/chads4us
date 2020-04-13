@@ -807,7 +807,19 @@ module.exports = {
             }
         })
     },
-
+    // Get all high schools
+    getAllHighSchools: (callback) => {
+        let getAllHSQuery = 'SELECT hsname FROM highschools';
+        collegeDB.query(getAllHSQuery, (err, results) => {
+            if (err) {
+                console.log(err);
+                callback(err);
+            }
+            else {
+                callback(null, results.rows);
+            }
+        });
+    },
     // Calculate HS avg GPA
     recalculateHSGPA: (highschoolname, callback) => {
         let getHSGPAQuery = 'SELECT AVG(gpa) FROM studentdata WHERE highschoolname = $1';
