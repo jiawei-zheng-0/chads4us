@@ -405,7 +405,7 @@ app.post('/collegerecommender/:username', function (req, res) {
 });
 // Find similar high schools
 app.post('/findsimilarhs', function (req, res) {
-    db.findSimilarHighSchools(req.body.highschool1, req.body.highschool2, (err, result) => {
+    db.getAllHighSchoolsExcept(req.body.highschool, (err, result) => {
         if (err) {
             console.log(err);
             res.status(500).send({
@@ -413,9 +413,41 @@ app.post('/findsimilarhs', function (req, res) {
             });
         }
         else {
-            res.status(200).send({
-                score: result
+            //const index = result.indexOf({ hsname: req.body.highschool });
+            //let highschoolScoreList = result.splice(index, 1);
+            //console.log(result);
+            let highSchools = result
+            let counter = 0;
+            result.forEach(highschool => {
+                console.log(`calculateing score between ${req.body.highschool} and ${highschool.hsname}`)
+                db.calculateHSSimilarScore(req.body.highschool, highschool.hsname, (err, result) => {
+                    if (err) {
+                        console.log(err);
+                        res.status(500).send({
+                            error: 'Error in finding similar high schools',
+                        });
+                    }
+                    else {
+                        let index = highSchools.indexOf(highschool);
+                        highSchools[index].score = result;
+                        counter++;
+                    }
+                });
             });
+            let timeoutCounter = 0;
+            const intervalID = setInterval(() => {
+                if (counter >= result.length) {
+                    clearInterval(intervalID);
+                    res.status(200).send(result);
+                }
+                timeoutCounter++;
+                if (timeoutCounter >= result.length + 3) {
+                    clearInterval(intervalID);
+                    res.status(500).send({
+                        error: 'Error in calculating similarity scores',
+                    });
+                }
+            }, 1000);
         }
     });
 });
@@ -619,7 +651,7 @@ app.post('/importprofiles', (req, res) => {
                             });
                         }
                         timeoutCounter++;
-                        if (timeoutCounter >= profiles.length+5) {// if func takes more than row # of seconds, timeout
+                        if (timeoutCounter >= profiles.length + 5) {// if func takes more than row # of seconds, timeout
                             clearInterval(intervalID);
                             res.status(500).send({
                                 error: 'Error in importing profiles',

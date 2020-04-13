@@ -536,8 +536,8 @@ module.exports = {
 
         getSAT();
     },
-    //Find similar high schools
-    findSimilarHighSchools: (highschool1, highschool2, callback) => {
+    //Calculate similarity score
+    calculateHSSimilarScore: (highschool1, highschool2, callback) => {
         const gpaQuery = 'SELECT hsavggpa FROM highschools WHERE hsname = $1';
         const nicheGradeQuery = 'SELECT hsnichegrade FROM highschools WHERE hsname = $1';
         const satQuery = 'SELECT hsavgsat FROM highschools WHERE hsname = $1';
@@ -809,7 +809,7 @@ module.exports = {
     },
     // Get all high schools
     getAllHighSchools: (callback) => {
-        let getAllHSQuery = 'SELECT hsname FROM highschools';
+        let getAllHSQuery = 'SELECT * FROM highschools';
         collegeDB.query(getAllHSQuery, (err, results) => {
             if (err) {
                 console.log(err);
@@ -820,6 +820,20 @@ module.exports = {
             }
         });
     },
+    // Get all high schools minus param
+    getAllHighSchoolsExcept: (highschool, callback) => {
+        let getAllHSQuery = 'SELECT * FROM highschools WHERE hsname!= $1';
+        collegeDB.query(getAllHSQuery, [highschool], (err, results) => {
+            if (err) {
+                console.log(err);
+                callback(err);
+            }
+            else {
+                callback(null, results.rows);
+            }
+        });
+    },
+
     // Calculate HS avg GPA
     recalculateHSGPA: (highschoolname, callback) => {
         if (highschoolname == null) {
