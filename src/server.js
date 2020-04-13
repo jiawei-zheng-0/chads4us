@@ -151,8 +151,8 @@ function importHighSchool(highschoolname, highschoolcity, highschoolstate, callb
     if (!highSchoolList.includes(hsname)) {//if high school does not exist
         console.log(`high school does not exist ${hsname}`);
         callback(`high school does not exist ${highschoolname}`);
-    } else {//if high school does exist
-        db.checkHighSchoolExists(highschoolname, (err, result) => {//check if hs data already in system
+    } else {//if high school does exist in hs.txt
+        db.checkHighSchoolExists(highschoolname, (err, result) => {//check if hs data already in db
             if (err) {
                 //console.log(err)
                 res.status(500).send({
@@ -162,13 +162,34 @@ function importHighSchool(highschoolname, highschoolcity, highschoolstate, callb
             else {
                 if (result.length == 0) {//if high school is not in db, scrape from niche
                     axios.get(`${config.highSchoolSite}${hsname}`)
-                        .then((response) => {
-                            //console.log(response.data);
-                            //Get niche score
-                            const grade = response.data.match(/\w[+-]?(?=<\/div>Overall Grade<\/span>)/gim);
-                            console.log(grade);
+                        .then((hspage) => {
+                            axios.get(`${config.highSchoolSite}${hsname}`)
+                                .then((academicspg) => {
+                                    //console.log(response.data);
+                                    //Get niche score
+                                    const grade = hspage.data.match(/\w[+-]?(?=<\/div>Overall Grade<\/span>)/gim)[0];
+                                    console.log(grade);
+                                    const avgSAT = Number(academicspg.data.match(/(?<=Average SAT composite score out of 1600, as reported by Niche users from this school\.<\/div><\/div><\/div><div class="scalar__value">)\d+/gim));
+                                    console.log(avgSAT);
+                                    const avgACT = Number(academicspg.data.match(/(?<=Average ACT composite score out of 36, as reported by Niche users from this school\.<\/div><\/div><\/div><div class="scalar__value">)\d+/gim));
+                                    console.log(avgACT);
+                                    const graduationRate = Number(academicspg.data.match(/(?<=graduation rates differently, use caution when comparing this data to data from another state\.<\/div><\/div><\/div><div class="scalar__value"><span>)\d+(?=%)/gim));
+                                    console.log(graduationRate);
+                                    db.addHighSchool(highschoolname, highschoolcity, highschoolstate, grade, avgSAT, graduationRate, avgACT, (err, result) => {
+                                        if (err) {
+                                            callback(`error in adding hs ${highschoolname} to db`);
+                                        }
+                                        else {
+                                            console.log(`${highschoolname} added to db`);
+                                            callback(null);
+                                        }
+                                    });
 
-                            
+                                })
+                                .catch(function (error) {
+                                    console.error(error);
+                                    callback(`high school does not exist ${highschoolname}`);
+                                });
                         })
                         .catch(function (error) {
                             console.error(error);
@@ -176,8 +197,8 @@ function importHighSchool(highschoolname, highschoolcity, highschoolstate, callb
                         });
 
                 }
-                else {//if hs data already in system, no need to scrape
-
+                else {//if hs is already in db no need to scrape
+                    callback(null);
                 }
             }
         });
@@ -199,6 +220,8 @@ app.post('/editprofile/:username', function (req, res) {
         }
         else {
             console.log(result);
+            const originalHS = result.highschoolname;
+            const newHS = req.body.highschoolname;
             Object.keys(result).forEach((key) => {
                 result[key] = req.body[key];
             });
@@ -217,39 +240,60 @@ app.post('/editprofile/:username', function (req, res) {
                     }
                     else {
                         console.log(`User ${username} profile updated`);
-                        //CHECK IF HIGH SCHOOL IS VALID HERE, if not in highschoo.txt error
-                        //build hishschool name
-                        importHighSchool(req.body.highschoolname, req.body.highschoolcity, req.body.highschoolstate, (err, result) => {
-                            if (err) {
-                                console.log('error in importing hs');
-                                res.status(500).send({
-                                    error: 'error in importing hs',
-                                });
-                            }
-                            else {
-
-                                if (password) {//if password needs to be changed
-                                    bcrypt.hash(password, 10, (err, hash) => {
-                                        db.changePassword(username, hash, (err) => {
-                                            if (err) {
-                                                console.log(`error in changing password for ${username}`);
-                                                res.status(500).send({
-                                                    error: 'error in changing password',
-                                                });
-                                            }
-                                            else {
-                                                console.log(`User ${username} password changed`);
-                                                res.status(200).send();
-                                            }
-                                        });
+                        //If new HS, do import new HS func
+                        if (newHS != originalHS) {
+                            importHighSchool(req.body.highschoolname, req.body.highschoolcity, req.body.highschoolstate, (err, result) => {
+                                if (err) {
+                                    console.log('error in importing hs');
+                                    res.status(500).send({
+                                        error: 'error in importing hs',
                                     });
                                 }
-                                else {//if password unmodified
-                                    res.status(200).send();
+                                else {
+                                    if (password) {//if password needs to be changed
+                                        bcrypt.hash(password, 10, (err, hash) => {
+                                            db.changePassword(username, hash, (err) => {
+                                                if (err) {
+                                                    console.log(`error in changing password for ${username}`);
+                                                    res.status(500).send({
+                                                        error: 'error in changing password',
+                                                    });
+                                                }
+                                                else {
+                                                    console.log(`User ${username} password changed`);
+                                                    res.status(200).send();
+                                                }
+                                            });
+                                        });
+                                    }
+                                    else {//if password unmodified
+                                        res.status(200).send();
+                                    }
                                 }
-                            }
 
-                        });
+                            });
+                        }
+
+                        else if (password) {//if hs is same and password needs to be changed
+                            bcrypt.hash(password, 10, (err, hash) => {
+                                db.changePassword(username, hash, (err) => {
+                                    if (err) {
+                                        console.log(`error in changing password for ${username}`);
+                                        res.status(500).send({
+                                            error: 'error in changing password',
+                                        });
+                                    }
+                                    else {
+                                        console.log(`User ${username} password changed`);
+                                        res.status(200).send();
+                                    }
+                                });
+                            });
+                        }
+                        else {//if password unmodified
+                            res.status(200).send();
+                        }
+
                     }
                 });
         }

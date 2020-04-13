@@ -795,21 +795,21 @@ module.exports = {
             }
         })
     },
-    addHighSchool: (highschool, callback) => {
-        let checkHSexistsQuery = 'SELECT * FROM highschools WHERE hsname = $1';
-        collegeDB.query(checkHSexistsQuery, [highschool], (err, results) => {
+    addHighSchool: (highschoolname,highschoolcity,highschoolstate,highschoolgrade,highschoolsat,highschoolgradrate,highschoolact, callback) => {
+        let addHighSchoolQuery = 'INSERT INTO highschools (hsname,hscity,hsstate,hsnichegrade,hsavgsat,gradrate,avgact) VALUES ($1,$2,$3,$4,$5,$6,$7) ON CONFLICT DO NOTHING';
+        collegeDB.query(addHighSchoolQuery, [highschoolname,highschoolcity,highschoolstate,highschoolgrade,highschoolsat,highschoolgradrate,highschoolact], (err, results) => {
             if (err) {
                 console.log(err);
                 callback(err);
             }
             else {
-                callback(null, results.rows);
+                callback(null);
             }
         })
     },
 
     // Calculate HS avg GPA
-    calculateHSGPA: (highschoolname, callback) => {
+    recalculateHSGPA: (highschoolname, callback) => {
         let getHSGPAQuery = 'SELECT AVG(gpa) FROM studentdata WHERE highschoolname = $1';
         let importHSGPAQuery = 'UPDATE highschools SET hsavggpa = $1 WHERE hsname = $2';
 
