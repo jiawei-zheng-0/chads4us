@@ -40,18 +40,6 @@ collegeList = collegeList.filter(function (removeEmpty) {
     return removeEmpty != '';
 });
 
-app.post('/posttest', (req, res) => {
-    res.status(200).send({
-        status: 'post response',
-    });
-});
-
-app.get('/gettest', (req, res) => {
-    res.status(200).send({
-        status: 'get response',
-    });
-});
-
 function number(val) {
     if (val == '') { return null; }
     else { return Number(val); }
