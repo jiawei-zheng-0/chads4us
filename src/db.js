@@ -275,9 +275,9 @@ module.exports = {
         let searchQuery = 'SELECT * FROM colleges WHERE 1=1';
         if (collegename) {
             if (isStrict)
-                searchQuery += ` AND collegename IS NOT NULL AND collegename LIKE '%${collegename}%'`;
+                searchQuery += ` AND collegename IS NOT NULL AND collegename ILIKE '%${collegename}%'`;
             else
-                searchQuery += ` AND (collegename IS NULL OR collegename LIKE '%${collegename}%')`;
+                searchQuery += ` AND (collegename IS NULL OR collegename ILIKE '%${collegename}%')`;
         }
         if (lowadmissionrate && highadmissionrate) {
             if (isStrict)
