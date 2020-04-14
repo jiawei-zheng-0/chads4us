@@ -300,15 +300,15 @@ module.exports = {
         }
         if (major1) {
             if (isStrict)
-                searchQuery += ` AND majors IS NOT NULL AND array_to_string(majors, ',') LIKE '%${major1}%'`;
+                searchQuery += ` AND majors IS NOT NULL AND array_to_string(majors, ',') ILIKE '%${major1}%'`;
             else
-                searchQuery += ` AND (majors IS NULL OR array_to_string(majors, ',') LIKE '%${major1}%')`;
+                searchQuery += ` AND (majors IS NULL OR array_to_string(majors, ',') ILIKE '%${major1}%')`;
         }
         if (major2) {
             if (isStrict)
-                searchQuery += ` AND majors IS NOT NULL AND array_to_string(majors, ',') LIKE '%${major2}%'`;
+                searchQuery += ` AND majors IS NOT NULL AND array_to_string(majors, ',') ILIKE '%${major2}%'`;
             else
-                searchQuery += ` AND (majors IS NULL OR array_to_string(majors, ',') LIKE '%${major2}%')`;
+                searchQuery += ` AND (majors IS NULL OR array_to_string(majors, ',') ILIKE '%${major2}%')`;
         }
         if (lowranking && highranking) {
             if (isStrict)
