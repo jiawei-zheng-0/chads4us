@@ -488,7 +488,7 @@ module.exports = {
         function calculateCollegeRecommendationScore() {
             // WSJ has 801 college rankings
             rankingPoints = ((801 - ranking) / 801) * 10;
-            // Half points for similar students if there are no simular students
+            // Half points for similar students if there are no similar students
             if (numSimStudents == 0 || numSimStudentsSameCollege == 0) {
                 popularityPoints = 15;
             }
@@ -515,7 +515,6 @@ module.exports = {
                     satactPoints = 0;
                 }
                 else {
-                    //console.log(`${collegename} colleg sat:${collegeSAT} student sat:${studentSAT}`)
                     satactPoints = 0.2 * ((100 / (0.3 * collegeSAT)) * studentSAT - (700 / 3));
                 }
             }
@@ -527,11 +526,9 @@ module.exports = {
                     satactPoints = 0;
                 }
                 else {
-                    //console.log(`${collegename} ${collegeACT} ${studentACT}`)
                     satactPoints = 0.2 * ((100 / (0.3 * collegeACT)) * studentACT - (700 / 3));
                 }
             }
-            //console.log(`${collegename}= ${rankingPoints}, ${popularityPoints}, ${gpaPoints}, ${satactPoints}`);
             let overallScore = Math.round(rankingPoints + popularityPoints + gpaPoints + satactPoints);
             return overallScore;
         }
@@ -615,6 +612,11 @@ module.exports = {
         }
 
         getGPA();
+    },
+    // Applications tracker
+    applicationsTracker: (isList, isStrict, collegename, lowcollegeclass, highcollegeclass, highschools, appstatuses, callback) => {
+        let appTrackerQuery = 'SELECT * FROM studentdata WHERE 1=1';
+        
     },
     //Delete profiles (admin)
     deleteProfiles: (callback) => {
