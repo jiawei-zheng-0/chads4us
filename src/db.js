@@ -911,9 +911,6 @@ module.exports = {
             }
         });
 
-<<<<<<< HEAD
-    }
-=======
     },
 
     // Get all high schools minus param
@@ -944,5 +941,4 @@ module.exports = {
         });
     },
 
->>>>>>> b9bd74d12614f575c13e325bf74e07999d92e193
 }

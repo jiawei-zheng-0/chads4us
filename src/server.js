@@ -1042,8 +1042,6 @@ app.post('/validatedecision', function (req, res) {
     });
 });
 
-<<<<<<< HEAD
-=======
 // Get applications to college
 app.get('/getapplications', function (req, res) {
     const college = req.body.college;
@@ -1070,7 +1068,6 @@ app.get('/getapplications', function (req, res) {
     }
 });
 
->>>>>>> b9bd74d12614f575c13e325bf74e07999d92e193
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Listening on ${PORT}`));
 
