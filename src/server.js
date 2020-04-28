@@ -17,6 +17,9 @@ const axios = require('axios');
 
 app.use(cors());
 app.use(express.static(path.join(__dirname, '../public')));
+app.get('*', function (request, response) {
+    response.sendFile(path.resolve(__dirname, '../public', 'index.html'))
+})
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
@@ -350,20 +353,22 @@ app.post('/editapplication/:username', function (req, res) {
 
 // Search for colleges
 app.post('/searchcolleges', function (req, res) {
-    db.searchColleges(req.body.isStrict, req.body.collegename, req.body.lowadmissionrate, req.body.highadmissionrate,
-        req.body.costofattendance, req.body.region, req.body.major1, req.body.major2, req.body.lowranking,
-        req.body.highranking, req.body.lowsize, req.body.highsize, req.body.lowsatmath, req.body.highsatmath,
-        req.body.lowsatebrw, req.body.highsatebrw, req.body.lowactcomposite, req.body.highactcomposite, (err, result) => {
-            if (err) {
-                console.log(err);
-                res.status(500).send({
-                    error: 'Error in searching for colleges',
-                });
-            }
-            else {
-                res.status(200).send(result.rows);
-            }
-        });
+    db.getState(req.body.username, (err, result) => {
+        db.searchColleges(req.body.isStrict, req.body.collegename, req.body.lowadmissionrate, req.body.highadmissionrate,
+            result, req.body.costofattendance, req.body.region, req.body.major1, req.body.major2, req.body.lowranking,
+            req.body.highranking, req.body.lowsize, req.body.highsize, req.body.lowsatmath, req.body.highsatmath,
+            req.body.lowsatebrw, req.body.highsatebrw, req.body.lowactcomposite, req.body.highactcomposite, (err, result) => {
+                if (err) {
+                    console.log(err);
+                    res.status(500).send({
+                        error: 'Error in searching for colleges',
+                    });
+                }
+                else {
+                    res.status(200).send(result.rows);
+                }
+            });
+    });
 });
 
 // College Recommendation Score
@@ -1037,6 +1042,35 @@ app.post('/validatedecision', function (req, res) {
     });
 });
 
+<<<<<<< HEAD
+=======
+// Get applications to college
+app.get('/getapplications', function (req, res) {
+    const college = req.body.college;
+    const startCollegeClassRange = req.body.startCollegeClassRange;
+    const endCollegeClassRange = req.body.endCollegeClassRange;
+    const highschools = req.body.highschools;
+    const statuses = req.body.statuses;
+    if (collegeList.includes(college)) {
+        db.getCollegeApplications(college, startCollegeClassRange, endCollegeClassRange, highschools, statuses, (err, result) => {
+            if (err) {
+                res.status(500).send({
+                    error: `Error in retrieving applications for ${college}`
+                });
+            }
+            else {
+                res.status(200).send(result);
+            }
+        });
+    }
+    else {
+        res.status(500).send({
+            error: 'College does not exist'
+        });
+    }
+});
+
+>>>>>>> b9bd74d12614f575c13e325bf74e07999d92e193
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Listening on ${PORT}`));
 
