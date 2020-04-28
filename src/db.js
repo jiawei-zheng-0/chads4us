@@ -270,7 +270,7 @@ module.exports = {
         })
     },
     //Search for colleges
-    searchColleges: (isStrict, collegename, lowadmissionrate, highadmissionrate, costofattendance, region, major1, major2, lowranking, highranking,
+    searchColleges: (isStrict, collegename, lowadmissionrate, highadmissionrate, state, costofattendance, region, major1, major2, lowranking, highranking,
         lowsize, highsize, lowsatmath, highsatmath, lowsatebrw, highsatebrw, lowactcomposite, highactcomposite, callback) => {
         let searchQuery = 'SELECT * FROM colleges WHERE 1=1';
         if (collegename) {
@@ -285,12 +285,11 @@ module.exports = {
             else
                 searchQuery += ` AND (admissionrate IS NULL OR admissionrate BETWEEN ${lowadmissionrate / 100.0} AND ${highadmissionrate / 100.0})`;
         }
-        //TODO : public uni cost 
         if (costofattendance) {
             if (isStrict)
-                searchQuery += ` AND costofattendanceinstate IS NOT NULL AND costofattendanceinstate <= ${costofattendance}`;
+                searchQuery += ` AND costofattendanceinstate IS NOT NULL AND (costofattendanceinstate <= ${costofattendance} AND state = '${state}') OR (costofattendanceoutofstate <= ${costofattendance} AND state != '${state}')`;
             else
-                searchQuery += ` AND (costofattendanceinstate IS NULL OR costofattendanceinstate <= ${costofattendance})`;
+                searchQuery += ` AND (costofattendanceinstate IS NULL OR (costofattendanceinstate <= ${costofattendance} AND state = '${state}') OR (costofattendanceoutofstate <= ${costofattendance} AND state != '${state}'))`;
         }
         if (region) {
             if (isStrict)
@@ -877,4 +876,19 @@ module.exports = {
             }
         });
     },
+
+    //Get state of user
+    getState: (username, callback) => {
+        let getStateQuery = 'SELECT residencestate FROM studentdata WHERE username = $1';
+        userDB.query(getStateQuery, [username], (err, results) => {
+            if (err) {
+                console.log(err);
+                callback(err);
+            }
+            else {
+                callback(null, results.rows[0].residencestate);
+            }
+        });
+    },
+
 }
