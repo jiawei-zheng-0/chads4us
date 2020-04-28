@@ -333,26 +333,19 @@ app.post('/editprofile/:username', function (req, res) {
 app.post('/editapplication/:username', function (req, res) {
     const username = req.params.username;
     // edit applications
-    if (collegeList.includes(req.body.collegename)) {
-        db.editApplications(username, req.body.collegename, req.body.status, (err, result) => {
-            if (err) {
-                console.log(err);
-                res.status(500).send({
-                    error: 'Error in editing applications',
-                });
-            }
-            else {
-                res.status(200).send({
-                    questionable: result
-                });
-            }
-        });
-    }
-    else {
-        res.status(500).send({
-            error: 'College does not exist',
-        });
-    }
+    db.editApplications(username, req.body.collegename, req.body.status, (err, result) => {
+        if (err) {
+            console.log(err);
+            res.status(500).send({
+                error: 'Error in editing applications',
+            });
+        }
+        else {
+            res.status(200).send({
+                questionable : result
+            });
+        }
+    });
 });
 
 // Search for colleges
@@ -455,6 +448,22 @@ app.post('/findsimilarhs', function (req, res) {
                 }
             }, 1000);
         }
+    });
+});
+
+// APPLICATIONS TRACKER
+app.post('/apptracker', function (req, res) {
+    db.appTracker(req.body.isList, req.body.isStrict, req.body.collegename, req.body.lowcollegeclass,
+        req.body.highcollegeclass, req.body.highschools, req.body.appstatuses, (err, result) => {
+        if (err) {
+            console.log(err);
+            res.status(500).send({
+                error: 'Error in processing applications tracker',
+            });
+        }
+        else {
+            res.status(200).send(result);
+        } 
     });
 });
 
@@ -1014,7 +1023,6 @@ app.get('/reviewdecisions', function (req, res) {
     });
 });
 
-// Sets questionable decision to not questionable
 app.post('/validatedecision', function (req, res) {
     let applicationid = req.body.applicationid;
     db.validateDecision(applicationid, (err, result) => {
@@ -1027,33 +1035,6 @@ app.post('/validatedecision', function (req, res) {
             res.status(200).send(result);
         }
     });
-});
-
-// Get applications to college
-app.get('/getapplications', function (req, res) {
-    const college = req.body.college;
-    const startCollegeClassRange = req.body.startCollegeClassRange;
-    const endCollegeClassRange = req.body.endCollegeClassRange;
-    const highschools = req.body.highschools;
-    const statuses = req.body.statuses;
-    if (collegeList.includes(college))
-    {
-        db.getCollegeApplications(college, startCollegeClassRange, endCollegeClassRange, highschools, statuses, (err, result) => {
-            if (err) {
-                res.status(500).send({
-                    error: `Error in retrieving applications for ${college}`
-                });
-            }
-            else {
-                res.status(200).send(result);
-            }
-        });
-    }
-    else{
-        res.status(500).send({
-            error: 'College does not exist'
-        });
-    }
 });
 
 const PORT = process.env.PORT || 5000;

@@ -614,9 +614,59 @@ module.exports = {
         getGPA();
     },
     // Applications tracker
-    applicationsTracker: (isList, isStrict, collegename, lowcollegeclass, highcollegeclass, highschools, appstatuses, callback) => {
-        let appTrackerQuery = 'SELECT * FROM studentdata WHERE 1=1';
+    appTracker: (isList, isStrict, collegename, lowcollegeclass, highcollegeclass, highschools, appstatuses, callback) => {    
+        let apps;
+
+        // get applications with specified statuses
+        const getApps = function () {
+            let appQuery = `SELECT * FROM applications WHERE collegename = $1`;
+            if (appstatuses) {
+                for (let i = 0; i < appstatuses.length; i++) {
+                    if (i == 0) {
+                        appQuery += ` AND status = '${appstatuses[i]}'`;
+                    } else {
+                        appQuery += ` OR status = '${appstatuses[i]}'`;
+                    }
+                }
+            }
+            userDB.query(appQuery, [collegename], (err, results) => {
+                if (err) {
+                    callback(err);
+                }
+                else {
+                    apps = results.rows;
+                    // callback(null, results.rows);
+                    getProfiles();
+                }
+            });
+        }
         
+        const getProfiles = function () {
+            let profiles = [];
+
+            let profileQuery = 'SELECT * FROM studentdata WHERE 1=1';
+            for (let i = 0; i < apps.length; i++) {
+                if (lowcollegeclass && highcollegeclass) {
+                    profileQuery += ` AND collegeclass BETWEEN $1 AND $2`;
+                }
+                if (highschools) {
+                    profileQuery += ` AND array_to_string(${highschools}, ',') = ANY (highschoolname)`;
+                }
+                console.log(profileQuery);
+                userDB.query(profileQuery, [lowcollegeclass, highcollegeclass, highschools], (err, results) => {
+                    if (err) {
+                        //callback(err);
+                        console.log(err);
+                    }
+                    else {
+                        profiles.push(results.rows);
+                        profileQuery = 'SELECT * FROM studentdata WHERE 1=1';
+                    }
+                });
+            }
+        }
+        
+        getApps();
     },
     //Delete profiles (admin)
     deleteProfiles: (callback) => {
@@ -862,19 +912,5 @@ module.exports = {
             }
         });
 
-    },
-
-    // Get all high schools minus param
-    getCollegeApplications: (college, startCollegeClassRange, endCollegeClassRange, highschools, statuses, callback) => {
-        let getCollegeAppsQuery = 'SELECT * FROM applications WHERE hsname!= $1';
-        userDB.query(getCollegeAppsQuery, [], (err, results) => {
-            if (err) {
-                console.log(err);
-                callback(err);
-            }
-            else {
-                callback(null, results.rows);
-            }
-        });
-    },
+    }
 }
