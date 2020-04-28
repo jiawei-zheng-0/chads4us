@@ -348,9 +348,11 @@ app.post('/editapplication/:username', function (req, res) {
             }
         });
     }
-    res.status(500).send({
-        error: 'College does not exist',
-    });
+    else {
+        res.status(500).send({
+            error: 'College does not exist',
+        });
+    }
 });
 
 // Search for colleges
