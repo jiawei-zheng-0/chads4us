@@ -1014,6 +1014,7 @@ app.get('/reviewdecisions', function (req, res) {
     });
 });
 
+// Sets questionable decision to not questionable
 app.post('/validatedecision', function (req, res) {
     let applicationid = req.body.applicationid;
     db.validateDecision(applicationid, (err, result) => {
@@ -1026,6 +1027,33 @@ app.post('/validatedecision', function (req, res) {
             res.status(200).send(result);
         }
     });
+});
+
+// Get applications to college
+app.get('/getapplications', function (req, res) {
+    const college = req.body.college;
+    const startCollegeClassRange = req.body.startCollegeClassRange;
+    const endCollegeClassRange = req.body.endCollegeClassRange;
+    const highschools = req.body.highschools;
+    const statuses = req.body.statuses;
+    if (collegeList.includes(college))
+    {
+        db.getCollegeApplications(college, startCollegeClassRange, endCollegeClassRange, highschools, statuses, (err, result) => {
+            if (err) {
+                res.status(500).send({
+                    error: `Error in retrieving applications for ${college}`
+                });
+            }
+            else {
+                res.status(200).send(result);
+            }
+        });
+    }
+    else{
+        res.status(500).send({
+            error: 'College does not exist'
+        });
+    }
 });
 
 const PORT = process.env.PORT || 5000;

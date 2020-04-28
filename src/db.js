@@ -862,5 +862,19 @@ module.exports = {
             }
         });
 
-    }
+    },
+
+    // Get all high schools minus param
+    getCollegeApplications: (college, startCollegeClassRange, endCollegeClassRange, highschools, statuses, callback) => {
+        let getCollegeAppsQuery = 'SELECT * FROM applications WHERE hsname!= $1';
+        userDB.query(getCollegeAppsQuery, [], (err, results) => {
+            if (err) {
+                console.log(err);
+                callback(err);
+            }
+            else {
+                callback(null, results.rows);
+            }
+        });
+    },
 }
