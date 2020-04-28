@@ -634,37 +634,48 @@ module.exports = {
                 }
                 else {
                     apps = results.rows;
+                    console.log(apps)
                     // callback(null, results.rows);
                     getProfiles();
                 }
             });
         }
-        
-        const getProfiles = function () {
-            let profiles = [];
 
-            let profileQuery = 'SELECT * FROM studentdata WHERE 1=1';
-            for (let i = 0; i < apps.length; i++) {
-                if (lowcollegeclass && highcollegeclass) {
-                    profileQuery += ` AND collegeclass BETWEEN $1 AND $2`;
-                }
-                if (highschools) {
-                    profileQuery += ` AND array_to_string(${highschools}, ',') = ANY (highschoolname)`;
-                }
-                console.log(profileQuery);
-                userDB.query(profileQuery, [lowcollegeclass, highcollegeclass, highschools], (err, results) => {
-                    if (err) {
-                        //callback(err);
-                        console.log(err);
-                    }
-                    else {
-                        profiles.push(results.rows);
-                        profileQuery = 'SELECT * FROM studentdata WHERE 1=1';
-                    }
-                });
+        const getProfiles = function () {
+            let usernames = [];
+            apps.forEach(app => {
+                usernames.push(app.username);
+            });
+            let parmsCounter = 1;
+            let parms=[];
+
+            let profiles = [];
+            let profileQuery = `SELECT * FROM studentdata WHERE username = ANY($${parmsCounter++})`;
+            parms.push(usernames);
+            if (lowcollegeclass && highcollegeclass) {
+                profileQuery += ` AND collegeclass BETWEEN $${parmsCounter++} AND $${parmsCounter++}`;
+                parms.push(lowcollegeclass);
+                parms.push(highcollegeclass);
             }
+            if (highschools) {
+                profileQuery += ` AND highschoolname = ANY($${parmsCounter++})`;
+                parms.push(highschools);
+            }
+            console.log(profileQuery);
+            userDB.query(profileQuery, parms, (err, results) => {
+                if (err) {
+                    //callback(err);
+                    console.log(err);
+                }
+                else {
+                    console.log(results.rows)
+                    profiles.push(results.rows);
+                    profileQuery = 'SELECT * FROM studentdata WHERE 1=1';
+                }
+            });
         }
-        
+
+
         getApps();
     },
     //Delete profiles (admin)
