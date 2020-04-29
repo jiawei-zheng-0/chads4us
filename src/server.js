@@ -17,9 +17,9 @@ const axios = require('axios');
 
 app.use(cors());
 app.use(express.static(path.join(__dirname, '../public')));
-app.get('*', function (request, response) {
-    response.sendFile(path.resolve(__dirname, '../public', 'index.html'))
-})
+////app.get('*', function (request, response) {
+//    response.sendFile(path.resolve(__dirname, '../public', 'index.html'))
+//})
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
