@@ -285,7 +285,7 @@ module.exports = {
             else
                 searchQuery += ` AND (admissionrate IS NULL OR admissionrate BETWEEN ${lowadmissionrate / 100.0} AND ${highadmissionrate / 100.0})`;
         }
-        if (costofattendance) {
+        if (costofattendance && state != null) {
             if (isStrict)
                 searchQuery += ` AND costofattendanceinstate IS NOT NULL AND (costofattendanceinstate <= ${costofattendance} AND state = '${state}') OR (costofattendanceoutofstate <= ${costofattendance} AND state != '${state}')`;
             else
@@ -648,7 +648,7 @@ module.exports = {
                 usernames.push(app.username);
             });
             let parmsCounter = 1;
-            let parms=[];
+            let parms = [];
 
             let profileQuery = `SELECT * FROM studentdata WHERE username = ANY($${parmsCounter++})`;
             parms.push(usernames);
@@ -945,7 +945,12 @@ module.exports = {
                 callback(err);
             }
             else {
-                callback(null, results.rows[0].residencestate);
+                if (results.rows) {
+                    callback(null, results.rows[0].residencestate);
+                }
+                else {
+                    callback(null, null);
+                }
             }
         });
     },
