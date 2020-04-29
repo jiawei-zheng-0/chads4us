@@ -622,12 +622,20 @@ module.exports = {
             if (appstatuses) {
                 for (let i = 0; i < appstatuses.length; i++) {
                     if (i == 0) {
-                        appQuery += ` AND (status = '${appstatuses[i]}'`;
+                        if (isStrict) {
+                            appQuery += ` AND status IS NOT NULL AND (status = '${appstatuses[i]}'`;
+                        } else {
+                            appQuery += ` AND (status IS NULL OR (status = '${appstatuses[i]}'`;
+                        }
                     } else {
                         appQuery += ` OR status = '${appstatuses[i]}'`;
                     }
                 }
-                appQuery += `)`;
+                if (isStrict) {
+                    appQuery += `)`;
+                } else {
+                    appQuery += `))`;
+                }       
             }
             userDB.query(appQuery, [collegename], (err, results) => {
                 if (err) {
@@ -653,12 +661,20 @@ module.exports = {
             let profileQuery = `SELECT * FROM studentdata WHERE username = ANY($${parmsCounter++})`;
             parms.push(usernames);
             if (lowcollegeclass && highcollegeclass) {
-                profileQuery += ` AND collegeclass BETWEEN $${parmsCounter++} AND $${parmsCounter++}`;
+                if (isStrict) {
+                    profileQuery += ` AND collegeclass IS NOT NULL AND collegeclass BETWEEN $${parmsCounter++} AND $${parmsCounter++}`;
+                } else {
+                    profileQuery += ` AND (collegeclass IS NULL OR collegeclass BETWEEN $${parmsCounter++} AND $${parmsCounter++})`;
+                }
                 parms.push(lowcollegeclass);
                 parms.push(highcollegeclass);
             }
             if (highschools) {
-                profileQuery += ` AND highschoolname = ANY($${parmsCounter++})`;
+                if (isStrict) {
+                    profileQuery += ` AND highschoolname IS NOT NULL AND highschoolname = ANY($${parmsCounter++})`;
+                } else {
+                    profileQuery += ` AND (highschoolname IS NULL OR highschoolname = ANY($${parmsCounter++}))`;
+                }
                 parms.push(highschools);
             }
             userDB.query(profileQuery, parms, (err, results) => {
