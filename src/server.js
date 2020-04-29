@@ -458,7 +458,7 @@ app.post('/findsimilarhs', function (req, res) {
 
 // APPLICATIONS TRACKER
 app.post('/apptracker', function (req, res) {
-    db.appTracker(req.body.isList, req.body.isStrict, req.body.collegename, req.body.lowcollegeclass,
+    db.appTracker(req.body.isStrict, req.body.collegename, req.body.lowcollegeclass,
         req.body.highcollegeclass, req.body.highschools, req.body.appstatuses, (err, result) => {
         if (err) {
             console.log(err);
@@ -640,9 +640,6 @@ app.post('/importprofiles', (req, res) => {
                     let timeoutCounter = 0;
                     const intervalID = setInterval(() => {
                         if (counter >= profiles.length) {
-                            //console.log(listOfUpdatedHighSchools)
-                            //console.log(listOfUpdatedHighSchoolCity)
-                            //console.log(listOfUpdatedHighSchoolState)
 
                             listOfUpdatedHighSchools.forEach(highSchool => {
                                 let i = listOfUpdatedHighSchools.indexOf(highSchool);
@@ -837,15 +834,6 @@ app.post('/scrapecollegedata', (req, res) => {
         if (counter >= collegeList.length) {// if data for all colleges retrieved, store in db
             clearInterval(intervalID);
             // success in scraping all data
-            //console.log(collegeList);
-            //console.log(fourYearGradRate);
-            //console.log(costOfAttendanceInState);
-            //console.log(costOfAttendanceOutOfState);
-            //console.log(majors);
-            //console.log(satMathAvg);
-            //console.log(satEBRWAvg);
-            //console.log(actAvg);
-            //console.log(gpa)
 
             collegeList.forEach(college => {
                 const i = collegeList.indexOf(college);
@@ -1066,6 +1054,23 @@ app.get('/getapplications', function (req, res) {
             error: 'College does not exist'
         });
     }
+});
+
+app.get('/getallhs', function (req, res) {
+    let hs = [];
+    db.getAllHighSchools((err, result) => {
+        if (err) {
+            res.status(500).send({
+                error: `Error in retrieving all high schools`
+            });
+        }
+        else {
+            result.forEach(highSchool => {
+                hs.push(highSchool.hsname);
+            });
+            res.status(200).send(hs);
+        }
+    });
 });
 
 const PORT = process.env.PORT || 5000;

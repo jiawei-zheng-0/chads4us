@@ -613,7 +613,7 @@ module.exports = {
         getGPA();
     },
     // Applications tracker
-    appTracker: (isList, isStrict, collegename, lowcollegeclass, highcollegeclass, highschools, appstatuses, callback) => {    
+    appTracker: (isStrict, collegename, lowcollegeclass, highcollegeclass, highschools, appstatuses, callback) => {    
         let apps;
 
         // get applications with specified statuses
@@ -622,11 +622,12 @@ module.exports = {
             if (appstatuses) {
                 for (let i = 0; i < appstatuses.length; i++) {
                     if (i == 0) {
-                        appQuery += ` AND status = '${appstatuses[i]}'`;
+                        appQuery += ` AND (status = '${appstatuses[i]}'`;
                     } else {
                         appQuery += ` OR status = '${appstatuses[i]}'`;
                     }
                 }
+                appQuery += `)`;
             }
             userDB.query(appQuery, [collegename], (err, results) => {
                 if (err) {
@@ -634,13 +635,13 @@ module.exports = {
                 }
                 else {
                     apps = results.rows;
-                    console.log(apps)
-                    // callback(null, results.rows);
+                    console.log(apps);
                     getProfiles();
                 }
             });
         }
 
+        // get student profiles given apps
         const getProfiles = function () {
             let usernames = [];
             apps.forEach(app => {
@@ -649,7 +650,6 @@ module.exports = {
             let parmsCounter = 1;
             let parms=[];
 
-            let profiles = [];
             let profileQuery = `SELECT * FROM studentdata WHERE username = ANY($${parmsCounter++})`;
             parms.push(usernames);
             if (lowcollegeclass && highcollegeclass) {
@@ -661,20 +661,18 @@ module.exports = {
                 profileQuery += ` AND highschoolname = ANY($${parmsCounter++})`;
                 parms.push(highschools);
             }
-            console.log(profileQuery);
             userDB.query(profileQuery, parms, (err, results) => {
                 if (err) {
-                    //callback(err);
-                    console.log(err);
+                    callback(err);       
                 }
                 else {
                     console.log(results.rows)
-                    profiles.push(results.rows);
-                    profileQuery = 'SELECT * FROM studentdata WHERE 1=1';
+                    console.log(parms)
+                    // list of profiles
+                    callback(null, results.rows);
                 }
             });
         }
-
 
         getApps();
     },
@@ -951,5 +949,4 @@ module.exports = {
             }
         });
     },
-
 }
