@@ -12,6 +12,7 @@
     "studentProfileCSV": "data/students.csv",
     "outputProfileCSV": "data/studentsFormatted.csv",
     "applicationCSV": "data/applications.csv",
+    "outputApplicationsCSV" : "data/applicationsFormatted.csv",
     "highSchoolFile": "data/highschools.txt",
     "collegeFile": "data/colleges.txt",
     "collegeScorecard1": "data/collegescorecard1.csv",

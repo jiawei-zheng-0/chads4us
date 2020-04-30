@@ -1,101 +1,101 @@
-userid, college, status
+userid,college,status
 40_NY_0,Moravian College,accepted
 40_NY_0,Florida Gulf Coast University,accepted
 40_NY_0,Suffolk University,accepted
 40_NY_0,University of Hartford,accepted
 40_NY_1,Illinois College,accepted
 40_NY_1,Stevenson University,accepted
-40_NY_1,"University of Nevada, Las Vegas",accepted
+40_NY_1,"University of Nevada,Las Vegas",accepted
 40_NY_1,Central Connecticut State University,accepted
 40_NY_1,Williams College,denied
 40_NY_2,Illinois College,accepted
 40_NY_2,Stevenson University,accepted
 40_NY_2,Williams College,denied
-40_NY_2,"University of Nevada, Las Vegas",accepted
+40_NY_2,"University of Nevada,Las Vegas",accepted
 40_NY_2,Central Connecticut State University,accepted
 40_NY_3,Illinois College,accepted
 40_NY_3,Stevenson University,accepted
-40_NY_3,"University of Nevada, Las Vegas",accepted
+40_NY_3,"University of Nevada,Las Vegas",accepted
 40_NY_3,Williams College,denied
 40_NY_3,Central Connecticut State University,accepted
 40_IL_40,Vassar College,denied
 40_IL_40,Stevenson University,accepted
-40_IL_40,"University of Nevada, Las Vegas",accepted
+40_IL_40,"University of Nevada,Las Vegas",accepted
 40_IL_40,Central Connecticut State University,accepted
 40_IL_40,Williams College,denied
 40_IL_41,Stevenson University,accepted
-40_IL_41,"University of Nevada, Las Vegas",accepted
+40_IL_41,"University of Nevada,Las Vegas",accepted
 40_IL_41,Vassar College,denied
 40_IL_41,Central Connecticut State University,accepted
 40_IL_41,Williams College,pending
 40_IL_42,Vassar College,denied
 40_IL_42,Stevenson University,accepted
-40_IL_42,"University of Nevada, Las Vegas",accepted
+40_IL_42,"University of Nevada,Las Vegas",accepted
 40_IL_42,Central Connecticut State University,accepted
 40_IL_42,Williams College,denied
 40_IL_43,Illinois College,accepted
 40_IL_43,Stevenson University,accepted
-40_IL_43,"University of Nevada, Las Vegas",accepted
+40_IL_43,"University of Nevada,Las Vegas",accepted
 40_IL_43,Central Connecticut State University,accepted
 40_IL_43,Williams College,denied
 40_KS_80,Illinois College,pending
 40_KS_80,Stevenson University,accepted
 40_KS_80,Williams College,denied
-40_KS_80,"University of Nevada, Las Vegas",accepted
+40_KS_80,"University of Nevada,Las Vegas",accepted
 40_KS_80,Central Connecticut State University,accepted
 40_KS_81,Illinois College,accepted
 40_KS_81,Stevenson University,accepted
-40_KS_81,"University of Nevada, Las Vegas",pending
+40_KS_81,"University of Nevada,Las Vegas",pending
 40_KS_81,Central Connecticut State University,accepted
 40_KS_81,Williams College,denied
 40_KS_82,Vassar College,denied
 40_KS_82,Stevenson University,accepted
-40_KS_82,"University of Nevada, Las Vegas",accepted
+40_KS_82,"University of Nevada,Las Vegas",accepted
 40_KS_82,Central Connecticut State University,pending
 40_KS_82,Williams College,denied
 40_KS_83,Illinois College,accepted
 40_KS_83,Stevenson University,accepted
-40_KS_83,"University of Nevada, Las Vegas",accepted
+40_KS_83,"University of Nevada,Las Vegas",accepted
 40_KS_83,Central Connecticut State University,pending
 40_KS_83,Williams College,denied
 40_NC_120,Illinois College,accepted
 40_NC_120,Stevenson University,accepted
-40_NC_120,"University of Nevada, Las Vegas",pending
+40_NC_120,"University of Nevada,Las Vegas",pending
 40_NC_120,Central Connecticut State University,accepted
 40_NC_120,Williams College,denied
 40_NC_121,Illinois College,pending
 40_NC_121,Stevenson University,accepted
-40_NC_121,"University of Nevada, Las Vegas",accepted
+40_NC_121,"University of Nevada,Las Vegas",accepted
 40_NC_121,Central Connecticut State University,accepted
 40_NC_121,Williams College,denied
 40_NC_122,Stevenson University,accepted
-40_NC_122,"University of Nevada, Las Vegas",accepted
+40_NC_122,"University of Nevada,Las Vegas",accepted
 40_NC_122,Vassar College,denied
 40_NC_122,Central Connecticut State University,accepted
 40_NC_122,Williams College,denied
 40_NC_123,Illinois College,pending
 40_NC_123,Stevenson University,accepted
-40_NC_123,"University of Nevada, Las Vegas",accepted
+40_NC_123,"University of Nevada,Las Vegas",accepted
 40_NC_123,Central Connecticut State University,accepted
 40_NC_123,Williams College,denied
 40_NY_160,Vassar College,denied
 40_NY_160,Stevenson University,accepted
-40_NY_160,"University of Nevada, Las Vegas",accepted
+40_NY_160,"University of Nevada,Las Vegas",accepted
 40_NY_160,Central Connecticut State University,accepted
 40_NY_160,Williams College,denied
 40_NY_161,Stevenson University,accepted
-40_NY_161,"University of Nevada, Las Vegas",accepted
+40_NY_161,"University of Nevada,Las Vegas",accepted
 40_NY_161,Vassar College,denied
 40_NY_161,Central Connecticut State University,accepted
 40_NY_161,Williams College,denied
 40_NY_162,Illinois College,accepted
 40_NY_162,Stevenson University,accepted
-40_NY_162,"University of Nevada, Las Vegas",accepted
+40_NY_162,"University of Nevada,Las Vegas",accepted
 40_NY_162,Central Connecticut State University,accepted
 40_NY_162,Williams College,denied
 40_NY_163,Illinois College,accepted
 40_NY_163,Stevenson University,accepted
-40_NY_163,"University of Nevada, Las Vegas",accepted
+40_NY_163,"University of Nevada,Las Vegas",accepted
 40_NY_163,Central Connecticut State University,accepted
 40_NY_163,Williams College,denied
 37_GA_0,Mount Holyoke College,denied
@@ -169,7 +169,7 @@ userid, college, status
 37_NY_121,Barnard College,denied
 37_NY_121,Reed College,denied
 37_NY_122,Colorado College,denied
-37_NY_122,"California State University, East Bay",accepted
+37_NY_122,"California State University,East Bay",accepted
 37_NY_122,Smith College,denied
 37_NY_122,Barnard College,denied
 37_NY_122,Reed College,denied

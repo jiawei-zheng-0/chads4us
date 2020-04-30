@@ -345,7 +345,7 @@ app.post('/editapplication/:username', function (req, res) {
         }
         else {
             res.status(200).send({
-                questionable : result
+                questionable: result
             });
         }
     });
@@ -460,23 +460,23 @@ app.post('/findsimilarhs', function (req, res) {
 app.post('/apptracker', function (req, res) {
     db.appTracker(req.body.isStrict, req.body.collegename, req.body.lowcollegeclass,
         req.body.highcollegeclass, req.body.highschools, req.body.appstatuses, (err, studentProfiles, applications) => {
-        if (err) {
-            console.log(err);
-            res.status(500).send({
-                error: 'Error in processing applications tracker',
-            });
-        }
-        else {
-            applications.forEach(application => {
-                studentProfiles.forEach(profile => {
-                    if (profile.username === application.username){
-                        profile.status = application.status;
-                    }
+            if (err) {
+                console.log(err);
+                res.status(500).send({
+                    error: 'Error in processing applications tracker',
                 });
-            });
-            res.status(200).send(studentProfiles);
-        } 
-    });
+            }
+            else {
+                applications.forEach(application => {
+                    studentProfiles.forEach(profile => {
+                        if (profile.username === application.username) {
+                            profile.status = application.status;
+                        }
+                    });
+                });
+                res.status(200).send(studentProfiles);
+            }
+        });
 });
 
 // DELETE ALL STUDENT PROFILES
@@ -511,20 +511,26 @@ app.post('/getallcolleges', function (req, res) {
 app.post('/importprofiles', (req, res) => {
     //import applications
     fs.readFile(config.applicationCSV, 'utf-8', (err, data) => {
+        if (err) { throw err; }
         const newValue = data.replace(/ *, */gim, ',');// removes spaces next to commas in csv
-        fs.createReadStream(config.applicationCSV)
-            .pipe(csvParser())
-            .on('data', (row) => {
-                //console.log(row);
-                db.importApplication(row.userid, row.college, row.status, (err) => {
-                    if (err) {
-                        console.log('Error in importing applications');
-                    }
+        fs.writeFile(config.outputApplicationsCSV, newValue, 'utf-8', function (err) {
+            if (err) { throw err; }
+            fs.createReadStream(config.outputApplicationsCSV)
+                .pipe(csv.parse({ headers: true }))
+                .on('error', error => console.error(error))
+                .on('data', (row) => {
+                    //console.log(row);
+                    db.importApplication(row.userid, row.college, row.status, (err) => {
+                        if (err) {
+                            console.log('Error in importing applications');
+                        }
+                    });
+                })
+                .on('end', () => {
+                    console.log('CSV file read finished');
                 });
-            })
-            .on('end', () => {
-                console.log('CSV file read finished');
-            });
+        });
+
     });
 
     //import profiles
