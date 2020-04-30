@@ -218,6 +218,7 @@ app.post('/editprofile/:username', function (req, res) {
             const originalHS = result.highschoolname;
             const newHS = req.body.highschoolname;
             const oldGPA = result.gpa;
+            // Replaces old profile values with new values
             Object.keys(result).forEach((key) => {
                 result[key] = req.body[key];
             });
@@ -277,7 +278,7 @@ app.post('/editprofile/:username', function (req, res) {
                                                     });
                                                 }
                                                 else {
-                                                    console.log(`${originalHS} GPA reacalulated`);
+                                                    console.log(`${originalHS} GPA recalulated`);
                                                     if (password) {//if password needs to be changed
                                                         bcrypt.hash(password, 10, (err, hash) => {
                                                             db.changePassword(username, hash, (err) => {
