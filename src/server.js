@@ -356,7 +356,7 @@ app.post('/editapplication/:username', function (req, res) {
 app.post('/searchcolleges', function (req, res) {
     db.getState(req.body.username, (err, result) => {
         db.searchColleges(req.body.isStrict, req.body.collegename, req.body.lowadmissionrate, req.body.highadmissionrate,
-            result, req.body.costofattendance, req.body.region, req.body.major1, req.body.major2, req.body.lowranking,
+            result, req.body.costofattendance, req.body.location, req.body.isRegion, req.body.major1, req.body.major2, req.body.lowranking,
             req.body.highranking, req.body.lowsize, req.body.highsize, req.body.lowsatmath, req.body.highsatmath,
             req.body.lowsatebrw, req.body.highsatebrw, req.body.lowactcomposite, req.body.highactcomposite, (err, result) => {
                 if (err) {

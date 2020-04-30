@@ -270,7 +270,7 @@ module.exports = {
         })
     },
     //Search for colleges
-    searchColleges: (isStrict, collegename, lowadmissionrate, highadmissionrate, state, costofattendance, region, major1, major2, lowranking, highranking,
+    searchColleges: (isStrict, collegename, lowadmissionrate, highadmissionrate, state, costofattendance, location, isRegion, major1, major2, lowranking, highranking,
         lowsize, highsize, lowsatmath, highsatmath, lowsatebrw, highsatebrw, lowactcomposite, highactcomposite, callback) => {
         let searchQuery = 'SELECT * FROM colleges WHERE 1=1';
         if (collegename) {
@@ -291,11 +291,19 @@ module.exports = {
             else
                 searchQuery += ` AND (costofattendanceinstate IS NULL OR (costofattendanceinstate <= ${costofattendance} AND state = '${state}') OR (costofattendanceoutofstate <= ${costofattendance} AND state != '${state}'))`;
         }
-        if (region) {
-            if (isStrict)
-                searchQuery += ` AND region IS NOT NULL AND region='${region}'`;
-            else
-                searchQuery += ` AND (region IS NULL OR region='${region}')`;
+        if (location) {
+            // is searching by region or states
+            if (isRegion) {
+                if (isStrict)
+                    searchQuery += ` AND region IS NOT NULL AND region = $1`;
+                else
+                    searchQuery += ` AND (region IS NULL OR region = $1)`;
+            } else {
+                if (isStrict)
+                    searchQuery += ` AND state IS NOT NULL AND state = ANY ($1)`;
+                else
+                    searchQuery += ` AND (state IS NOT NULL OR state = ANY ($1))`;
+            }
         }
         if (major1) {
             if (isStrict)
@@ -340,7 +348,7 @@ module.exports = {
                 searchQuery += ` AND (actcomposite IS NULL OR actcomposite BETWEEN ${lowactcomposite} AND ${highactcomposite})`;
         }
         console.log(searchQuery);
-        collegeDB.query(searchQuery, (err, results) => {
+        collegeDB.query(searchQuery, [location], (err, results) => {
             if (err) {
                 callback(err);
             } else {
