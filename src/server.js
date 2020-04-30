@@ -459,7 +459,7 @@ app.post('/findsimilarhs', function (req, res) {
 // APPLICATIONS TRACKER
 app.post('/apptracker', function (req, res) {
     db.appTracker(req.body.isStrict, req.body.collegename, req.body.lowcollegeclass,
-        req.body.highcollegeclass, req.body.highschools, req.body.appstatuses, (err, result) => {
+        req.body.highcollegeclass, req.body.highschools, req.body.appstatuses, (err, studentProfiles, applications) => {
         if (err) {
             console.log(err);
             res.status(500).send({
@@ -467,7 +467,14 @@ app.post('/apptracker', function (req, res) {
             });
         }
         else {
-            res.status(200).send(result);
+            applications.forEach(application => {
+                studentProfiles.forEach(profile => {
+                    if (profile.username === application.username){
+                        profile.status = application.status;
+                    }
+                });
+            });
+            res.status(200).send(studentProfiles);
         } 
     });
 });

@@ -683,9 +683,9 @@ module.exports = {
                 }
                 else {
                     console.log(results.rows)
-                    console.log(parms)
+                    //console.log(parms)
                     // list of profiles
-                    callback(null, results.rows);
+                    callback(null, results.rows, apps);
                 }
             });
         }
