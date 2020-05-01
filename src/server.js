@@ -1024,8 +1024,9 @@ app.get('/reviewdecisions', function (req, res) {
 });
 
 app.post('/validatedecision', function (req, res) {
-    let applicationid = req.body.applicationid;
-    db.validateDecision(applicationid, (err, result) => {
+    let collegename = req.body.collegename;
+    let username = req.body.username;
+    db.validateDecision(collegename,username, (err, result) => {
         if (err) {
             res.status(500).send({
                 error: 'Error in validating questionable acceptance decision'
