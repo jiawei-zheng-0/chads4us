@@ -285,6 +285,7 @@ module.exports = {
     searchColleges: (isStrict, collegename, lowadmissionrate, highadmissionrate, state, costofattendance, location, isRegion, major1, major2, lowranking, highranking,
         lowsize, highsize, lowsatmath, highsatmath, lowsatebrw, highsatebrw, lowactcomposite, highactcomposite, callback) => {
         let searchQuery = 'SELECT * FROM colleges WHERE 1=1';
+        let parms = [];
         if (collegename) {
             if (isStrict)
                 searchQuery += ` AND collegename IS NOT NULL AND collegename ILIKE '%${collegename}%'`;
@@ -316,6 +317,7 @@ module.exports = {
                 else
                     searchQuery += ` AND (state IS NOT NULL OR state = ANY ($1))`;
             }
+            parms.push(location);
         }
         if (major1) {
             if (isStrict)
@@ -360,7 +362,7 @@ module.exports = {
                 searchQuery += ` AND (actcomposite IS NULL OR actcomposite BETWEEN ${lowactcomposite} AND ${highactcomposite})`;
         }
         console.log(searchQuery);
-        collegeDB.query(searchQuery, [location], (err, results) => {
+        collegeDB.query(searchQuery, parms, (err, results) => {
             if (err) {
                 callback(err);
             } else {
