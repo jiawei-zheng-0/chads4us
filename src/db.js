@@ -635,6 +635,7 @@ module.exports = {
     // Applications tracker
     appTracker: (isStrict, collegename, lowcollegeclass, highcollegeclass, highschools, appstatuses, callback) => {    
         let apps;
+        console.log(`isStrict = ${isStrict}, collegename=${collegename}, lowcollegeclass=${lowcollegeclass}, highcollegeclass=${highcollegeclass},highschools=${highschools},appstatuses=${appstatuses}`);
 
         // get applications with specified statuses
         const getApps = function () {
