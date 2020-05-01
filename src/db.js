@@ -308,12 +308,12 @@ module.exports = {
             // is searching by region or states
             if (isRegion) {
                 if (isStrict)
-                    searchQuery += ` AND region IS NULL AND region = $1`;
+                    searchQuery += ` AND region IS NOT NULL AND region = $1`;
                 else
                     searchQuery += ` AND (region IS NULL OR region = $1)`;
             } else {
                 if (isStrict)
-                    searchQuery += ` AND state IS NULL AND state = ANY($1)`;
+                    searchQuery += ` AND state IS NOT NULL AND state = ANY($1)`;
                 else
                     searchQuery += ` AND (state IS NULL OR state = ANY($1))`;
             }
