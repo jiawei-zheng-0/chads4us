@@ -633,32 +633,28 @@ module.exports = {
         getGPA();
     },
     // Applications tracker
-    appTracker: (isStrict, collegename, lowcollegeclass, highcollegeclass, highschools, appstatuses, callback) => {    
+    appTracker: (isStrict, collegename, lowcollegeclass, highcollegeclass, highschools, appstatuses, callback) => {
         let apps;
         console.log(`isStrict = ${isStrict}, collegename=${collegename}, lowcollegeclass=${lowcollegeclass}, highcollegeclass=${highcollegeclass},highschools=${highschools},appstatuses=${appstatuses}`);
 
         // get applications with specified statuses
         const getApps = function () {
             let appQuery = `SELECT * FROM applications WHERE collegename = $1`;
-            if (appstatuses) {
-                for (let i = 0; i < appstatuses.length; i++) {
-                    if (i == 0) {
-                        if (isStrict) {
-                            appQuery += ` AND status IS NOT NULL AND (status = '${appstatuses[i]}'`;
-                        } else {
-                            appQuery += ` AND (status IS NULL OR (status = '${appstatuses[i]}'`;
-                        }
-                    } else {
-                        appQuery += ` OR status = '${appstatuses[i]}'`;
-                    }
-                }
+            let parmsCounter = 2;
+            let parms = [];
+            parms.push(collegename)
+            if (appstatuses !== undefined && appstatuses.length != 0) {
                 if (isStrict) {
-                    appQuery += `)`;
-                } else {
-                    appQuery += `))`;
-                }       
+                    appQuery += ` AND status IS NOT NULL AND status = ANY($${parmsCounter++})`;
+                    parms.push(appstatuses);
+                }
+                else {
+                    appQuery += ` AND (status IS NULL OR status = ANY($${parmsCounter++}))`;
+                    parms.push(appstatuses);
+                }
             }
-            userDB.query(appQuery, [collegename], (err, results) => {
+            console.log(appQuery)
+            userDB.query(appQuery, parms, (err, results) => {
                 if (err) {
                     callback(err);
                 }
@@ -690,7 +686,7 @@ module.exports = {
                 parms.push(lowcollegeclass);
                 parms.push(highcollegeclass);
             }
-            if (highschools) {
+            if (highschools !== undefined && highschools.length != 0) {
                 if (isStrict) {
                     profileQuery += ` AND highschoolname IS NOT NULL AND highschoolname = ANY($${parmsCounter++})`;
                 } else {
@@ -698,9 +694,10 @@ module.exports = {
                 }
                 parms.push(highschools);
             }
+            console.log(profileQuery)
             userDB.query(profileQuery, parms, (err, results) => {
                 if (err) {
-                    callback(err);       
+                    callback(err);
                 }
                 else {
                     console.log(results.rows)
