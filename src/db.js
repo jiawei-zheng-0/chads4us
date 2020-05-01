@@ -990,4 +990,23 @@ module.exports = {
             }
         });
     },
+
+    //Check if High school exists in db
+    highSchoolExists: (highschool, callback) => {
+        let highSchoolExistsQuery = 'SELECT * FROM highschools WHERE hsname = $1';
+        collegeDB.query(highSchoolExistsQuery, [highschool], (err, results) => {
+            if (err) {
+                console.log(err);
+                callback(err);
+            }
+            else {
+                if (results.rows === undefined || results.rows.length != 0) {
+                    callback(null, true);
+                }
+                else{
+                    callback(null, false);
+                }
+            }
+        });
+    },
 }

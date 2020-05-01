@@ -410,50 +410,59 @@ app.post('/collegerecommender/:username', function (req, res) {
 });
 // Find similar high schools
 app.post('/findsimilarhs', function (req, res) {
-    db.getAllHighSchoolsExcept(req.body.highschool, (err, result) => {
-        if (err) {
-            console.log(err);
+    db.highSchoolExists(req.body.highschool, (err, result) => {
+        if (err || !result) {
             res.status(500).send({
-                error: 'Error in finding similar high schools',
+                error: 'High school does not exist',
             });
         }
         else {
-            let highSchools = result
-            let counter = 0;
-            result.forEach(highschool => {
-                //console.log(`calculateing score between ${req.body.highschool} and ${highschool.hsname}`)
-                db.calculateHSSimilarScore(req.body.highschool, highschool.hsname, (err, result) => {
-                    if (err) {
-                        console.log(err);
-                        res.status(500).send({
-                            error: 'Error in finding similar high schools',
-                        });
-                    }
-                    else {
-                        let index = highSchools.indexOf(highschool);
-                        highSchools[index].score = result;
-                        counter++;
-                    }
-                });
-            });
-            let timeoutCounter = 0;
-            const intervalID = setInterval(() => {
-                if (counter >= result.length) {
-                    clearInterval(intervalID);
-                    highSchools.sort((a, b) => {
-                        var x = a.score; var y = b.score;
-                        return ((x > y) ? -1 : ((x < y) ? 1 : 0));
-                    });
-                    res.status(200).send(result);
-                }
-                timeoutCounter++;
-                if (timeoutCounter >= result.length + 3) {
-                    clearInterval(intervalID);
+            db.getAllHighSchoolsExcept(req.body.highschool, (err, result) => {
+                if (err) {
+                    console.log(err);
                     res.status(500).send({
-                        error: 'Error in calculating similarity scores',
+                        error: 'Error in finding similar high schools',
                     });
                 }
-            }, 1000);
+                else {
+                    let highSchools = result
+                    let counter = 0;
+                    result.forEach(highschool => {
+                        //console.log(`calculateing score between ${req.body.highschool} and ${highschool.hsname}`)
+                        db.calculateHSSimilarScore(req.body.highschool, highschool.hsname, (err, result) => {
+                            if (err) {
+                                console.log(err);
+                                res.status(500).send({
+                                    error: 'Error in finding similar high schools',
+                                });
+                            }
+                            else {
+                                let index = highSchools.indexOf(highschool);
+                                highSchools[index].score = result;
+                                counter++;
+                            }
+                        });
+                    });
+                    let timeoutCounter = 0;
+                    const intervalID = setInterval(() => {
+                        if (counter >= result.length) {
+                            clearInterval(intervalID);
+                            highSchools.sort((a, b) => {
+                                var x = a.score; var y = b.score;
+                                return ((x > y) ? -1 : ((x < y) ? 1 : 0));
+                            });
+                            res.status(200).send(result);
+                        }
+                        timeoutCounter++;
+                        if (timeoutCounter >= result.length + 3) {
+                            clearInterval(intervalID);
+                            res.status(500).send({
+                                error: 'Error in calculating similarity scores',
+                            });
+                        }
+                    }, 1000);
+                }
+            });
         }
     });
 });
@@ -1026,7 +1035,7 @@ app.get('/reviewdecisions', function (req, res) {
 app.post('/validatedecision', function (req, res) {
     let collegename = req.body.collegename;
     let username = req.body.username;
-    db.validateDecision(collegename,username, (err, result) => {
+    db.validateDecision(collegename, username, (err, result) => {
         if (err) {
             res.status(500).send({
                 error: 'Error in validating questionable acceptance decision'
