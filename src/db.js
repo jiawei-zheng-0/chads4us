@@ -64,7 +64,6 @@ const flagApplication = function (username, collegename) {
                 callback(err);
             }
             else {
-                console.log(collegename);
                 collegeactCompScore = results.rows[0].actcomposite;
                 collegeDB.query(collegeSATMathQuery, [collegename], (err, results) => {
                     if (err) {
