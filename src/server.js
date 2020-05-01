@@ -418,13 +418,10 @@ app.post('/findsimilarhs', function (req, res) {
             });
         }
         else {
-            //const index = result.indexOf({ hsname: req.body.highschool });
-            //let highschoolScoreList = result.splice(index, 1);
-            //console.log(result);
             let highSchools = result
             let counter = 0;
             result.forEach(highschool => {
-                console.log(`calculateing score between ${req.body.highschool} and ${highschool.hsname}`)
+                //console.log(`calculateing score between ${req.body.highschool} and ${highschool.hsname}`)
                 db.calculateHSSimilarScore(req.body.highschool, highschool.hsname, (err, result) => {
                     if (err) {
                         console.log(err);
@@ -443,6 +440,10 @@ app.post('/findsimilarhs', function (req, res) {
             const intervalID = setInterval(() => {
                 if (counter >= result.length) {
                     clearInterval(intervalID);
+                    highSchools.sort((a, b) => {
+                        var x = a.score; var y = b.score;
+                        return ((x > y) ? -1 : ((x < y) ? 1 : 0));
+                    });
                     res.status(200).send(result);
                 }
                 timeoutCounter++;
