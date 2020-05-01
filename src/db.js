@@ -858,9 +858,9 @@ module.exports = {
         });
     },
     //Validate decisions
-    validateDecision: (applicationid, callback) => {
-        let validateDecisionQuery = `UPDATE applications SET questionable = FALSE WHERE applicationid = $1`;
-        userDB.query(validateDecisionQuery, [applicationid], (err, results) => {
+    validateDecision: (collegename, username, callback) => {
+        let validateDecisionQuery = `UPDATE applications SET questionable = FALSE WHERE collegename = $1 AND username = $2`;
+        userDB.query(validateDecisionQuery, [collegename, username], (err, results) => {
             if (err) {
                 callback(err);
             }
