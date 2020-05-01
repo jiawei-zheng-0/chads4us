@@ -313,9 +313,9 @@ module.exports = {
                     searchQuery += ` AND (region IS NULL OR region = $1)`;
             } else {
                 if (isStrict)
-                    searchQuery += ` AND state IS NOT NULL AND state = ANY ($1)`;
+                    searchQuery += ` AND state IS NOT NULL AND state = ANY($1)`;
                 else
-                    searchQuery += ` AND (state IS NOT NULL OR state = ANY ($1))`;
+                    searchQuery += ` AND (state IS NULL OR state = ANY($1))`;
             }
             parms.push(location);
         }
