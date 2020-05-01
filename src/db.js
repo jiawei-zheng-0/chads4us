@@ -86,7 +86,6 @@ const flagApplication = function (username, collegename) {
             }
         });
     }
-
     const flag = function () {
         let decisionScore = Math.max((collegeactCompScore - studentactCompScore) / collegeactCompScore, (collegesatMathScore - studentsatMathScore) / collegesatMathScore, (collegesatEBRWScore - studentsatEBRWScore) / collegesatEBRWScore);
         let flag = decisionScore >= 0.12 ? true : false;
