@@ -979,7 +979,7 @@ module.exports = {
                 callback(err);
             }
             else {
-                if (results.rows) {
+                if (results.rows !== undefined && results.rows.length != 0) {
                     callback(null, results.rows[0].residencestate);
                 }
                 else {
