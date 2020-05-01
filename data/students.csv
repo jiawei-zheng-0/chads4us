@@ -1,5 +1,5 @@
 userid,password,residence_state,high_school_name,high_school_city,high_school_state,GPA,college_class,major_1,major_2,SAT_math,SAT_EBRW,ACT_English,ACT_math,ACT_reading,ACT_science,ACT_composite,SAT_literature,SAT_US_hist,SAT_world_hist,SAT_math_I,SAT_math_II,SAT_eco_bio,SAT_mol_bio,SAT_chemistry,SAT_physics,num_AP_passed
-jamess,40_NY_0!,NY,Commack High School,Commack,NY,1,2024,Physics,History,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+james,40_NY_0!,NY,Commack High School,Commack,NY,1,2024,Physics,History,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
 40_NY_1,40_NY_1!,NY,Commack High School,Commack,NY,4,2024,Physics,History,630,610,27,27,29,28,28,730,710,730,730,710,710,730,730,730,7
 40_NY_2,40_NY_2!,NY,Commack High School,Commack,NY,4,2025,Physics,Philosophy,630,630,27,29,29,28,28,720,710,710,730,730,720,720,710,710,7
 40_NY_3,40_NY_3!,NY,Commack High School,Commack,NY,3.8,2025,Physics,Philosophy,610,610,29,29,29,28,29,730,720,720,710,730,730,710,730,730,5
