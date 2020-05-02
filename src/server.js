@@ -484,31 +484,31 @@ app.post('/findsimilarhs', function (req, res) {
 
 // APPLICATIONS TRACKER
 app.post('/apptracker', function (req, res) {
-    if (!collegeList.includes(req.body.collegename)){
+    if (!collegeList.includes(req.body.collegename)) {
         res.status(500).send({
             error: 'Invaild College',
         });
     }
-    else{
-    db.appTracker(req.body.isStrict, req.body.collegename, req.body.lowcollegeclass,
-        req.body.highcollegeclass, req.body.highschools, req.body.appstatuses, (err, studentProfiles, applications) => {
-            if (err) {
-                console.log(err);
-                res.status(500).send({
-                    error: 'Error in processing applications tracker',
-                });
-            }
-            else {
-                applications.forEach(application => {
-                    studentProfiles.forEach(profile => {
-                        if (profile.username === application.username) {
-                            profile.status = application.status;
-                        }
+    else {
+        db.appTracker(req.body.isStrict, req.body.collegename, req.body.lowcollegeclass,
+            req.body.highcollegeclass, req.body.highschools, req.body.appstatuses, (err, studentProfiles, applications) => {
+                if (err) {
+                    console.log(err);
+                    res.status(500).send({
+                        error: 'Error in processing applications tracker',
                     });
-                });
-                res.status(200).send(studentProfiles);
-            }
-        });
+                }
+                else {
+                    applications.forEach(application => {
+                        studentProfiles.forEach(profile => {
+                            if (profile.username === application.username) {
+                                profile.status = application.status;
+                            }
+                        });
+                    });
+                    res.status(200).send(studentProfiles);
+                }
+            });
     }
 });
 
@@ -1110,6 +1110,10 @@ app.get('/getallhs', function (req, res) {
             res.status(200).send(hs);
         }
     });
+});
+
+app.get('/getallcollegenames', function (req, res) {
+    res.status(200).send(collegeList);
 });
 
 const PORT = process.env.PORT || 5000;
