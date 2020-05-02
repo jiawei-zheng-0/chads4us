@@ -1113,7 +1113,7 @@ app.get('/getallhs', function (req, res) {
 });
 
 app.get('/getfive', function (req, res) {
-    db.getFiveProfiles((err, result) => {
+    db.getAppProfiles((err, result) => {
         if (err) {
             res.status(500).send({
                 error: `Error in retrieving profiles`

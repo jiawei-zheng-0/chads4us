@@ -991,7 +991,7 @@ module.exports = {
         });
     },
 
-    getFiveProfiles: (callback) => {
+    getAppProfiles: (callback) => {
         let get5Query = 'SELECT * FROM studentdata ORDER BY RANDOM() LIMIT 5';
         userDB.query(get5Query, (err, results) => {
             if (err) {
