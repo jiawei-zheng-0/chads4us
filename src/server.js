@@ -484,6 +484,12 @@ app.post('/findsimilarhs', function (req, res) {
 
 // APPLICATIONS TRACKER
 app.post('/apptracker', function (req, res) {
+    if (!collegeList.includes(req.body.collegename)){
+        res.status(500).send({
+            error: 'Invaild College',
+        });
+    }
+    else{
     db.appTracker(req.body.isStrict, req.body.collegename, req.body.lowcollegeclass,
         req.body.highcollegeclass, req.body.highschools, req.body.appstatuses, (err, studentProfiles, applications) => {
             if (err) {
@@ -503,6 +509,7 @@ app.post('/apptracker', function (req, res) {
                 res.status(200).send(studentProfiles);
             }
         });
+    }
 });
 
 // DELETE ALL STUDENT PROFILES
