@@ -15,9 +15,9 @@
     "collegeFile": "data/colleges.txt",
     "collegeScorecard1": "data/collegescorecard1.csv",
     "collegeScorecard2": "data/collegescorecard2.csv",
-    "collegeRankingSite": "http://allv22.all.cs.stonybrook.edu/~sasdasdtoller/cse416/WSJ_THE/united_states_rankings_2020_limit0_25839923f8b1714cf54659d4e4af6c3b.json",
-    "collegeDataSite": "http://allv22.all.cs.stonybrook.edu/~stoller/cse416/collegedata/asdasd",
-    "highSchoolSite": "http://allv22.all.cs.stonybrook.edu/~stoller/cse416/niche/asdasdas",
+    "collegeRankingSite": "http://allv22.all.cs.stonybrook.edu/~stoller/cse416/WSJ_THE/united_states_rankings_2020_limit0_25839923f8b1714cf54659d4e4af6c3b.json",
+    "collegeDataSite": "http://allv22.all.cs.stonybrook.edu/~stoller/cse416/collegedata/",
+    "highSchoolSite": "http://allv22.all.cs.stonybrook.edu/~stoller/cse416/niche/",
     "collegesWithThe": [
         "The Citadel",
         "The Art Institute of Atlanta",
