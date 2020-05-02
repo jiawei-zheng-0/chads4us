@@ -345,19 +345,26 @@ app.post('/editprofile/:username', function (req, res) {
 app.post('/editapplication/:username', function (req, res) {
     const username = req.params.username;
     // edit applications
-    db.editApplications(username, req.body.collegename, req.body.status, (err, result) => {
-        if (err) {
-            console.log(err);
-            res.status(500).send({
-                error: 'Error in editing applications',
-            });
-        }
-        else {
-            res.status(200).send({
-                questionable: result
-            });
-        }
-    });
+    if (!collegeList.includes(req.body.collegename)) {
+        res.status(500).send({
+            error: 'Invalid College',
+        });
+    }
+    else {
+        db.editApplications(username, req.body.collegename, req.body.status, (err, result) => {
+            if (err) {
+                console.log(err);
+                res.status(500).send({
+                    error: 'Error in editing applications',
+                });
+            }
+            else {
+                res.status(200).send({
+                    questionable: result
+                });
+            }
+        });
+    }
 });
 
 // Search for colleges
