@@ -1,17 +1,17 @@
 {
   "files": {
-    "main.css": "/static/css/main.0e4578cd.chunk.css",
-    "main.js": "/static/js/main.a8ed87ff.chunk.js",
-    "main.js.map": "/static/js/main.a8ed87ff.chunk.js.map",
+    "main.css": "/static/css/main.4846ee1c.chunk.css",
+    "main.js": "/static/js/main.af845a69.chunk.js",
+    "main.js.map": "/static/js/main.af845a69.chunk.js.map",
     "runtime-main.js": "/static/js/runtime-main.edae25c4.js",
     "runtime-main.js.map": "/static/js/runtime-main.edae25c4.js.map",
-    "static/js/2.e5d48f6b.chunk.js": "/static/js/2.e5d48f6b.chunk.js",
-    "static/js/2.e5d48f6b.chunk.js.map": "/static/js/2.e5d48f6b.chunk.js.map",
+    "static/js/2.d85c96bc.chunk.js": "/static/js/2.d85c96bc.chunk.js",
+    "static/js/2.d85c96bc.chunk.js.map": "/static/js/2.d85c96bc.chunk.js.map",
     "index.html": "/index.html",
-    "precache-manifest.8f895846e2183946267880d5fde95397.js": "/precache-manifest.8f895846e2183946267880d5fde95397.js",
+    "precache-manifest.72551ebd76cbe6b858d5701a1ea49b67.js": "/precache-manifest.72551ebd76cbe6b858d5701a1ea49b67.js",
     "service-worker.js": "/service-worker.js",
-    "static/css/main.0e4578cd.chunk.css.map": "/static/css/main.0e4578cd.chunk.css.map",
-    "static/js/2.e5d48f6b.chunk.js.LICENSE.txt": "/static/js/2.e5d48f6b.chunk.js.LICENSE.txt",
+    "static/css/main.4846ee1c.chunk.css.map": "/static/css/main.4846ee1c.chunk.css.map",
+    "static/js/2.d85c96bc.chunk.js.LICENSE.txt": "/static/js/2.d85c96bc.chunk.js.LICENSE.txt",
     "static/media/abstrakt-design-03.png": "/static/media/abstrakt-design-03.8b89fa84.png",
     "static/media/collegesearch.scss": "/static/media/bg2.724be147.png",
     "static/media/book.png": "/static/media/book.91f94de9.png",
@@ -19,13 +19,13 @@
     "static/media/college.png": "/static/media/college.d37e3607.png",
     "static/media/App.scss": "/static/media/ralph.beb1c65e.jpg",
     "static/media/application.css": "/static/media/schoolAppLogo.abb607ba.png",
-    "static/media/profile.css": "/static/media/spikes.5d213869.png",
+    "static/media/profile.scss": "/static/media/spikes.5d213869.png",
     "static/media/women_hand.png": "/static/media/women_hand.eccae564.png"
   },
   "entrypoints": [
     "static/js/runtime-main.edae25c4.js",
-    "static/js/2.e5d48f6b.chunk.js",
-    "static/css/main.0e4578cd.chunk.css",
-    "static/js/main.a8ed87ff.chunk.js"
+    "static/js/2.d85c96bc.chunk.js",
+    "static/css/main.4846ee1c.chunk.css",
+    "static/js/main.af845a69.chunk.js"
   ]
 }
