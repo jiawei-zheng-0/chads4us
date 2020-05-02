@@ -224,111 +224,118 @@ app.post('/editprofile/:username', function (req, res) {
             });
             console.log(result);
             // edit profile
-            db.editProfile(username, result.residencestate, result.highschoolname, result.highschoolcity, result.highschoolstate, result.gpa, result.collegeclass,
-                result.major1, result.major2, result.satebrw, result.satmath, result.actenglish, result.actmath, result.actreading, result.actscience, result.actcomposite,
-                result.satliterature, result.satushistory, result.satworldhistory, result.satmath1, result.satmath2, result.satecobio, result.satmolbio,
-                result.satchem, result.satphysics, result.numpassedaps, (err) => {
-                    if (err) {
-                        console.log('error in editing profile');
-                        console.log(err);
-                        res.status(500).send({
-                            error: 'error in editing profile',
-                        });
-                    }
-                    else {
-                        console.log(`User ${username} profile updated`);
-                        //If user's gpa changed, update avg gpa of high school
-                        //console.log(`${result.gpa} = ${ req.body.gpa}`)
-                        if (oldGPA != req.body.gpa) {
-                            db.recalculateHSGPA(result.highschoolname, (err, result) => {
-                                if (err) {
-                                    console.log('error in caluclating HS GPA');
-                                    res.status(500).send({
-                                        error: 'error in importing hs',
-                                    });
-                                }
+            if (!config.Northeast.includes(highschoolstate) && !config.Midwest.includes(highschoolstate) && !config.South.includes(highschoolstate) && !config.West.includes(highschoolstate)) {//if invalid state
+                res.status(500).send({
+                    error: 'Invalid state',
+                });
+            }
+            else {
+                db.editProfile(username, result.residencestate, result.highschoolname, result.highschoolcity, result.highschoolstate, result.gpa, result.collegeclass,
+                    result.major1, result.major2, result.satebrw, result.satmath, result.actenglish, result.actmath, result.actreading, result.actscience, result.actcomposite,
+                    result.satliterature, result.satushistory, result.satworldhistory, result.satmath1, result.satmath2, result.satecobio, result.satmolbio,
+                    result.satchem, result.satphysics, result.numpassedaps, (err) => {
+                        if (err) {
+                            console.log('error in editing profile');
+                            console.log(err);
+                            res.status(500).send({
+                                error: 'error in editing profile',
                             });
                         }
-                        //If new HS, do import new HS func
-                        if (newHS != originalHS) {
-                            importHighSchool(req.body.highschoolname, req.body.highschoolcity, req.body.highschoolstate, (err, result) => {
-                                if (err) {
-                                    console.log('error in importing hs');
-                                    res.status(500).send({
-                                        error: 'error in importing hs',
-                                    });
-                                }
-                                else {
-                                    console.log(`${newHS} imported`);
-                                    //Now update GPAs of old and new HS
-                                    db.recalculateHSGPA(newHS, (err, result) => {
-                                        if (err) {
-                                            console.log('error in caluclating HS GPA');
-                                            res.status(500).send({
-                                                error: 'error in caluclating HS GPA',
-                                            });
-                                        }
-                                        else {
-                                            console.log(`${newHS} GPA reacalulated`);
-                                            db.recalculateHSGPA(originalHS, (err, result) => {
-                                                if (err) {
-                                                    console.log('error in caluclating HS GPA');
-                                                    res.status(500).send({
-                                                        error: 'error in caluclating HS GPA',
-                                                    });
-                                                }
-                                                else {
-                                                    console.log(`${originalHS} GPA recalulated`);
-                                                    if (password) {//if password needs to be changed
-                                                        bcrypt.hash(password, 10, (err, hash) => {
-                                                            db.changePassword(username, hash, (err) => {
-                                                                if (err) {
-                                                                    console.log(`error in changing password for ${username}`);
-                                                                    res.status(500).send({
-                                                                        error: 'error in changing password',
-                                                                    });
-                                                                }
-                                                                else {
-                                                                    console.log(`User ${username} password changed`);
-                                                                    res.status(200).send();
-                                                                }
-                                                            });
-                                                        });
-                                                    }
-                                                    else {//if password unmodified
-                                                        res.status(200).send();
-                                                    }
-                                                }
-                                            });
-                                        }
-                                    });
-                                }
-
-                            });
-                        }
-
-                        else if (password) {//if hs is same and password needs to be changed
-                            bcrypt.hash(password, 10, (err, hash) => {
-                                db.changePassword(username, hash, (err) => {
+                        else {
+                            console.log(`User ${username} profile updated`);
+                            //If user's gpa changed, update avg gpa of high school
+                            //console.log(`${result.gpa} = ${ req.body.gpa}`)
+                            if (oldGPA != req.body.gpa) {
+                                db.recalculateHSGPA(result.highschoolname, (err, result) => {
                                     if (err) {
-                                        console.log(`error in changing password for ${username}`);
+                                        console.log('error in caluclating HS GPA');
                                         res.status(500).send({
-                                            error: 'error in changing password',
+                                            error: 'error in importing hs',
+                                        });
+                                    }
+                                });
+                            }
+                            //If new HS, do import new HS func
+                            if (newHS != originalHS) {
+                                importHighSchool(req.body.highschoolname, req.body.highschoolcity, req.body.highschoolstate, (err, result) => {
+                                    if (err) {
+                                        console.log('error in importing hs');
+                                        res.status(500).send({
+                                            error: 'error in importing hs',
                                         });
                                     }
                                     else {
-                                        console.log(`User ${username} password changed`);
-                                        res.status(200).send();
+                                        console.log(`${newHS} imported`);
+                                        //Now update GPAs of old and new HS
+                                        db.recalculateHSGPA(newHS, (err, result) => {
+                                            if (err) {
+                                                console.log('error in caluclating HS GPA');
+                                                res.status(500).send({
+                                                    error: 'error in caluclating HS GPA',
+                                                });
+                                            }
+                                            else {
+                                                console.log(`${newHS} GPA reacalulated`);
+                                                db.recalculateHSGPA(originalHS, (err, result) => {
+                                                    if (err) {
+                                                        console.log('error in caluclating HS GPA');
+                                                        res.status(500).send({
+                                                            error: 'error in caluclating HS GPA',
+                                                        });
+                                                    }
+                                                    else {
+                                                        console.log(`${originalHS} GPA recalulated`);
+                                                        if (password) {//if password needs to be changed
+                                                            bcrypt.hash(password, 10, (err, hash) => {
+                                                                db.changePassword(username, hash, (err) => {
+                                                                    if (err) {
+                                                                        console.log(`error in changing password for ${username}`);
+                                                                        res.status(500).send({
+                                                                            error: 'error in changing password',
+                                                                        });
+                                                                    }
+                                                                    else {
+                                                                        console.log(`User ${username} password changed`);
+                                                                        res.status(200).send();
+                                                                    }
+                                                                });
+                                                            });
+                                                        }
+                                                        else {//if password unmodified
+                                                            res.status(200).send();
+                                                        }
+                                                    }
+                                                });
+                                            }
+                                        });
                                     }
-                                });
-                            });
-                        }
-                        else {//if password unmodified
-                            res.status(200).send();
-                        }
 
-                    }
-                });
+                                });
+                            }
+
+                            else if (password) {//if hs is same and password needs to be changed
+                                bcrypt.hash(password, 10, (err, hash) => {
+                                    db.changePassword(username, hash, (err) => {
+                                        if (err) {
+                                            console.log(`error in changing password for ${username}`);
+                                            res.status(500).send({
+                                                error: 'error in changing password',
+                                            });
+                                        }
+                                        else {
+                                            console.log(`User ${username} password changed`);
+                                            res.status(200).send();
+                                        }
+                                    });
+                                });
+                            }
+                            else {//if password unmodified
+                                res.status(200).send();
+                            }
+
+                        }
+                    });
+            }
         }
     });
 });
