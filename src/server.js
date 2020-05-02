@@ -224,6 +224,7 @@ app.post('/editprofile/:username', function (req, res) {
             });
             console.log(result);
             // edit profile
+            let highschoolstate = req.body.residencestate;
             if (!config.Northeast.includes(highschoolstate) && !config.Midwest.includes(highschoolstate) && !config.South.includes(highschoolstate) && !config.West.includes(highschoolstate)) {//if invalid state
                 res.status(500).send({
                     error: 'Invalid state',
