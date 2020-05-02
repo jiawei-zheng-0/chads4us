@@ -1081,6 +1081,19 @@ app.get('/getallhs', function (req, res) {
     });
 });
 
+app.get('/getfive', function (req, res) {
+    db.getFiveProfiles((err, result) => {
+        if (err) {
+            res.status(500).send({
+                error: `Error in retrieving profiles`
+            });
+        }
+        else {
+            res.status(200).send(result.rows);
+        }
+    })
+});
+
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Listening on ${PORT}`));
 

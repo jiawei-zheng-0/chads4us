@@ -990,4 +990,16 @@ module.exports = {
             }
         });
     },
+
+    getFiveProfiles: (callback) => {
+        let get5Query = 'SELECT * FROM studentdata ORDER BY RANDOM() LIMIT 5';
+        userDB.query(get5Query, (err, results) => {
+            if (err) {
+                callback(err);
+            }
+            else {
+                callback(null, results);
+            }
+        })
+    }
 }
