@@ -6,7 +6,11 @@ App is hosted on heroku and can be accessed at
 chads4us.herokuapp.com (please allow a minute the dyno to wake when accessing site)
 
 Team members:
+
 Jia Wei Zheng @jiaster (Backend, Database, sysadmin)
+
 Nicholas Chen @grahmnic (Frontend)
+
 Ralph Huang @ralhuang (Frontend)
+
 James Li @lijames2 (Backend, Database)
