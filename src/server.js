@@ -656,8 +656,10 @@ app.post('/importprofiles', (req, res) => {
 
                 });
                 let timeoutCounter = 0;
+                let started = false;
                 const intervalID = setInterval(() => {
-                    if (counter >= profiles.length) {
+                    if (counter >= profiles.length && started === false) {
+                        started = true;
                         importApplications();
                         listOfUpdatedHighSchools.forEach(highSchool => {
                             let i = listOfUpdatedHighSchools.indexOf(highSchool);
